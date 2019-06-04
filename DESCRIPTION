@@ -13,8 +13,12 @@ Description: Provides a suite of functions to assist with the design and
     designs, for both point and composite null hypotheses. A selection of
     plotting functions also permit the informative depiction of various
     important quantities.
-License: GPL-3
-Imports: Rcpp
+License: MIT
+Imports:
+    dplyr,
+    ggplot2,
+    Rcpp,
+    tibble
 LinkingTo: Rcpp
 RoxygenNote: 6.1.1
 Encoding: UTF-8
