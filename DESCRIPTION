@@ -1,6 +1,6 @@
 Package: ph2rand
 Type: Package
-Title: Design of randomized phase II oncology trials
+Title: Design of randomized comparative phase II oncology trials
 Version: 0.7
 Date: 2019-06-04
 Authors@R: c(person(given = "Michael", family = "Grayling",

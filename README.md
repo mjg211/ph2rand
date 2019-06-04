@@ -3,7 +3,7 @@
 
 # ph2rand
 
-*Design of randomized phase II oncology trials*
+*Design of randomized comparative phase II oncology trials*
 
 ## Description
 
