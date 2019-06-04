@@ -1,19 +1,18 @@
 Package: ph2rand
 Type: Package
-Title: Design and analysis of randomized phase II oncology trials
+Title: Design of randomized phase II oncology trials
 Version: 0.7
-Date: 2018-12-12
+Date: 2019-06-04
 Authors@R: c(person(given = "Michael", family = "Grayling",
                     email = "michael.grayling@newcastle.ac.uk",
                     role = c("aut", "cre")))
-Description: This package provides a suite of functions to assist with the
-    design, analysis, and visualization of randomized phase II oncology trials.
+Description: Provides a suite of functions to assist with the design and
+    visualization of randomized comparative phase II oncology trials.
     Specifically, support is provided to perform a sample size calculation for
-    each of the most popular randomized phase II oncology trial designs, for
-    both point and composite null hypotheses. Additional functions then allow
-    point estimates, p-values, and confidence intervals to be determined for
-    possible outcomes in these designs. A selection of plotting functions also
-    permit the informative depiction of various important quantities.
+    each of the most popular randomized comparative phase II oncology trial
+    designs, for both point and composite null hypotheses. A selection of
+    plotting functions also permit the informative depiction of various
+    important quantities.
 License: GPL-3
 Imports: Rcpp
 LinkingTo: Rcpp
