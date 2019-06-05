@@ -20,7 +20,7 @@ pmf <- function(des, pi, k, summary = F) {
     message("  Identifying PMFs", uc("two_elip"))
   }
   if ("ph2rand_des_one_stage" %in% class(des)) {
-    pmf <- switch(type,
+    pmf <- switch(des$type,
                   bernard       =
                     bernard_pmf_one_stage(pi, des$n0, des$n1, des$e),
                   binomial      =
@@ -31,7 +31,7 @@ pmf <- function(des, pi, k, summary = F) {
                     single_double_pmf_one_stage(pi, des$n0, des$n1, des$eS,
                                                    des$eT))
   } else {
-    pmf <- switch(type,
+    pmf <- switch(des$type,
                   bernard       =
                     bernard_pmf_two_stage(pi, des$n0, des$n1, des$e1, des$f1,
                                           des$e2, k),

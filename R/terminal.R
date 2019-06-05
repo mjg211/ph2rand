@@ -19,7 +19,7 @@ terminal <- function(des, k, summary = F) {
     message("  Identifying terminal points", uc("two_elip"))
   }
   if ("ph2rand_des_one_stage" %in% class(des)) {
-    terminal <- switch(type,
+    terminal <- switch(des$type,
                        bernard       =
                          bernard_terminal_one_stage(des$n0, des$n1, des$e),
                        binomial      =
@@ -30,7 +30,7 @@ terminal <- function(des, k, summary = F) {
                          single_double_terminal_one_stage(des$n0, des$n1,
                                                           des$e))
   } else {
-    terminal <- switch(type,
+    terminal <- switch(des$type,
                        bernard       =
                          bernard_terminal_two_stage(des$n0, des$n1, des$e1,
                                                     des$f1, des$e2, k),

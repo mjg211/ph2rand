@@ -27,7 +27,8 @@ bernard_des_one_stage        <- function(alpha, beta, delta, ratio, point_null,
     feasible           <- tibble::as_tibble(feasible)
     feasible[, 1:3]    <- dplyr::mutate_if(feasible[, 1:3], is.double,
                                            as.integer)
-    feasible           <- dplyr::arrange(feasible, n0, desc(`min power`))
+    feasible           <- dplyr::arrange(feasible, n0,
+                                         dplyr::desc(.data$`min power`))
     e                  <- feasible$e[1]
     n0                 <- feasible$n0[1]
     n1                 <- feasible$n1[1]
@@ -120,7 +121,8 @@ bernard_des_two_stage        <- function(alpha, beta, delta, ratio, point_null,
     }
     feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, byrow = T)*
                                     feasible[, c(13, 14, 16, 19, 20)])
-    feasible           <- dplyr::arrange(feasible, o, desc(`min power`))
+    feasible           <- dplyr::arrange(feasible, .data$o,
+                                         dplyr::desc(.data$`min power`))
     if (!efficacy) {
       feasible$e1      <- Inf
     }
@@ -161,8 +163,9 @@ bernard_opchar_one_stage     <- function(pi, n0, n1, e, pmf_pi) {
   rows_pi  <- nrow(pi)
   P        <- numeric(rows_pi)
   for (i in 1:rows_pi) {
-    P[i]   <- sum(dplyr::filter(pmf_pi, pi0 == pi[i, 1] & pi1 == pi[i, 2] &
-                                  decision == "Reject")$`f(x,m|pi)`)
+    P[i]   <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
+                                  .data$pi1 == pi[i, 2] &
+                                  .data$decision == "Reject")$`f(x,m|pi)`)
   }
   tibble::tibble(pi0           = pi[, 1],
                  pi1           = pi[, 2],
@@ -179,14 +182,14 @@ bernard_opchar_two_stage     <- function(pi, n0, n1, e1, f1, e2, k, pmf_pi) {
   E                <- Fu <- numeric(2)
   for (i in 1:rows_pi) {
     for (j in k) {
-      E[j]         <- sum(dplyr::filter(pmf_pi, pi0 == pi[i, 1] &
-                                          pi1 == pi[i, 2] &
-                                          decision == "Reject" &
-                                          k == j)$`f(x,m|pi)`)
-      Fu[j]        <- sum(dplyr::filter(pmf_pi, pi0 == pi[i, 1] &
-                                          pi1 == pi[i, 2] &
-                                          decision == "Do not reject" &
-                                          k == j)$`f(x,m|pi)`)
+      E[j]         <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
+                                          .data$pi1 == pi[i, 2] &
+                                          .data$decision == "Reject" &
+                                          .data$k == j)$`f(x,m|pi)`)
+      Fu[j]        <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
+                                          .data$pi1 == pi[i, 2] &
+                                          .data$decision == "Do not reject" &
+                                          .data$k == j)$`f(x,m|pi)`)
     }
     cum_S          <- cumsum(S <- E + Fu)
     MSS            <- ifelse(any(cum_S == 0.5),
@@ -233,11 +236,11 @@ bernard_pmf_one_stage        <- function(pi, n0, n1, e) {
   rows_total                               <- rows_pmf*rows_pi
   f                                        <- numeric(rows_total)
   for (i in 1:rows_pi) {
-    dbinom0                                <- dbinom(0:n0, n0, pi[i, 1])
+    dbinom0                                <- stats::dbinom(0:n0, n0, pi[i, 1])
     if (all(n0 == n1, pi[i, 1] == pi[i, 2])) {
       dbinom1                              <- dbinom0
     } else {
-      dbinom1                              <- dbinom(0:n1, n1, pi[i, 2])
+      dbinom1                              <- stats::dbinom(0:n1, n1, pi[i, 2])
     }
     f[(1 + (i - 1)*rows_pmf):(i*rows_pmf)] <-
       dbinom0[x[, 1] + 1]*dbinom1[x[, 2] + 1]
@@ -258,7 +261,7 @@ bernard_pmf_one_stage        <- function(pi, n0, n1, e) {
                                         "Do not reject"),
                    k           = factor(rep(1, rows_total), 1),
                    `f(x,m|pi)` = f)
-  dplyr::arrange(pmf, pi0, pi1, x0, x1)
+  dplyr::arrange(pmf, .data$pi0, .data$pi1, .data$x0, .data$x1)
 }
 
 bernard_pmf_two_stage        <- function(pi, n0, n1, e1, f1, e2, k) {
@@ -296,7 +299,7 @@ bernard_pmf_two_stage        <- function(pi, n0, n1, e1, f1, e2, k) {
                                         "Do not reject"),
                    k           = factor(pmf[, 7], k),
                    `f(x,m|pi)` = pmf[, 8])
-  dplyr::arrange(pmf, pi0, pi1, k, x0, x1)
+  dplyr::arrange(pmf, .data$pi0, .data$pi1, .data$k, .data$x0, .data$x1)
 }
 
 bernard_terminal_one_stage   <- function(n0, n1, e) {
@@ -325,7 +328,7 @@ bernard_terminal_two_stage   <- function(n0, n1, e1, f1, e2, k) {
     fact   <- n0[1]/(n0[1] + n1[1])
     f1     <- -1/sqrt(fact*(1 - fact)*(1/n0[1] + 1/n1[1])) - 1
   }
-  terminal <- bernard_terminal_two_stage_cpp(n0, n1, e, f, k)
+  terminal <- bernard_terminal_two_stage_cpp(n0, n1, e1, f1, e2, k)
   terminal <- tibble::tibble(x0        = as.integer(terminal[, 1]),
                              x1        = as.integer(terminal[, 2]),
                              m0        = as.integer(terminal[, 3]),
@@ -334,5 +337,5 @@ bernard_terminal_two_stage   <- function(n0, n1, e1, f1, e2, k) {
                              decision  = ifelse(terminal[, 6] == 1, "Reject",
                                                 "Do not reject"),
                              k  = factor(terminal[, 7], k))
-  dplyr::arrange(terminal, k, x0, x1)
+  dplyr::arrange(terminal, .data$k, .data$x0, .data$x1)
 }
