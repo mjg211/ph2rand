@@ -13,7 +13,7 @@ Description: Provides a suite of functions to assist with the design and
     designs, for both point and composite null hypotheses. A selection of
     plotting functions also permit the informative depiction of various
     important quantities.
-License: MIT
+License: MIT + file LICENSE
 Imports:
     dplyr,
     ggplot2,
