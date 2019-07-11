@@ -1,21 +1,21 @@
 #' @export
 pmf <- function(des, pi, k, summary = F) {
-  
+
   ##### Check inputs ###########################################################
-  
+
   check_des(des, "any", 1:2)
-  pi <- check_pi(pi)
+  pi <- check_pi(pi, des)
   k  <- check_k(k, des)
   check_logical(summary, "summary")
-  
+
   ##### Print summary ##########################################################
-  
+
   if (summary) {
-    #summary_pmf(des, pi, k)
+    summary_pmf(des, pi, k)
   }
-  
+
   ##### Perform main computations ##############################################
-  
+
   if (summary) {
     message("  Identifying PMFs", uc("two_elip"))
   }
@@ -49,13 +49,14 @@ pmf <- function(des, pi, k, summary = F) {
   if (summary) {
     message(uc("two_elip"), "outputting.")
   }
-  
+
   ##### Output results #########################################################
-  
+
   output        <- list(des     = des,
                         k       = k,
                         pmf     = pmf,
                         summary = summary)
   class(output) <- c(class(output), "ph2rand_pmf")
   output
+
 }

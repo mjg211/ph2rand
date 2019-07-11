@@ -615,8 +615,8 @@ NumericMatrix fisher_des_one_stage_cpp(double alpha, double beta, double delta,
     n0                      = poss_n0[n];
     n1                      = poss_n1[n];
     if ((summary == 1) && (n0%10 == 0)) {
-      Rcpp::Rcout << "...currently analysing the design with n0 = " << n0 <<
-        "..." << std::endl;
+      Rcpp::Rcout << "  currently analysing the design with n0 = " << n0 <<
+        std::endl;
     }
     NumericVector e_z(n0 + n1 + 1),
                   g_power(n0 + n1 + 1),
@@ -821,12 +821,12 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
       NumericMatrix poss_x1 = poss_x[n01 + n0max*(n11 - 1) - 1];
       if ((summary == 1) && (n01%10 == 0)) {
         if (equal == 1) {
-          Rcpp::Rcout << "...currently analysing the design with n01 = " <<
-            n01 << "..." << std::endl;
+          Rcpp::Rcout << "  currently analysing the design with n01 = " <<
+            n01 << std::endl;
         }
         else {
-          Rcpp::Rcout << "...currently analysing the designs with n01 = " <<
-            n01 << "..." << std::endl;
+          Rcpp::Rcout << "  currently analysing the designs with n01 = " <<
+            n01 << std::endl;
         }
       }
       NumericVector e_z1(n0max + n1max + 1),

@@ -687,8 +687,8 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
     n0                       = poss_n0[n - 1];
     n1                       = poss_n1[n - 1];
     if ((summary == 1) && (n0%10 == 0)) {
-      Rcpp::Rcout << "...currently analysing designs with n0 = " << n0 <<
-        "..." << std::endl;
+      Rcpp::Rcout << "  currently analysing designs with n0 = " << n0 <<
+        std::endl;
     }
     NumericVector unique_B_n = unique_B[n0 + n0max*(n1 - 1) - 1];
     NumericMatrix prob_x_power(n0 + 1, n1 + 1),
@@ -828,8 +828,8 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
     if (((equal != 1) && (n01 < n0max)) ||
           ((equal == 1) && (n01 <= 0.5*n0max))) {
       if ((summary == 1) && (n01%10 == 0)) {
-        Rcpp::Rcout << "...currently analysing designs with n01 = " << n01 <<
-          "..." << std::endl;
+        Rcpp::Rcout << "  currently analysing designs with n01 = " << n01 <<
+          std::endl;
       }
       NumericVector unique_B1           = unique_B[n01 + n0max*(n11 - 1) - 1];
       len_B1                            = unique_B1.length();
@@ -985,7 +985,6 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                       }
                     }
                     else {
-                      Rcpp::Rcout << "...before..." << std::endl;
                       NumericVector max_typeI          =
                         bernard_max_typeI(2, alpha,
                                           NumericVector::create(n01, n02),
@@ -995,7 +994,6 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                                           List::create(poss_x1, poss_x2),
                                           List::create(poss_B1, poss_B2),
                                           pi_null, 1);
-                      Rcpp::Rcout << "...after..." << std::endl;
                       if (max_typeI[1] <= alpha) {
                         if (point_alt == 1) {
                           feasible_designs(counter, _) =
@@ -1009,7 +1007,6 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                           counter++;
                         }
                         else {
-                          Rcpp::Rcout << "...before2..." << std::endl;
                           NumericVector min_power      =
                             bernard_min_power(2, beta, delta,
                                               NumericVector::create(n01, n02),
@@ -1019,7 +1016,6 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                                               List::create(poss_x1, poss_x2),
                                               List::create(poss_B1, poss_B2),
                                               pi_alt, 1);
-                          Rcpp::Rcout << "...after2..." << std::endl;
                           if (min_power[1] < 1 - beta) {
                             break;
                           }

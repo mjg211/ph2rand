@@ -1,7 +1,6 @@
 build_des_one_stage_output <- function(alpha, beta, delta, feasible, n0max,
-                                       opchar, pi_alt, pi_null, point_alt,
-                                       point_null, ratio, summary, type,
-                                       type_components) {
+                                       opchar, pi0_alt, pi0_null, ratio,
+                                       summary, type, type_components) {
   if (type %in% c("bernard", "binomial")) {
     output      <- list(alpha      = alpha,
                         beta       = beta,
@@ -12,10 +11,8 @@ build_des_one_stage_output <- function(alpha, beta, delta, feasible, n0max,
                         n0max      = n0max,
                         n1         = type_components$n1,
                         opchar     = opchar,
-                        pi_alt     = pi_alt,
-                        pi_null    = pi_null,
-                        point_alt  = point_alt,
-                        point_null = point_null,
+                        pi0_alt    = pi0_alt,
+                        pi0_null   = pi0_null,
                         ratio      = ratio,
                         summary    = summary,
                         type       = type)
@@ -30,10 +27,8 @@ build_des_one_stage_output <- function(alpha, beta, delta, feasible, n0max,
                         n0max      = n0max,
                         n1         = type_components$n1,
                         opchar     = opchar,
-                        pi_alt     = pi_alt,
-                        pi_null    = pi_null,
-                        point_alt  = point_alt,
-                        point_null = point_null,
+                        pi0_alt    = pi0_alt,
+                        pi0_null   = pi0_null,
                         ratio      = ratio,
                         summary    = summary,
                         type       = type)
@@ -48,10 +43,8 @@ build_des_one_stage_output <- function(alpha, beta, delta, feasible, n0max,
                         n0max      = n0max,
                         n1         = type_components$n1,
                         opchar     = opchar,
-                        pi_alt     = pi_alt,
-                        pi_null    = pi_null,
-                        point_alt  = point_alt,
-                        point_null = point_null,
+                        pi0_alt    = pi0_alt,
+                        pi0_null   = pi0_null,
                         ratio      = ratio,
                         summary    = summary,
                         type       = type)
@@ -61,9 +54,9 @@ build_des_one_stage_output <- function(alpha, beta, delta, feasible, n0max,
 }
 
 build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
-                                       n0max, opchar, pi_alt, pi_ess, pi_null,
-                                       point_alt, point_null, ratio, summary, w,
-                                       type, type_components) {
+                                       n0max, opchar, pi0_alt, pi0_ess,
+                                       pi0_null, ratio, summary, w, type,
+                                       type_components) {
   if (type %in% c("bernard", "binomial")) {
     output      <- list(alpha      = alpha,
                         beta       = beta,
@@ -79,11 +72,9 @@ build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
                         n0max      = n0max,
                         n1         = type_components$n1,
                         opchar     = opchar,
-                        pi_alt     = pi_alt,
-                        pi_ess     = pi_ess,
-                        pi_null    = pi_null,
-                        point_alt  = point_alt,
-                        point_null = point_null,
+                        pi0_alt    = pi0_alt,
+                        pi0_ess    = pi0_ess,
+                        pi0_null   = pi0_null,
                         ratio      = ratio,
                         summary    = summary,
                         type       = type,
@@ -107,11 +98,9 @@ build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
                         n0max          = n0max,
                         n1             = type_components$n1,
                         opchar         = opchar,
-                        pi_alt         = pi_alt,
-                        pi_ess         = pi_ess,
-                        pi_null        = pi_null,
-                        point_alt      = point_alt,
-                        point_null     = point_null,
+                        pi0_alt        = pi0_alt,
+                        pi0_ess        = pi0_ess,
+                        pi0_null       = pi0_null,
                         ratio          = ratio,
                         summary        = summary,
                         type           = type,
@@ -134,11 +123,9 @@ build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
                         n0max      = n0max,
                         n1         = type_components$n1,
                         opchar     = opchar,
-                        pi_alt     = pi_alt,
-                        pi_ess     = pi_ess,
-                        pi_null    = pi_null,
-                        point_alt  = point_alt,
-                        point_null = point_null,
+                        pi0_alt    = pi0_alt,
+                        pi0_ess    = pi0_ess,
+                        pi0_null   = pi0_null,
                         ratio      = ratio,
                         summary    = summary,
                         type       = type,
@@ -148,7 +135,7 @@ build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
   output
 }
 
-search_parameters <- function(J, type, n0max, ratio) {
+search_parameters          <- function(J, type, n0max, ratio) {
   poss_n0                                          <- 1:n0max
   poss_n1                                          <- poss_n0*ratio
   keep                                             <- which(poss_n1%%1 == 0)
@@ -220,7 +207,7 @@ search_parameters <- function(J, type, n0max, ratio) {
               unique_B    = unique_B))
 }
 
-theme_ph2rand     <- function(base_size = 11, base_family = "") {
+theme_ph2rand              <- function(base_size = 11, base_family = "") {
   ggplot2::theme_grey(base_size   = base_size,
                       base_family = base_family) +
     ggplot2::theme(panel.background = ggplot2::element_rect(fill   = "white",
@@ -249,13 +236,13 @@ theme_ph2rand     <- function(base_size = 11, base_family = "") {
                    complete         = T)
 }
 
-row_match         <- function(vec, mat) {
+row_match                  <- function(vec, mat) {
   cvec <- do.call("paste", c(vec[, , drop = FALSE], sep = "\r"))
   cmat <- do.call("paste", c(mat[, , drop = FALSE], sep = "\r"))
   match(cvec, cmat, nomatch = NA_integer_)
 }
 
-uc                <- function(char) {
+uc                         <- function(char) {
   lookup <- matrix(c("alpha",    "\u03B1",
                      "beta",     "\u03B2",
                      "gamma",    "\u03B3",
@@ -305,6 +292,7 @@ uc                <- function(char) {
                      "Psi",      "\u03A8",
                      "Omega",    "\u03A9",
                      "le",       "\u2264",
+                     "ge",       "\u2265",
                      "third",    "\u2153",
                      "quarter",  "\u00BC",
                      "fifth",    "\u2155",
@@ -315,7 +303,7 @@ uc                <- function(char) {
   lookup[which(lookup[, 1] == char), 2]
 }
 
-uc_sub            <- function(n) {
+uc_sub                     <- function(n) {
   codes <- c("\u2080", "\u2081", "\u2082", "\u2083", "\u2084", "\u2085",
              "\u2086", "\u2087", "\u2088", "\u2089")
   if (n < 10) {

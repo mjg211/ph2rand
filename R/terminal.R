@@ -10,7 +10,7 @@ terminal <- function(des, k, summary = F) {
   ##### Print summary ##########################################################
   
   if (summary) {
-    #summary_terminal(des, k)
+    summary_terminal(des, k)
   }
 
   ##### Perform main computations ##############################################
@@ -51,11 +51,12 @@ terminal <- function(des, k, summary = F) {
   }
 
   ##### Output results #########################################################
-  
+
   output        <- list(des      = des,
                         k        = k,
                         summary  = summary,
                         terminal = terminal)
   class(output) <- c(class(output), "ph2rand_terminal")
   output
+
 }

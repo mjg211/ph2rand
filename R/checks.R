@@ -510,61 +510,70 @@ check_fisher_params          <- function(efficacy_type, efficacy_param,
   return(efficacy_param)
 }
 
-check_pi                     <- function(pi) {
-  if (!is.numeric(pi)) {
-    stop("pi must be either a numeric vector of length two, or a numeric ",
-         "matrix with two columns. In either case all elements must take ",
-         "values in [0, 1]")
+check_pi                     <- function(pi, des) {
+  if (missing(pi)) {
+    pi           <- as.matrix(des$opchar[, 1:2])
+    colnames(pi) <- NULL
   } else {
-    if (is.matrix(pi)) {
-      if (any(ncol(pi) != 2, pi < 0, pi > 1)) {
-        stop("pi must be either a numeric vector of length two, or a numeric ",
-             "matrix with two columns. In either case all elements must take ",
-             "values in [0, 1]")
-      } else if (sum(duplicated(pi)) > 0) {
-        warning("pi contains duplicated rows")
-      }
+    if (!is.numeric(pi)) {
+      stop("pi must be either a numeric vector of length two, or a numeric ",
+           "matrix with two columns. In either case all elements must take ",
+           "values in [0, 1]")
     } else {
-      if (any(length(pi) != 2, pi < 0, pi > 1)) {
-        stop("pi must be either a numeric vector of length two, or a numeric ",
-             "matrix with two columns. In either case all elements must take ",
-             "values in [0, 1]")
+      if (is.matrix(pi)) {
+        if (any(ncol(pi) != 2, pi < 0, pi > 1)) {
+          stop("pi must be either a numeric vector of length two, or a numeric",
+               " matrix with two columns. In either case all elements must ",
+               "take values in [0, 1]")
+        } else if (sum(duplicated(pi)) > 0) {
+          warning("pi contains duplicated rows")
+        }
       } else {
-        return(matrix(pi, 1))
+        if (any(length(pi) != 2, pi < 0, pi > 1)) {
+          stop("pi must be either a numeric vector of length two, or a numeric",
+               " matrix with two columns. In either case all elements must ",
+               "take values in [0, 1]")
+        } else {
+          pi     <- matrix(pi, 1)
+        }
       }
     }
   }
   pi
 }
 
-check_pi_alt                 <- function(pi_alt, point_alt, delta) {
-  if (point_alt) {
-    if (any(length(pi_alt) != 1, pi_alt < 0, pi_alt + delta > 1)) {
-      stop("For the chosen value of point_alt, pi_alt must be a single ",
-           "numeric in [0, 1 - delta]")
+check_pi0_alt                <- function(pi0_alt, delta) {
+  if (!(length(pi0_alt) %in% c(1, 2))) {
+    stop("pi0_alt must be a numeric vector of length 1 or 2")
+  }
+  if (length(pi0_alt) == 1) {
+    if (any(pi0_alt < 0, pi0_alt + delta > 1)) {
+      stop("If pi0_alt is a numeric vector of length 1, it must belong to ",
+           "[0, 1 - delta]")
     }
   } else {
-    if (any(length(pi_alt) != 2, pi_alt < 0, pi_alt > 1 - delta,
-            pi_alt[2] <= pi_alt[1])) {
-      stop("For the chosen value of point_alt, pi_alt must be a numeric ",
-           "vector of length 2, with both elements in [0, 1 - delta], and with",
-           " the second element strictly larger than the first")
+    if (any(pi0_alt < 0, pi0_alt > 1 - delta, pi0_alt[2] <= pi0_alt[1])) {
+      stop("If pi0_alt is a numeric vector of length 2, both elements must ",
+           "belong to [0, 1 - delta], and the second element must be strictly ",
+           "larger than the first")
     }
   }
 }
 
-check_pi_null                <- function(pi_null, point_null) {
-  if (point_null) {
-    if (any(length(pi_null) != 1, pi_null < 0, pi_null > 1)) {
-      stop("For the chosen value of point_null, pi_null must be a single ",
-           "numeric in [0, 1]")
+check_pi0_null               <- function(pi0_null, point_null) {
+  if (!(length(pi0_null) %in% c(1, 2))) {
+    stop("pi0_null must be a numeric vector of length 1 or 2")
+  }
+  if (length(pi0_null) == 1) {
+    if (any(pi0_null < 0, pi0_null > 1)) {
+      stop("If pi0_alt is a numeric vector of length 1, it must belong to ",
+           "[0, 1]")
     }
   } else {
-    if (any(length(pi_null) != 2, pi_null < 0, pi_null > 1,
-            pi_null[2] <= pi_null[1])) {
-      stop("For the chosen value of point_null, pi_null must be a numeric ",
-           "vector of length 2, with both elements in [0, 1], and with the ",
-           "second element strictly larger than the first")
+    if (any(pi0_null < 0, pi0_null > 1, pi0_null[2] <= pi0_null[1])) {
+      stop("If pi0_alt is a numeric vector of length 2, both elements must ",
+           "belong to [0, 1], and the second element must be strictly larger ",
+           "than the first")
     }
   }
 }

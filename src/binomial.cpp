@@ -628,8 +628,8 @@ NumericMatrix binomial_des_one_stage_cpp(double alpha, double beta,
     n0                                     = poss_n0[n];
     n1                                     = poss_n1[n];
     if ((summary == 1) && (n0%10 == 0)) {
-      Rcpp::Rcout << "...currently analysing designs with n0 = " << n0 <<
-        "..." << std::endl;
+      Rcpp::Rcout << "  currently analysing designs with n0 = " << n0 <<
+        std::endl;
     }
     NumericVector prob_y_power(n0 + n1 + 1),
                   prob_y_typeI(n0 + n1 + 1);
@@ -761,8 +761,8 @@ NumericMatrix binomial_des_two_stage_cpp(double alpha, double beta,
     if (((equal != 1) && (n01 < n0max)) ||
           ((equal == 1) && (n01 <= 0.5*n0max))) {
       if ((summary == 1) && (n01%10 == 0)) {
-        Rcpp::Rcout << "...currently analysing designs with n01 = " << n01 <<
-          "..." << std::endl;
+        Rcpp::Rcout << "  currently analysing designs with n01 = " << n01 <<
+          std::endl;
       }
       NumericVector prob_y1_ess0(n01 + n11 + 1),
                     prob_y1_ess1(n01 + n11 + 1),

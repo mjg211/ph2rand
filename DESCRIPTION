@@ -6,13 +6,11 @@ Date: 2019-06-04
 Authors@R: c(person(given = "Michael", family = "Grayling",
                     email = "michael.grayling@newcastle.ac.uk",
                     role = c("aut", "cre")))
-Description: Provides a suite of functions to assist with the design and
-    visualization of randomized comparative phase II oncology trials.
-    Specifically, support is provided to perform a sample size calculation for
-    each of the most popular randomized comparative phase II oncology trial
-    designs, for both point and composite null hypotheses. A selection of
-    plotting functions also permit the informative depiction of various
-    important quantities.
+Description: Provides a suite of functions to assist with the design of
+    randomized comparative phase II oncology trials. Specifically, support is
+    provided to perform a sample size calculation for each of the most popular
+    randomized comparative phase II oncology trial designs, for both point and
+    composite null hypotheses.
 License: MIT + file LICENSE
 Imports:
     dplyr,

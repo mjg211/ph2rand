@@ -1,12 +1,12 @@
-bernard_des_one_stage        <- function(alpha, beta, delta, ratio, point_null,
-                                         pi_null, point_alt, pi_alt, n0max,
-                                         summary) {
+bernard_des_one_stage        <- function(alpha, beta, delta, ratio, pi0_null,
+                                         pi0_alt, n0max, summary) {
   params               <- search_parameters(1, "bernard", n0max, ratio)
   feasible             <-
     bernard_des_one_stage_cpp(alpha, beta, delta, params$poss_n0,
                               params$poss_n1, params$poss_x, params$poss_B,
-                              params$unique_B, point_null, pi_null, point_alt,
-                              pi_alt, summary)
+                              params$unique_B, (length(pi0_null) == 1),
+                              pi0_null, (length(pi0_alt) == 1), pi0_alt,
+                              summary)
   if (feasible[1, 1] > 0) {
     if (summary) {
       message(uc("two_elip"), "feasible designs identified in the range of ",
@@ -46,23 +46,21 @@ bernard_des_one_stage        <- function(alpha, beta, delta, ratio, point_null,
   }
   output               <-
     build_des_one_stage_output(alpha, beta, delta, feasible, n0max, opchar,
-                               pi_alt, pi_null, point_alt, point_null, ratio,
-                               summary, "bernard", list(e = e, n0 = n0,
-                                                        n1 = n1))
+                               pi0_alt, pi0_null, ratio, summary, "bernard",
+                               list(e = e, n0 = n0, n1 = n1))
   output
 }
 
-bernard_des_two_stage        <- function(alpha, beta, delta, ratio, point_null,
-                                         pi_null, point_alt, pi_alt, n0max,
-                                         equal, w, pi_ess, efficacy, futility,
-                                         summary) {
+bernard_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
+                                         pi0_alt, n0max, equal, w, pi0_ess,
+                                         efficacy, futility, summary) {
   params               <- search_parameters(2, "bernard", n0max, ratio)
   feasible             <-
     bernard_des_two_stage_cpp(alpha, beta, delta, params$poss_n0,
                               params$poss_n1, params$poss_x, params$poss_B,
-                              params$unique_B, point_null, pi_null, point_alt,
-                              pi_alt, equal, efficacy, futility, pi_ess,
-                              summary)
+                              params$unique_B, (length(pi0_null) == 1),
+                              pi0_null, (length(pi0_alt) == 1), pi0_alt, equal,
+                              efficacy, futility, pi0_ess, summary)
   if (feasible[1, 1] > 0) {
     if (summary) {
       message(uc("two_elip"), "feasible designs identified in the range of ",
@@ -148,8 +146,8 @@ bernard_des_two_stage        <- function(alpha, beta, delta, ratio, point_null,
   }
   output               <-
     build_des_two_stage_output(alpha, beta, delta, equal, feasible, n0max,
-                               opchar, pi_alt, pi_ess, pi_null, point_alt,
-                               point_null, ratio, summary, w, "bernard",
+                               opchar, pi0_alt, pi0_ess, pi0_null, ratio,
+                               summary, w, "bernard",
                                list(e1 = e1, e2 = e2, efficacy = efficacy,
                                     f1 = f1, futility = futility, n0 = n0,
                                     n1 = n1))

@@ -1,8 +1,8 @@
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage(rep("-", 66), "\nph2rand: Design of randomized ",
+  packageStartupMessage("  ", rep("-", 66), "\nph2rand: Design of randomized ",
                         "comparative phase II oncology trials\n", rep("-", 66),
-                        "\n\nv.0.7: For an overview of the package's ",
-                        "functionality enter: ?ph2rand\n\nFor news on the ",
+                        "\n\n  v.0.7: For an overview of the package's ",
+                        "functionality enter: ?ph2rand\n\n  For news on the ",
                         "latest updates enter: news(package = \"ph2rand\")")
 }
 
