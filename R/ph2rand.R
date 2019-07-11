@@ -2,9 +2,9 @@
 #'
 #' \strong{multiarm} provides a suite of functions to assist with the design of
 #' randomized comparative phase II oncology trials. Specifically, support is
-#' provided to perform a sample size calculation for each of the most popular
-#' randomized comparative phase II oncology trial designs, for both point and
-#' composite null hypotheses.
+#' provided to perform a sample size calculation for several randomized
+#' comparative phase II oncology trial designs, for both point and composite
+#' null hypotheses.
 #'
 #' @section Getting started:
 #'
