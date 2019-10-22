@@ -1,86 +1,85 @@
-binomial_des_one_stage        <- function(alpha, beta, delta, ratio, pi0_null,
-                                          pi0_alt, n0max, summary) {
-  params               <- search_parameters(1, "binomial", n0max, ratio)
+binomial_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
+                                          nCmax, summary) {
+  params               <- search_parameters(1, "binomial", nCmax, ratio)
   feasible             <-
-    binomial_des_one_stage_cpp(alpha, beta, delta, params$poss_n0,
-                               params$poss_n1, params$poss_x, params$poss_y,
-                               (length(pi0_null) == 1), pi0_null,
-                               (length(pi0_alt) == 1), pi0_alt, summary)
+    binomial_des_one_stage_cpp(alpha, beta, delta, params$poss_nC,
+                               params$poss_nE, params$poss_x, params$poss_y,
+                               (length(Pi0) == 1), Pi0, (length(Pi1) == 1),
+                               Pi1, summary)
   if (feasible[1, 1] > 0) {
     if (summary) {
       message(uc("two_elip"), "feasible designs identified in the range of ",
-              "considered sample sizes. Identifying the optimal design",
+              "considered sample sizes.\n  Identifying the optimal design",
               uc("two_elip"))
     }
     nrow_feasible      <- nrow(feasible)
     if (nrow_feasible == 1) {
       feasible         <- matrix(c(1, feasible[, 1],
-                                   params$poss_n1[feasible[, 1]],
+                                   params$poss_nE[feasible[, 1]],
                                    feasible[, -1]), 1)
     } else {
       feasible         <- cbind(1:nrow(feasible), feasible[, 1],
-                                params$poss_n1[feasible[, 1]], feasible[, -1])
+                                params$poss_nE[feasible[, 1]], feasible[, -1])
     }
-    colnames(feasible) <- c("index", "n0", "n1", "e", "argmax alpha",
+    colnames(feasible) <- c("index", "nC1", "nE1", "e1", "argmax alpha",
                             "max alpha", "argmin power", "min power")
     feasible           <- tibble::as_tibble(feasible)
     feasible[, 1:4]    <- dplyr::mutate_if(feasible[, 1:4], is.double,
                                            as.integer)
-    feasible           <- dplyr::arrange(feasible, .data$n0,
+    feasible           <- dplyr::arrange(feasible, .data$nC1,
                                          dplyr::desc(.data$`min power`))
-    e                  <- feasible$e[1]
-    n0                 <- feasible$n0[1]
-    n1                 <- feasible$n1[1]
+    e1                 <- feasible$e1[1]
+    nC                 <- feasible$nC1[1]
+    nE                 <- feasible$nE1[1]
     opchar             <-
       binomial_opchar_one_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
                                       feasible$`argmin power`[1] + c(0, delta)),
-                                n0, n1, e)
+                                nC, nE, e1)
   } else {
-    e                  <- feasible <- n0 <- n1 <- opchar <- NULL
+    e1                 <- feasible <- nC <- nE <- opchar <- NULL
     if (summary) {
       message(uc("two_elip"), "no feasible designs identified in range of ",
-              "considered maximal allowed sample size. Consider increasing ",
-              "n0max", uc("two_elip"))
+              "considered maximal allowed sample size.\n  Consider increasing ",
+              "nCmax", uc("two_elip"))
     }
   }
   output               <-
-    build_des_one_stage_output(alpha, beta, delta, feasible, n0max, opchar,
-                               pi0_alt, pi0_null, ratio, summary, "binomial",
-                               list(e = e, n0 = n0, n1 = n1))
+    build_des_one_stage_output(alpha, beta, delta, feasible, nCmax, opchar,
+                               Pi0, Pi1, ratio, summary, "binomial",
+                               list(e1 = e1, nC = nC, nE = nE))
   output
 }
 
-binomial_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
-                                          pi0_alt, n0max, equal, w, pi0_ess,
-                                          efficacy, futility, summary) {
-  params               <- search_parameters(2, "binomial", n0max, ratio)
+binomial_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
+                                          nCmax, equal, w, piO, efficacy,
+                                          futility, summary) {
+  params               <- search_parameters(2, "binomial", nCmax, ratio)
   feasible             <-
-    binomial_des_two_stage_cpp(alpha, beta, delta, params$poss_n0,
-                               params$poss_n1, params$poss_x, params$poss_y,
-                               (length(pi0_null) == 1), pi0_null,
-                               (length(pi0_alt) == 1), pi0_alt, equal,
-                               efficacy, futility, pi0_ess, summary)
+    binomial_des_two_stage_cpp(alpha, beta, delta, params$poss_nC,
+                               params$poss_nE, params$poss_x, params$poss_y,
+                               (length(Pi0) == 1), Pi0, (length(Pi1) == 1), Pi1,
+                               equal, efficacy, futility, piO, summary)
   if (feasible[1, 1] > 0) {
     if (summary) {
       message(uc("two_elip"), "feasible designs identified in the range of ",
-              "considered sample sizes. Identifying the optimal design",
+              "considered sample sizes.\n  Identifying the optimal design",
               uc("two_elip"))
     }
     nrow_feasible      <- nrow(feasible)
     if (nrow_feasible == 1) {
       feasible         <- matrix(c(1, feasible[, 1:2],
-                                   params$poss_n1[feasible[, 1]],
-                                   params$poss_n1[feasible[, 2]],
+                                   params$poss_nE[feasible[, 1]],
+                                   params$poss_nE[feasible[, 2]],
                                    feasible[, -(1:2)]), 1)
     } else {
       feasible         <- cbind(1:nrow(feasible), feasible[, 1:2],
-                                params$poss_n1[feasible[, 1]],
-                                params$poss_n1[feasible[, 2]],
+                                params$poss_nE[feasible[, 1]],
+                                params$poss_nE[feasible[, 2]],
                                 feasible[, -(1:2)])
     }
-    colnames(feasible) <- c("index", "n01", "n02", "n11", "n12", "e1", "e2",
+    colnames(feasible) <- c("index", "nC1", "nC2", "nE1", "nE2", "e1", "e2",
                             "f1", "argmax alpha", "max alpha", "argmin power",
-                            "min power", "ESS0", "ESS1")
+                            "min power", "ESS(piO,piO)", "ESS(piO,piO+delta)")
     feasible           <- tibble::as_tibble(feasible)
     feasible[, 1:8]    <- dplyr::mutate_if(feasible[, 1:8], is.double,
                                            as.integer)
@@ -88,14 +87,14 @@ binomial_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
       dplyr::mutate(feasible,
                     `argmax ESS(pi,pi)`       = 0,
                     `max ESS(pi,pi)`          = 0,
-                    `argmax_pi0 ESS(pi0,pi1)` = 0,
-                    `argmax_pi1 ESS(pi0,pi1)` = 0,
-                    `max ESS(pi0,pi1)`        = 0,
-                    `max(n)`                  =
+                    `argmax_piC ESS(piC,piE)` = 0,
+                    `argmax_piE ESS(piC,piE)` = 0,
+                    `max ESS(piC,piE)`        = 0,
+                    `max N`                   =
                       as.integer(rowSums(feasible[, 2:5])))
     for (i in 1:nrow_feasible) {
       index            <- as.numeric(feasible[i, 2] +
-                                       params$max_poss_n0*(feasible[i, 4] - 1))
+                                       params$max_poss_nC*(feasible[i, 4] - 1))
       max_ESS_1d       <-
         binomial_max_ess_1d_two_stage(as.numeric(feasible[i, 2:3]),
                                       as.numeric(feasible[i, 4:5]),
@@ -112,12 +111,12 @@ binomial_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
                                       as.numeric(feasible[i, 8]),
                                       params$poss_x[[index]],
                                       params$poss_y[[index]])
-      feasible$`argmax_pi0 ESS(pi0,pi1)`[i] <- max_ESS_2d[1]
-      feasible$`argmax_pi1 ESS(pi0,pi1)`[i] <- max_ESS_2d[2]
-      feasible$`max ESS(pi0,pi1)`[i] <- max_ESS_2d[3]
+      feasible$`argmax_piC ESS(piC,piE)`[i] <- max_ESS_2d[1]
+      feasible$`argmax_piE ESS(piC,piE)`[i] <- max_ESS_2d[2]
+      feasible$`max ESS(piC,piE)`[i]        <- max_ESS_2d[3]
     }
-    feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, byrow = T)*
-                                    feasible[, c(13, 14, 16, 19, 20)])
+    feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, T)*
+                                    feasible[, c(13:14, 16, 19:20)])
     feasible           <- dplyr::arrange(feasible, .data$o,
                                          dplyr::desc(.data$`min power`))
     if (!efficacy) {
@@ -129,36 +128,36 @@ binomial_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
     e1                 <- feasible$e1[1]
     e2                 <- feasible$e2[1]
     f1                 <- feasible$f1[1]
-    n0                 <- c(feasible$n01[1], feasible$n02[1])
-    n1                 <- c(feasible$n11[1], feasible$n12[1])
+    nC                 <- c(feasible$nC1[1], feasible$nC2[1])
+    nE                 <- c(feasible$nE1[1], feasible$nE2[1])
     opchar             <-
       binomial_opchar_two_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
                                       feasible$`argmin power`[1] + c(0, delta)),
-                                n0, n1, e1, f1, e2, 1:2)
+                                nC, nE, e1, f1, e2, 1:2)
     
   } else {
-    e1                 <- e2 <- f1 <- feasible <- n0 <- n1 <- opchar <- NULL
+    e1                 <- e2 <- f1 <- feasible <- nC <- nE <- opchar <- NULL
     if (summary) {
       message(uc("two_elip"), "no feasible designs identified in range of ",
-              "considered maximal allowed sample size. Consider increasing ",
-              "n0max", uc("two_elip"))
+              "considered maximal allowed sample size.\n  Consider increasing ",
+              "nCmax", uc("two_elip"))
     }
   }
   output               <-
-    build_des_two_stage_output(alpha, beta, delta, equal, feasible, n0max,
-                               opchar, pi0_alt, pi0_ess, pi0_null, ratio,
-                               summary, w, "binomial",
+    build_des_two_stage_output(alpha, beta, delta, equal, feasible, nCmax,
+                               opchar, Pi0, Pi1, piO, ratio, summary, w,
+                               "binomial",
                                list(e1 = e1, e2 = e2, efficacy = efficacy,
-                                    f1 = f1, futility = futility, n0 = n0,
-                                    n1 = n1))
+                                    f1 = f1, futility = futility, nC = nC,
+                                    nE = nE))
   output
 }
 
-binomial_max_ess_2d_two_stage <- function(n0, n1, e1, f1, poss_x1, poss_y1) {
+binomial_max_ess_2d_two_stage <- function(nC, nE, e1, f1, poss_x1, poss_y1) {
   max_ESS_2d <- stats::optim(par     = c(0.5, 0.5),
                              fn      = binomial_minus_ess_two_stage,
-                             n0      = n0,
-                             n1      = n1,
+                             nC      = nC,
+                             nE      = nE,
                              e1      = e1,
                              f1      = f1,
                              poss_x1 = poss_x1,
@@ -166,47 +165,47 @@ binomial_max_ess_2d_two_stage <- function(n0, n1, e1, f1, poss_x1, poss_y1) {
   c(max_ESS_2d$par, -max_ESS_2d$value)
 }
 
-binomial_minus_ess_two_stage  <- function(pi, n0, n1, e1, f1, poss_x1,
+binomial_minus_ess_two_stage  <- function(pi, nC, nE, e1, f1, poss_x1,
                                           poss_y1) {
   if (!missing(poss_x1)) {
-    -binomial_des_ess_two_stage(pi, n0, n1, e1, f1, poss_x1, poss_y1)
+    -binomial_des_ess_two_stage(pi, nC, nE, e1, f1, poss_x1, poss_y1)
   } else {
-    -binomial_ess_two_stage(pi, n0, n1, e1, f1)
+    -binomial_ess_two_stage(pi, nC, nE, e1, f1)
   }
 }
 
-binomial_opchar_one_stage     <- function(pi, n0, n1, e, pmf_pi) {
+binomial_opchar_one_stage     <- function(pi, nC, nE, e, pmf_pi) {
   if (missing(pmf_pi)) {
-    pmf_pi <- binomial_pmf_one_stage(pi, n0, n1, e)
+    pmf_pi <- binomial_pmf_one_stage(pi, nC, nE, e)
   }
   rows_pi  <- nrow(pi)
   P        <- numeric(rows_pi)
   for (i in 1:rows_pi) {
-    P[i]   <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
-                                  .data$pi1 == pi[i, 2] &
+    P[i]   <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
+                                  .data$piE == pi[i, 2] &
                                   .data$decision == "Reject")$`f(x,m|pi)`)
   }
-  tibble::tibble(pi0     = pi[, 1],
-                 pi1     = pi[, 2],
+  tibble::tibble(piC     = pi[, 1],
+                 piE     = pi[, 2],
                  `P(pi)` = P)
 }
 
-binomial_opchar_two_stage     <- function(pi, n0, n1, e1, f1, e2, k, pmf_pi) {
+binomial_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
   if (missing(pmf_pi)) {
-    pmf_pi         <- binomial_pmf_two_stage(pi, n0, n1, e1, f1, e2, k)
+    pmf_pi         <- binomial_pmf_two_stage(pi, nC, nE, e1, f1, e2, k)
   }
   rows_pi          <- nrow(pi)
-  n                <- c(n0[1] + n1[1], sum(n0) + sum(n1))
-  opchar           <- matrix(0, rows_pi, 15)
+  n                <- c(nC[1] + nE[1], sum(nC) + sum(nE))
+  opchar           <- matrix(0, rows_pi, 13)
   E                <- Fu <- numeric(2)
   for (i in 1:rows_pi) {
     for (j in k) {
-      E[j]         <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
-                                          .data$pi1 == pi[i, 2] &
+      E[j]         <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
+                                          .data$piE == pi[i, 2] &
                                           .data$decision == "Reject" &
                                           .data$k == j)$`f(x,m|pi)`)
-      Fu[j]        <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
-                                          .data$pi1 == pi[i, 2] &
+      Fu[j]        <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
+                                          .data$piE == pi[i, 2] &
                                           .data$decision == "Do not reject" &
                                           .data$k == j)$`f(x,m|pi)`)
     }
@@ -216,58 +215,56 @@ binomial_opchar_two_stage     <- function(pi, n0, n1, e1, f1, e2, k, pmf_pi) {
                                     n[which(cum_S == 0.5) + 1]),
                              n[which(cum_S > 0.5)[1]])
     opchar[i, ]    <- c(pi[i, 1], pi[i, 2], sum(E), sum(n*S),
-                        sqrt(sum(n^2*S) - sum(n*S)^2), MSS, E, Fu, S, cum_S,
-                        n[2])
+                        sqrt(sum(n^2*S) - sum(n*S)^2), MSS, E, Fu, S, n[2])
   }
   opchar           <- tibble::as_tibble(opchar)
-  colnames(opchar) <- c("pi0", "pi1", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",
-                        paste(rep(c("E", "F", "S"), each = 2), rep(1:2, 3),
-                              "(pi)", sep = ""),
-                        paste("cum{S", 1:2, "(pi)}", sep = ""), "max(n)")
-  opchar$`max(n)`  <- as.integer(opchar$`max(n)`)
+  colnames(opchar) <- c("piC", "piE", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",
+                        paste0(rep(c("E", "F", "S"), each = 2), rep(1:2, 3),
+                               "(pi)"), "max N")
+  opchar$`max N`   <- as.integer(opchar$`max N`)
   opchar
 }
 
-binomial_pmf_one_stage        <- function(pi, n0, n1, e) {
-  x                                        <- expand.grid(0:n0, 0:n1)
-  rows_pmf                                 <- (n0 + 1)*(n1 + 1)
+binomial_pmf_one_stage        <- function(pi, nC, nE, e1) {
+  x                                        <- expand.grid(0:nC, 0:nE)
+  rows_pmf                                 <- (nC + 1)*(nE + 1)
   rows_pi                                  <- nrow(pi)
   rows_total                               <- rows_pmf*rows_pi
   f                                        <- numeric(rows_total)
   for (i in 1:rows_pi) {
-    dbinom0                                <- stats::dbinom(0:n0, n0, pi[i, 1])
-    if (all(n0 == n1, pi[i, 1] == pi[i, 2])) {
+    dbinom0                                <- stats::dbinom(0:nC, nC, pi[i, 1])
+    if (all(nC == nE, pi[i, 1] == pi[i, 2])) {
       dbinom1                              <- dbinom0
     } else {
-      dbinom1                              <- stats::dbinom(0:n1, n1, pi[i, 2])
+      dbinom1                              <- stats::dbinom(0:nE, nE, pi[i, 2])
     }
     f[(1 + (i - 1)*rows_pmf):(i*rows_pmf)] <-
       dbinom0[x[, 1] + 1]*dbinom1[x[, 2] + 1]
   }
   pmf                                      <-
-    tibble::tibble(pi0         = rep(pi[, 1], each = rows_pmf),
-                   pi1         = rep(pi[, 2], each = rows_pmf),
-                   x0          = rep(as.vector(x[, 1]), rows_pi),
-                   x1          = rep(as.vector(x[, 2]), rows_pi),
-                   m0          = rep(as.integer(n0), rows_total),
-                   m1          = rep(as.integer(n1), rows_total),
-                   statistic   = .data$x1 - .data$x0,
-                   decision    = ifelse(.data$statistic >= e, "Reject",
+    tibble::tibble(piC         = rep(pi[, 1], each = rows_pmf),
+                   piE         = rep(pi[, 2], each = rows_pmf),
+                   xC          = rep(as.vector(x[, 1]), rows_pi),
+                   xE          = rep(as.vector(x[, 2]), rows_pi),
+                   mC          = rep(as.integer(nC), rows_total),
+                   mE          = rep(as.integer(nE), rows_total),
+                   statistic   = .data$xE - .data$xC,
+                   decision    = ifelse(.data$statistic >= e1, "Reject",
                                         "Do not reject"),
                    k           = factor(rep(1, rows_total), 1),
                    `f(x,m|pi)` = f)
-  dplyr::arrange(pmf, .data$pi0, .data$pi1, .data$x0, .data$x1)
+  dplyr::arrange(pmf, .data$piC, .data$piE, .data$xC, .data$xE)
 }
 
-binomial_pmf_two_stage        <- function(pi, n0, n1, e1, f1, e2, k) {
+binomial_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
   if (e1 == Inf) {
-    e1                                           <- n1[1] + 1
+    e1                                           <- nE[1] + 1
   }
   if (f1 == -Inf) {
-    f1                                           <- -n0[1] - 1
+    f1                                           <- -nC[1] - 1
   }
   pmf                                            <-
-    binomial_pmf_two_stage_cpp(pi[1, ], n0, n1, e1, f1, e2, k)
+    binomial_pmf_two_stage_cpp(pi[1, ], nC, nE, e1, f1, e2, k)
   rows_pmf                                       <- nrow(pmf)
   rows_pi                                        <- nrow(pi)
   if (rows_pi > 1) {
@@ -275,52 +272,52 @@ binomial_pmf_two_stage        <- function(pi, n0, n1, e1, f1, e2, k) {
       rbind(pmf, matrix(0, (rows_pi - 1)*rows_pmf, 8))
     for (i in 2:rows_pi) {
       pmf[(1 + (i - 1)*rows_pmf):(i*rows_pmf), ] <-
-        binomial_pmf_two_stage_cpp(pi[i, ], n0, n1, e1, f1, e2, k)
+        binomial_pmf_two_stage_cpp(pi[i, ], nC, nE, e1, f1, e2, k)
     }
   }
   pmf                                            <-
-    tibble::tibble(pi0         = rep(pi[, 1], each = rows_pmf),
-                   pi1         = rep(pi[, 2], each = rows_pmf),
-                   x0          = as.integer(pmf[, 1]),
-                   x1          = as.integer(pmf[, 2]),
-                   m0          = as.integer(pmf[, 3]),
-                   m1          = as.integer(pmf[, 4]),
+    tibble::tibble(piC         = rep(pi[, 1], each = rows_pmf),
+                   piE         = rep(pi[, 2], each = rows_pmf),
+                   xC          = as.integer(pmf[, 1]),
+                   xE          = as.integer(pmf[, 2]),
+                   mC          = as.integer(pmf[, 3]),
+                   mE          = as.integer(pmf[, 4]),
                    statistic   = as.integer(pmf[, 5]),
                    decision    = ifelse(pmf[, 6] == 1, "Reject",
                                         "Do not reject"),
                    k           = factor(pmf[, 7], k),
                    `f(x,m|pi)` = pmf[, 8])
-  dplyr::arrange(pmf, .data$pi0, .data$pi1, .data$k, .data$x0, .data$x1)
+  dplyr::arrange(pmf, .data$piC, .data$piE, .data$k, .data$xC, .data$xE)
 }
 
-binomial_terminal_one_stage   <- function(n0, n1, e) {
-  x        <- expand.grid(0:n0, 0:n1)
-  rows_pmf <- (n0 + 1)*(n1 + 1)
-  tibble::tibble(x0        = x[, 1],
-                 x1        = x[, 2],
-                 m0        = rep(as.integer(n0), rows_pmf),
-                 m1        = rep(as.integer(n1), rows_pmf),
-                 statistic = .data$x1 - .data$x0,
-                 decision  = ifelse(.data$statistic >= e, "Reject",
+binomial_terminal_one_stage   <- function(nC, nE, e1) {
+  x        <- expand.grid(0:nC, 0:nE)
+  rows_pmf <- (nC + 1)*(nE + 1)
+  tibble::tibble(xC        = x[, 1],
+                 xE        = x[, 2],
+                 mC        = rep(as.integer(nC), rows_pmf),
+                 mE        = rep(as.integer(nE), rows_pmf),
+                 statistic = .data$xE - .data$xC,
+                 decision  = ifelse(.data$statistic >= e1, "Reject",
                                     "Do not reject"),
                  k         = factor(rep(1, rows_pmf), 1))
 }
 
-binomial_terminal_two_stage   <- function(n0, n1, e1, f1, e2, k) {
+binomial_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
   if (e1 == Inf) {
-    e1     <- n1[1] + 1
+    e1     <- nE[1] + 1
   }
   if (f1 == -Inf) {
-    f1     <- -n0[1] - 1
+    f1     <- -nC[1] - 1
   }
-  terminal <- binomial_terminal_two_stage_cpp(n0, n1, e1, f1, e2, k)
-  terminal <- tibble::tibble(x0        = as.integer(terminal[, 1]),
-                             x1        = as.integer(terminal[, 2]),
-                             m0        = as.integer(terminal[, 3]),
-                             m1        = as.integer(terminal[, 4]),
+  terminal <- binomial_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k)
+  terminal <- tibble::tibble(xC        = as.integer(terminal[, 1]),
+                             xE        = as.integer(terminal[, 2]),
+                             mC        = as.integer(terminal[, 3]),
+                             mE        = as.integer(terminal[, 4]),
                              statistic = as.integer(terminal[, 5]),
                              decision  = ifelse(terminal[, 6] == 1, "Reject",
                                                 "Do not reject"),
                              k         = factor(terminal[, 7], k))
-  dplyr::arrange(terminal, .data$k, .data$x0, .data$x1)
+  dplyr::arrange(terminal, .data$k, .data$xC, .data$xE)
 }

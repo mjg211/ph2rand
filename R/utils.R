@@ -1,84 +1,92 @@
-build_des_one_stage_output <- function(alpha, beta, delta, feasible, n0max,
-                                       opchar, pi0_alt, pi0_null, ratio,
-                                       summary, type, type_components) {
+build_des_one_stage_output <- function(alpha, beta, delta, feasible, nCmax,
+                                       opchar, Pi0, Pi1, ratio, summary, type,
+                                       type_components) {
   if (type %in% c("bernard", "binomial")) {
-    output      <- list(alpha      = alpha,
-                        beta       = beta,
-                        delta      = delta,
-                        e          = type_components$e,
-                        feasible   = feasible,
-                        n0         = type_components$n0,
-                        n0max      = n0max,
-                        n1         = type_components$n1,
-                        opchar     = opchar,
-                        pi0_alt    = pi0_alt,
-                        pi0_null   = pi0_null,
-                        ratio      = ratio,
-                        summary    = summary,
-                        type       = type)
+    output      <- list(alpha       = alpha,
+                        beta        = beta,
+                        delta       = delta,
+                        e1          = type_components$e1,
+                        f1          = type_components$e1,
+                        feasible    = feasible,
+                        J           = 1,
+                        nC          = type_components$nC,
+                        nCmax       = nCmax,
+                        nE          = type_components$nE,
+                        opchar      = opchar,
+                        Pi0         = Pi0,
+                        Pi1         = Pi1,
+                        ratio       = ratio,
+                        summary     = summary,
+                        type        = type)
   } else if (type == "fisher") {
-    output      <- list(alpha      = alpha,
-                        beta       = beta,
-                        delta      = delta,
-                        e          = type_components$e,
-                        feasible   = feasible,
-                        feasible_e = type_components$feasible_e,
-                        n0         = type_components$n0,
-                        n0max      = n0max,
-                        n1         = type_components$n1,
-                        opchar     = opchar,
-                        pi0_alt    = pi0_alt,
-                        pi0_null   = pi0_null,
-                        ratio      = ratio,
-                        summary    = summary,
-                        type       = type)
+    output      <- list(alpha       = alpha,
+                        beta        = beta,
+                        delta       = delta,
+                        e1          = type_components$e1,
+                        f1          = type_components$e1,
+                        feasible    = feasible,
+                        feasible_e1 = type_components$feasible_e1,
+                        J           = 1,
+                        nC          = type_components$nC,
+                        nCmax       = nCmax,
+                        nE          = type_components$nE,
+                        opchar      = opchar,
+                        Pi0         = Pi0,
+                        Pi1         = Pi1,
+                        ratio       = ratio,
+                        summary     = summary,
+                        type        = type)
   } else if (type == "single_double") {
-    output      <- list(alpha      = alpha,
-                        beta       = beta,
-                        delta      = delta,
-                        eS          = type_components$eS,
-                        eT          = type_components$eT,
-                        feasible   = feasible,
-                        n0         = type_components$n0,
-                        n0max      = n0max,
-                        n1         = type_components$n1,
-                        opchar     = opchar,
-                        pi0_alt    = pi0_alt,
-                        pi0_null   = pi0_null,
-                        ratio      = ratio,
-                        summary    = summary,
-                        type       = type)
+    output      <- list(alpha       = alpha,
+                        beta        = beta,
+                        delta       = delta,
+                        eS1         = type_components$eS1,
+                        eT1         = type_components$eT1,
+                        feasible    = feasible,
+                        fS1         = type_components$eS1,
+                        fT1         = type_components$eT1,
+                        J           = 1,
+                        nC          = type_components$nC,
+                        nCmax       = nCmax,
+                        nE          = type_components$nE,
+                        opchar      = opchar,
+                        Pi0         = Pi0,
+                        Pi1         = Pi1,
+                        ratio       = ratio,
+                        summary     = summary,
+                        type        = type)
   }
-  class(output) <- c(class(output), "ph2rand_des_one_stage")
+  class(output) <- c("ph2rand_des", class(output))
   output
 }
 
 build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
-                                       n0max, opchar, pi0_alt, pi0_ess,
-                                       pi0_null, ratio, summary, w, type,
-                                       type_components) {
+                                       nCmax, opchar, Pi0, Pi1, piO, ratio,
+                                       summary, w, type, type_components) {
   if (type %in% c("bernard", "binomial")) {
-    output      <- list(alpha      = alpha,
-                        beta       = beta,
-                        delta      = delta,
-                        e1         = type_components$e1,
-                        e2         = type_components$e2,
-                        efficacy   = type_components$efficacy,
-                        equal      = equal,
-                        f1         = type_components$f1,
-                        feasible   = feasible,
-                        futility   = type_components$futility,
-                        n0         = type_components$n0,
-                        n0max      = n0max,
-                        n1         = type_components$n1,
-                        opchar     = opchar,
-                        pi0_alt    = pi0_alt,
-                        pi0_ess    = pi0_ess,
-                        pi0_null   = pi0_null,
-                        ratio      = ratio,
-                        summary    = summary,
-                        type       = type,
-                        w          = w)
+    output      <- list(alpha          = alpha,
+                        beta           = beta,
+                        delta          = delta,
+                        e1             = type_components$e1,
+                        e2             = type_components$e2,
+                        efficacy       = type_components$efficacy,
+                        equal          = equal,
+                        f1             = type_components$f1,
+                        f2             = type_components$e2,
+                        feasible       = feasible,
+                        futility       = type_components$futility,
+                        J              = 2,
+                        nC             = type_components$nC,
+                        nCmax          = nCmax,
+                        nE             = type_components$nE,
+                        opchar         = opchar,
+                        Pi0            = Pi0,
+                        Pi1            = Pi1,
+                        piO            = piO,
+                        ratio          = ratio,
+                        summary        = summary,
+                        type           = type,
+                        w              = w)
   } else if (type == "fisher") {
     output      <- list(alpha          = alpha,
                         beta           = beta,
@@ -88,61 +96,72 @@ build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
                         efficacy_param = type_components$efficacy_param,
                         efficacy_type  = type_components$efficacy_type,
                         f1             = type_components$f1,
+                        f2             = type_components$e2,
                         feasible       = feasible,
                         feasible_e1    = type_components$feasible_e1,
                         feasible_e2    = type_components$feasible_e2,
                         feasible_f1    = type_components$feasible_f1,
                         futility_param = type_components$futility_param,
                         futility_type  = type_components$futility_type,
-                        n0             = type_components$n0,
-                        n0max          = n0max,
-                        n1             = type_components$n1,
+                        J              = 2,
+                        nC             = type_components$nC,
+                        nCmax          = nCmax,
+                        nE             = type_components$nE,
                         opchar         = opchar,
-                        pi0_alt        = pi0_alt,
-                        pi0_ess        = pi0_ess,
-                        pi0_null       = pi0_null,
+                        Pi0            = Pi0,
+                        Pi1            = Pi1,
+                        piO            = piO,
                         ratio          = ratio,
                         summary        = summary,
                         type           = type,
                         w              = w)
   } else if (type == "single_double") {
-    output      <- list(alpha      = alpha,
-                        beta       = beta,
-                        delta      = delta,
-                        efficacy   = type_components$efficacy,
-                        equal      = equal,
-                        eS1        = type_components$eS1,
-                        eS2        = type_components$eS2,
-                        eT1        = type_components$eT1,
-                        eT2        = type_components$eT2,
-                        feasible   = feasible,
-                        fS1        = type_components$fS1,
-                        fT1        = type_components$fT1,
-                        futility   = type_components$futility,
-                        n0         = type_components$n0,
-                        n0max      = n0max,
-                        n1         = type_components$n1,
-                        opchar     = opchar,
-                        pi0_alt    = pi0_alt,
-                        pi0_ess    = pi0_ess,
-                        pi0_null   = pi0_null,
-                        ratio      = ratio,
-                        summary    = summary,
-                        type       = type,
-                        w          = w)
+    output      <- list(alpha          = alpha,
+                        beta           = beta,
+                        delta          = delta,
+                        efficacy       = type_components$efficacy,
+                        equal          = equal,
+                        eS1            = type_components$eS1,
+                        eS2            = type_components$eS2,
+                        eT1            = type_components$eT1,
+                        eT2            = type_components$eT2,
+                        feasible       = feasible,
+                        fS1            = type_components$fS1,
+                        fS2            = type_components$eS2,
+                        fT1            = type_components$fT1,
+                        fT2            = type_components$eT2,
+                        futility       = type_components$futility,
+                        J              = 2,
+                        nC             = type_components$nC,
+                        nCmax          = nCmax,
+                        nE             = type_components$nE,
+                        opchar         = opchar,
+                        Pi0            = Pi0,
+                        Pi1            = Pi1,
+                        piO            = piO,
+                        ratio          = ratio,
+                        summary        = summary,
+                        type           = type,
+                        w              = w)
   }
-  class(output) <- c(class(output), "ph2rand_des_two_stage")
+  class(output) <- c("ph2rand_des", class(output))
   output
 }
 
-search_parameters          <- function(J, type, n0max, ratio) {
-  poss_n0                                          <- 1:n0max
-  poss_n1                                          <- poss_n0*ratio
-  keep                                             <- which(poss_n1%%1 == 0)
-  poss_n0                                          <- poss_n0[keep]
-  poss_n1                                          <- poss_n1[keep]
+row_match                  <- function(vec, mat) {
+  match(do.call("paste", c(vec[, , drop = F], sep = "\r")),
+        do.call("paste", c(mat[, , drop = F], sep = "\r")))
+}
+
+search_parameters          <- function(J, type, nCmax, ratio) {
+  poss_nC                                          <- 1:nCmax
+  poss_nE                                          <- poss_nC*ratio
+  keep                                             <- which(poss_nE%%1 == 0)
+  poss_nC                                          <- poss_nC[keep]
+  poss_nE                                          <- poss_nE[keep]
+  max_poss_nC                                      <- max(poss_nC)
   if (type == "fisher") {
-    maxima                                         <- max(c(poss_n0, poss_n1))
+    maxima                                         <- max(max_poss_nC, poss_nE)
     choose_mat                                     <- matrix(0, maxima,
                                                              maxima + 1)
     for (n in 1:maxima) {
@@ -151,19 +170,18 @@ search_parameters          <- function(J, type, n0max, ratio) {
   } else {
     choose_mat                                     <- NULL
   }
-  max_poss_n0                                      <- max(poss_n0)
   poss_x <- poss_y <- poss_z <- poss_B <- unique_B <- list()
-  len_poss_n0                                      <- length(poss_n0)
+  len_poss_nC                                      <- length(poss_nC)
   all_x                                            <-
-    as.matrix(expand.grid(0:poss_n0[len_poss_n0], 0:poss_n1[len_poss_n0]))
+    as.matrix(expand.grid(0:poss_nC[len_poss_nC], 0:poss_nE[len_poss_nC]))
   all_y                                            <- all_x[, 2] - all_x[, 1]
   all_z                                            <- all_x[, 1] + all_x[, 2]
-  for (n in 1:length(poss_n0)) {
-    n0                                             <- poss_n0[n]
-    n1                                             <- poss_n1[n]
-    index                                          <- n0 + max_poss_n0*(n1 - 1)
-    keep                                           <-
-      which(all_x[, 1] <= n0 & all_x[, 2] <= n1)
+  for (n in 1:len_poss_nC) {
+    nC                                             <- poss_nC[n]
+    nE                                             <- poss_nE[n]
+    index                                          <- nC + max_poss_nC*(nE - 1)
+    keep                                           <- which(all_x[, 1] <= nC &
+                                                              all_x[, 2] <= nE)
     poss_x[[index]]                                <- all_x[keep, ]
       
     if (type != "bernard") {
@@ -173,13 +191,13 @@ search_parameters          <- function(J, type, n0max, ratio) {
       }
     } else {
       denom_fact                                   <-
-        (poss_x[[index]][, 1] + poss_x[[index]][, 2])/(n0 + n1)
+        (poss_x[[index]][, 1] + poss_x[[index]][, 2])/(nC + nE)
       poss_B_index                                 <-
-        (poss_x[[index]][, 2]/n1 - poss_x[[index]][, 1]/n0)/
-        sqrt(denom_fact*(1 - denom_fact)*(1/n0 + 1/n1))
+        (poss_x[[index]][, 2]/nE - poss_x[[index]][, 1]/nC)/
+        sqrt(denom_fact*(1 - denom_fact)*(1/nC + 1/nE))
       poss_B_index[is.nan(poss_B_index)]           <- 0
-      poss_B[[index]]                              <- matrix(0, n0 + 1, n1 + 1)
-      for (i in 1:((n0 + 1)*(n1 + 1))) {
+      poss_B[[index]]                              <- matrix(0, nC + 1, nE + 1)
+      for (i in 1:((nC + 1)*(nE + 1))) {
         poss_B[[index]][poss_x[[index]][i, 1] + 1,
                         poss_x[[index]][i, 2] + 1] <- poss_B_index[i]
       }
@@ -196,21 +214,28 @@ search_parameters          <- function(J, type, n0max, ratio) {
       unique_B[[index]]                            <- unique_B[[index]][keep]
     }
   }
-  return(list(choose_mat  = choose_mat,
-              max_poss_n0 = max_poss_n0,
-              poss_n0     = poss_n0,
-              poss_n1     = poss_n1,
-              poss_B      = poss_B,
-              poss_x      = poss_x,
-              poss_y      = poss_y,
-              poss_z      = poss_z,
-              unique_B    = unique_B))
+  list(choose_mat  = choose_mat,
+       max_poss_nC = max_poss_nC,
+       poss_nC     = poss_nC,
+       poss_nE     = poss_nE,
+       poss_B      = poss_B,
+       poss_x      = poss_x,
+       poss_y      = poss_y,
+       poss_z      = poss_z,
+       unique_B    = unique_B)
 }
 
 theme_ph2rand              <- function(base_size = 11, base_family = "") {
-  ggplot2::theme_grey(base_size   = base_size,
-                      base_family = base_family) +
-    ggplot2::theme(panel.background = ggplot2::element_rect(fill   = "white",
+  ggplot2::theme_grey(base_family = base_family,
+                      base_size   = base_size) +
+    ggplot2::theme(axis.ticks       = ggplot2::element_line(colour = "grey70",
+                                                            size   = 0.25),
+                   complete         = T,
+                   legend.key       = ggplot2::element_rect(fill   = "white",
+                                                            colour = NA),
+                   legend.position  = "bottom",
+                   legend.title     = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_rect(fill   = "white",
                                                             colour = NA),
                    panel.border     = ggplot2::element_rect(fill   = NA,
                                                             colour = "grey70",
@@ -219,27 +244,14 @@ theme_ph2rand              <- function(base_size = 11, base_family = "") {
                                                             size   = 0.25),
                    panel.grid.minor = ggplot2::element_line(colour = "grey87",
                                                             size   = 0.125),
-                   axis.ticks       = ggplot2::element_line(colour = "grey70",
-                                                            size   = 0.25),
-                   legend.key       = ggplot2::element_rect(fill   = "white",
-                                                            colour = NA),
+                   plot.margin      = ggplot2::unit(c(0.3, 0.5, 0.3, 0.3),
+                                                    "cm"),
+                   plot.title       = ggplot2::element_text(hjust = 0.5),
                    strip.background = ggplot2::element_rect(fill   = "grey70",
                                                             colour = NA),
                    strip.text       =
                      ggplot2::element_text(colour = "white",
-                                           size   = ggplot2::rel(0.8)),
-                   legend.title     = ggplot2::element_blank(),
-                   legend.position  = "bottom",
-                   plot.margin      = ggplot2::unit(c(0.3, 0.5, 0.3, 0.3),
-                                                    "cm"),
-                   plot.title       = ggplot2::element_text(hjust = 0.5),
-                   complete         = T)
-}
-
-row_match                  <- function(vec, mat) {
-  cvec <- do.call("paste", c(vec[, , drop = FALSE], sep = "\r"))
-  cmat <- do.call("paste", c(mat[, , drop = FALSE], sep = "\r"))
-  match(cvec, cmat, nomatch = NA_integer_)
+                                           size   = ggplot2::rel(0.8)))
 }
 
 uc                         <- function(char) {

@@ -19,12 +19,11 @@ suppressPackageStartupMessages(library(ph2rand))
 
 # ph2rand <img src='man/figures/ph2rand.png' align="right" height="139" />
 
-*Design of randomized comparative phase II oncology trials*
+*Design of Randomized Comparative Phase II Oncology Trials with a Binary Primary Outcome*
 
 ## Description
 
-__ph2rand__ provides a suite of functions to assist with the design of randomized comparative phase II oncology trials.
-Specifically, support is provided to perform a sample size calculation for several randomized comparative phase II oncology trial designs (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017, Shan *et al*, 2013), for both point and composite null hypotheses.
+__ph2rand__ provides a suite of functions to assist in the design of randomized comparative phase II oncology trials with a binary primary outcome variable. Specifically, support is provided to: (a) perform a sample size calculation when using one of several published designs (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017, Shan *et al*, 2013), (b) evaluate the operating characteristics of a given design, and (c) produce informative plots.
 
 ## Getting started
 
@@ -41,8 +40,30 @@ For further help, please contact Michael Grayling at michael.grayling@newcastle.
 
 Find a two-stage design from Jung (2008) for the default parameters:
 
-```
+```{r}
 des <- des_two_stage()
+```
+
+Examine its required sample size in each arm, in each stage:
+
+```{r}
+des$nC
+des$nE
+```
+
+Next, look at its operating characteristics:
+
+```{r}
+des$opchar
+```
+
+Compare this to the equivalent design from Litwin *et al* (2017):
+
+```{r}
+#des <- des_two_stage(type = "single_double")
+#des$nC
+#des$nE
+#des$opchar
 ```
 
 ## References

@@ -22,27 +22,27 @@ pmf <- function(des, pi, k, summary = F) {
   if ("ph2rand_des_one_stage" %in% class(des)) {
     pmf <- switch(des$type,
                   bernard       =
-                    bernard_pmf_one_stage(pi, des$n0, des$n1, des$e),
+                    bernard_pmf_one_stage(pi, des$nC, des$nE, des$e1),
                   binomial      =
-                    binomial_pmf_one_stage(pi, des$n0, des$n1, des$e),
+                    binomial_pmf_one_stage(pi, des$nC, des$nE, des$e1),
                   fisher        =
-                    fisher_pmf_one_stage(pi, des$n0, des$n1, des$e),
+                    fisher_pmf_one_stage(pi, des$nC, des$nE, des$e1),
                   single_double =
-                    single_double_pmf_one_stage(pi, des$n0, des$n1, des$eS,
-                                                   des$eT))
+                    single_double_pmf_one_stage(pi, des$nC, des$nE, des$eS1,
+                                                   des$eT1))
   } else {
     pmf <- switch(des$type,
                   bernard       =
-                    bernard_pmf_two_stage(pi, des$n0, des$n1, des$e1, des$f1,
+                    bernard_pmf_two_stage(pi, des$nC, des$nE, des$e1, des$f1,
                                           des$e2, k),
                   binomial      =
-                    binomial_pmf_two_stage(pi, des$n0, des$n1, des$e1, des$f1,
+                    binomial_pmf_two_stage(pi, des$nC, des$nE, des$e1, des$f1,
                                            des$e2, k),
                   fisher        =
-                    fisher_pmf_two_stage(pi, des$n0, des$n1, des$e1, des$f1,
+                    fisher_pmf_two_stage(pi, des$nC, des$nE, des$e1, des$f1,
                                          des$e2, k),
                   single_double =
-                    single_double_pmf_two_stage(pi, des$n0, des$n1, des$eS1,
+                    single_double_pmf_two_stage(pi, des$nC, des$nE, des$eS1,
                                                 des$eT1, des$fS1, des$fT1,
                                                 des$eS2, des$eT2, k))
   }

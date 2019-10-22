@@ -21,27 +21,27 @@ terminal <- function(des, k, summary = F) {
   if ("ph2rand_des_one_stage" %in% class(des)) {
     terminal <- switch(des$type,
                        bernard       =
-                         bernard_terminal_one_stage(des$n0, des$n1, des$e),
+                         bernard_terminal_one_stage(des$nC, des$nE, des$e1),
                        binomial      =
-                         binomial_terminal_one_stage(des$n0, des$n1, des$e),
+                         binomial_terminal_one_stage(des$nC, des$nE, des$e1),
                        fisher        =
-                         fisher_terminal_one_stage(des$n0, des$n1, des$e),
+                         fisher_terminal_one_stage(des$nC, des$nE, des$e1),
                        single_double =
-                         single_double_terminal_one_stage(des$n0, des$n1,
-                                                          des$e))
+                         single_double_terminal_one_stage(des$nC, des$nE,
+                                                          des$e1))
   } else {
     terminal <- switch(des$type,
                        bernard       =
-                         bernard_terminal_two_stage(des$n0, des$n1, des$e1,
+                         bernard_terminal_two_stage(des$nC, des$nE, des$e1,
                                                     des$f1, des$e2, k),
                        binomial      =
-                         binomial_terminal_two_stage(des$n0, des$n1, des$e1,
+                         binomial_terminal_two_stage(des$nC, des$nE, des$e1,
                                                      des$f1, des$e2, k),
                        fisher        =
-                         fisher_terminal_two_stage(des$n0, des$n1, des$e1,
+                         fisher_terminal_two_stage(des$nC, des$nE, des$e1,
                                                    des$f1, des$e2, k),
                        single_double =
-                         single_double_terminal_two_stage(des$n0, des$n1,
+                         single_double_terminal_two_stage(des$nC, des$nE,
                                                           des$eS1, des$eT1,
                                                           des$fS1, des$fT1,
                                                           des$eS2, des$eT2, k))

@@ -1,0 +1,361 @@
+---
+title: "ph2rand: Design of randomized comparative phase II oncology trials"
+author: "Michael J Grayling (michael.grayling@newcastle.ac.uk)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ph2rand: Design of randomized comparative phase II oncology trials}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, echo = F}
+suppressPackageStartupMessages(library(ph2rand))
+```
+
+__ph2rand__ provides a suite of functions to assist with the design of randomized comparative phase II oncology trials.
+Specifically, support is provided to perform sample size calculations for several varieties of randomized comparative phase II oncology trial designs, for both point and composite null hypotheses.
+
+This vignette will proceed by detailing the type of trial designs __ph2rand__ currently supports.
+Each of the available functions will then be described, before several examples and useful further information is provided.
+
+# 1. Introduction
+
+Whilst almost all phase II oncology trials once utilised single-arm non-randomised designs, a large proportion now use randomised comparative designs.
+The reasons for this change in design are numerous, and are described at length in Grayling *et al* (2019).
+For the purposes of this vignette, the important consideration is that with the increased use of randomised comparative designs in phase II, software for determining such designs increases in value.
+It is for this reason that this package, __ph2rand__, has been developed.
+Its goal is to eventually support design determination when using the vast majority of published methods for randomised comparative oncology trials.
+At present, the focus is on the most commonly used class of design: those for two-arm trials with a single binary primary outcome variable.
+
+# 2. Randomized comparative phase II oncology trials
+
+## 2.1. Design setting
+
+At present, each of the designs supported by __ph2rand__ can be described within a single design framework.
+They all assume that a single experimental treatment regimen will be compared to a single concurrent control arm (which would typically be expected to be the current standard-of-care), through a trial with at most $J\in\mathbb{N}^+$ stages (i.e., in what follows we will simultaneously treat single-stage designs and designs that allow interim analyses).
+
+Furthermore, each supposes that the treatment's anti-tumour activity will be formally compared through a single binary primary outcome variable (e.g., tumour response or the disease control rate).
+Precisely then, they assume that outcomes $Y_ijk \sim Bern(\pi_k)$ are accrued from patients $i\in\{1,\dots,n_{jk}\}$, in stage $j\in\{1,\dots,J\}$, in arm $k\in\{C,E\}$.
+Here, arm $k=C$ corresponds to the control arm and arm $k=E$ to the experimental arm, and together the indices $i$ and $j$ define a particular patient.
+Thus, $\pi_k\in[0,1]$ is the probability of success (or response, if you prefer) for patient $(i,j)$ when they are assigned to arm $k$.
+For brevity in what follows, we set $\boldsymbol{\pi}=(\pi_C,\pi_E)^\top\in[0,1]^2$, and from here we will refer to the $\pi_k$ as response rates.
+Similarly, we set $\boldsymbol{n}_k=(n_{1k},\dots,n_{Jk})$ for $k\in\{C,E\}$.
+Note that at this stage we explicitly allow for the range of $i$ to depend on both $j$ and $k$, which will be discussed again in Section 3.
+
+With the above, __ph2rand__ suppports null hypotheses of the following form:
+
+$$ H_0 : \pi_C = \pi_E \in \Pi_0 \subseteq [0,1]. $$
+Here, $\Pi_0$ can be anything from a single real (e.g., 0.1), which would then logically correspond to the anticipated response rate in the control arm, through to the entire set $[0,1]$.
+The implications of different choices for $\Pi_0$ are discussed in Section 3.
+
+Then, given a particular null hypothesis, and given a trial design of any kind returned by __ph2rand__, which we denote in generality at this point by $\mathscr{D}$, denote its power function as follows:
+
+$$ P(\boldsymbol{\pi}) = \mathbb{P}(\text{Reject }H_0 \mid \boldsymbol{\pi},\mathscr{D}). $$
+Using the above definition, each of the design functions in __ph2rand__ aims to return an optimised design (as defined below) that ensures that the type-I error-rate is controlled to a specified level $\alpha \in (0,1)$.
+That is, they look to identify a design with:
+
+$$ \max_{\pi_C=\pi_E\in\Pi_0} P(\boldsymbol{\pi}) \le \alpha. $$
+Furthermore, __ph2rand__ supports powering trials under the following flexible framework.
+First, a clinically relevant difference in response rates $\delta \in (0,1]$ is specified.
+Then, a set $\Pi_1 \subseteq [0,1-\delta]$ is nominated, such that design determination should ensure that:
+
+$$ \min_{\pi_C\in\Lambda_1,\ \pi_E=\pi_C+\delta} P(\boldsymbol{\pi}) \ge 1 - \beta, $$
+where $\beta\in(0,1)$ can be viewed as the type-II error-rate.
+
+The above outlines the hypotheses and error-rates each of the designs supported by __ph2rand__ aims to control.
+To appreciate the differences between the way the designs work later, it is useful now to consider a general framework for decision making.
+
+First, each design framework specifies a particular test statistic $T_j$ that would be computed after stage $j$.
+In all instances this will be dependent (at most) on the chosen design (e.g., factors such as the sample size in each arm in each stage), and the number of responses seen in each arm in each stage.
+Furthermore, positive values of $T_j$ will always indicate increased patient benefit on the experimental arm.
+
+In addition, each of the design frameworks specifies particular types of rejection, non-rejection, and continuation regions.
+Each of these can be viewed as a set of values such that if the chosen test statistic belongs to a particular set, then an associated decision will be made.
+As above, these sets will only ever be dependent on the chosen design and the number of responses seen in each arm in each stage.
+We define them as $R_j$, $N_j$, and $C_j$.
+Here, $R$, $N$, and $C$ are chosen to indicate rejection, non-rejection, and continuation respectively.
+As will be seen later, this framework can readily handle any value of $J$ as we can always ensure a trial terminates after at most $J$ stages by setting $C_J = \emptyset$.
+Ultimately, with the above, the following algorithm describes how each of the designs work:
+
+1. Set $j=1$.
+2. Recruit $n_{jk}$ patients to arms $k\in\{C,E\}$ and gather the associated outcomes $y_{ijk}$ for $i\in\{1,\dots,n_{jk}\}$.
+3. Compute $T_j$ and make the following decisions:
+    - If $T_j \in C_j$, set $j=j+1$ and return to step 2.
+    - If $T_j \in R_j$, terminate the trial and reject $H_0$.
+    - If $T_j \in N_j$, terminate the trial and do not reject $H_0$.
+
+Here, $y_{ijk}$ is used to indicate the realised value of the random variable $Y_{ijk}$.
+
+Note that in all instances, the designs supported by __ph2rand__ will ensure that between them $R_j$, $N_j$, and $C_j$ define the complete sample space of possible values of $T_j$.
+That is, a decision will always be implied on how to proceed.
+This is discussed later in relation to implemented restrictions on the chosen stopping boundaries.
+
+The above completes the categorisation of the core principles of the designs supported by __ph2rand__.
+In practice, a large number of potential designs will meet the type-I and type-II error-rate criteria, and thus a condition is needed for choosing the best (i.e., optimal) design amongst these.
+Before we outline the optimality criteria supported by __ph2rand__, though, we describe the various statistical operating characteristics that it can return.
+
+## 2.2. Operating characteristics
+
+For single-stage designs, $P(\boldsymbol{\pi})$ will likely be the only random variable of interest.
+For two-stage designs, there are several additional variables that should be considered.
+Firstly, it will generally be of both interest and great use to evaluate the probability that the trial stops at the end of each permitted stage, with sub-categorisation according to the decision on whether or not $H_0$ should be rejected.
+We define these quantities for $j\in\{1,\dots,J\}$ as follows:
+
+\begin{align}
+  E_j(\boldsymbol{\pi}) &= \mathbb{P}(\text{Stop after stage }j\text{ and reject }H_0 \mid \boldsymbol{\pi},\mathscr{D}),\\
+  F_j(\boldsymbol{\pi}) &= \mathbb{P}(\text{Stop after stage }j\text{ and do not reject }H_0 \mid \boldsymbol{\pi},\mathscr{D}),\\
+  S_j(\boldsymbol{\pi}) &= E_j(\boldsymbol{\pi}) + F_j(\boldsymbol{\pi}),
+\end{align}
+
+where we use the letters $E$, $F$, and $S$ to signify efficacy (i.e., activity), futility (i.e., lack of activity), and stopping respectively.
+Alternatively, we can think about the above via the following equations:
+
+\begin{align}
+  E_1(\boldsymbol{\pi}) &= \mathbb{P}(T_1 \in R_1 \mid \boldsymbol{\pi},\mathscr{D}),\\
+  F_1(\boldsymbol{\pi}) &= \mathbb{P}(T_1 \in N_1 \mid \boldsymbol{\pi},\mathscr{D}),\\
+  S_1(\boldsymbol{\pi}) &= \mathbb{P}(T_1 \notin C_1 \mid \boldsymbol{\pi},\mathscr{D}),\\
+  E_j(\boldsymbol{\pi}) &= \mathbb{P}(T_1 \in C_1,\dots,T_{j-1}\in C_{j-1},T_j \in R_j \mid \boldsymbol{\pi},\mathscr{D}),\\
+  F_j(\boldsymbol{\pi}) &= \mathbb{P}(T_1 \in C_1,\dots,T_{j-1}\in C_{j-1},T_j \in N_j \mid \boldsymbol{\pi},\mathscr{D}),\\
+  S_j(\boldsymbol{\pi}) &= \mathbb{P}(T_1 \in C_1,\dots,T_{j-1}\in C_{j-1},T_j \notin C_j \mid \boldsymbol{\pi},\mathscr{D}).
+\end{align}
+
+Then, also of much interest will be the trials expected sample size under given response rates.
+To this end, denote by $N$ the random variable of the total sample size required by a trial.
+Then, we define the expected sample size, and can compute it in general, as follows:
+
+$$ ESS(\boldsymbol{\pi}) = \mathbb{E}(N \mid \boldsymbol{\pi},\mathscr{D}) = \sum_{j=1}^J S_j(\boldsymbol{\pi})\left( \sum_{l=1}^{j}n_{lC} + n_{lE}\right). $$
+We will also consider the standard deviation of the required sample size:
+
+\begin{align}
+SDSS(\boldsymbol{\pi}) &= \mathbb{E}(N^2 \mid \boldsymbol{\pi},\mathscr{D}) - \mathbb{E}(N \mid \boldsymbol{\pi},\mathscr{D})^2,\\
+&= \sum_{j=1}^J S_j(\boldsymbol{\pi})\left( \sum_{l=1}^{j}n_{lC} + n_{lE}\right)^2 - ESS(\boldsymbol{\pi})^2.
+\end{align}
+
+Finally, we will denote the maximum possible value of $N$ by $\max N = \sum_{j=1}^Jn_{jC} + n_{jE}$.
+
+## 2.3. Optimality criteria
+
+Designs that meet the desired type-I and type-II error-rate criteria are known as feasible.
+Within __ph2rand__, feasible designs are identified by searching over a discrete set of possible trial designs, as is described further in Section 4.1.
+
+Then, for a single-stage trial design, __ph2rand__ defines the optimal design as the feasible design that has the largest value of $\min_{\pi_C\in\Pi_1,\pi_E=\pi_C+\delta} P(\boldsymbol{\pi})$, amongst the feasible designs with the smallest value of $\max N$.
+For the designs currently supported this guarantees a unique optimal design.
+
+For designs with $J>1$, a more flexible optimality criteria is supported that builds upon that used, for example, in Jung *et al* (2004), Mander *et al* (2012), Wason *et al* (2012), Wason (2015), and Grayling *et al* (2018).
+Precisely, a set of weights, $w_1,\dots,w_5\in(0,\infty)$, are selected.
+As is a value $\pi_\text{opt}\in[0,1-\delta]$.
+Then, the optimal designs is that, amongst the feasible designs, which minimises the following criteria:
+
+\begin{multline}
+w_1ESS\{(\pi_\text{opt},\pi_\text{opt})^\top\} + w_2ESS\{(\pi_\text{opt},\pi_\text{opt} + \delta)^\top\} + w_3\max_{\pi_C=\pi_E\in[0,1]}ESS\{(\pi_C,\pi_E)^\top\}\\
++ w_4\max_{(\pi_C,\pi_E)^\top\in[0,1]^2}ESS\{(\pi_C,\pi_E)^\top\} + w_5\max N.
+\end{multline}
+
+In general, $\pi_\text{opt}$ should likely be chosen as the anticipated response rate in the control arm.
+In addition, it should typically be ensured that $w_1+\cdots+w_4>0$, as many designs will likely share the same minimal maximal sample size.
+Note that there is no available result that guarantees the above criteria and the given restrictions on the weights will lead to a unique optimal design.
+However, in practice, this is almost certain to be the case.
+
+## 2.4. Supported designs
+
+Currently, __ph2rand__ supports the determination of five different types of randomised comparative design, all in single-stage and two-stage forms, with one also permitting $J>2$.
+Each is described in its own subsection below.
+
+### 2.4.1. Jung (2008)
+
+Jung (2008), in combination with further details provided in Jung (2014), outlines a design framework based on exact binomial tests.
+Specifically, the following test statistic is used at the end of stage $j\in\{1,\dots, J\}$:
+
+$$ T_j = \sum_{l=1}^j \left( \sum_{i=1}^{n_{lE}} y_{ilE} - \sum_{i=1}^{n_{lC}} y_{ilC} \right), $$
+i.e., the difference between the number of responses observed on the experimental and control arms.
+An important observation for efficient design determination is then that $T_j \subseteq [-n_{C1}-\cdots-n_{Cj},n_{E1}+\cdots+n_{Ej}$.
+
+The design then works by specifying the following rejection and non-rejection regions:
+
+\begin{align}
+  R_j &= R_j(\mathscr{D}) = (e_j,\infty),\\
+  N_j &= N_j(\mathscr{D}) = (-\infty,f_j],\\
+  C_j &= C_j(\mathscr{D}) = (f_j, e_j].
+\end{align}
+
+Thus, for a $J$ stage design, parameters $e_1,\dots,e_J$ and $f_1,\dots,f_J$ are needed.
+For brevity, set $\boldsymbol{e}=(e_1,\dots,e_J)$ and $\boldsymbol{f}=(f_1,\dots,f_J)$.
+With this, we have $\mathscr{D} = \{\boldsymbol{n}_C,\boldsymbol{n}_E,\boldsymbol{e},\boldsymbol{f}\}$.
+
+Note that with the above, if we wish to prevent early stopping for, e.g., futility, we can simply require that $f_j = -\infty$ for $j\in\{1,\dots,J-1}$.
+Similarly, to prevent early stopping for efficacy, we can set $e_1=\dots=e_{J-1}=\infty$.
+
+Furthermore, note that in all cases __ph2rand__ ensures that $e_J = f_J$.
+This is in order to ensure that a decision is made on $H_0$ by the trial's completion.
+When $J>1$, it also ensures that $e_j > f_j$ for $j\in\{1,\dots,J-1}$, in order to make sure that $C_j \neq \emptyset$ for $j\in\{1,\dots,J-1}$.
+
+Finally, note that because $T_j\in\mathbb{Z}$, nothing is lost by making the assumption that $e_j,f_j\in\mathbb{Z}$:
+__ph2rand__ exploits this fact to consider possible designs as efficiently as possible.
+Specifically, as is discsussed further in Section 3, the user specifies a range of allowed sample sizes.
+Then, __ph2rand__ will search exhaustively over the designs that should be considered to evaluate potential options for the given sample sizes.
+It achieves this using several nested loops with carefully selected ranges.
+
+Currently, __ph2rand__ can identify this type of design for settings with $J\in\{1,2\}$.
+
+### 2.4.2. Shan *et al* (2013)
+
+Shan *et al* (2013) propose a framework similar to Jung (2008), but based on the following Barnard style test-statistics:
+
+$$ T_j = . $$
+The rejection, non-rejection, and continuation regions are as in Section 2.4.1.
+So to does the design search procedure remain qualitatively the same (i.e., looping to exhaustively evaluate potential designs is still carried out).
+However, whilst the $T_j$ will still take a discrete set of possible values that can be used to limit the number of designs that should be considered, in this case $T_j\in\mathbb{R}$ in general, and thus we allow $e_j,f_j\in\mathbb{R}$ also.
+
+As above, __ph2rand__ can currently identify this type of design for settings with $J\in\{1,2\}$.
+
+### 2.4.3. Jung and Sargent (2014)
+
+Jung and Sargent (2014) propose a somewhat different design framework to those given above.
+Specifically, whilst the test statistic used in Jung (2008) is retained, the following rejection and non-rejection regions can be nominated:
+
+\begin{align}
+  R_j &= R_j(z,\mathscr{D}) = (e_{jz_1\dots z_j},\infty),\\
+  N_j &= N_j(z,\mathscr{D}) = (-\infty,f_{jz_1\dots z_j}],\\
+  C_j &= C_j(z,\mathscr{D}) = (f_{jz_1\dots z_j}, e_{jz_1\dots z_j}],
+\end{align}
+
+where $z=z_1+\dots+z_j$, with:
+
+$$z_j=\sum_{i=1}^{n_jC}y_{ijC} + \sum_{i=1}^{n_jE}y_{ijE}.$$
+Thus, the $R_j$, $N_j$, and $C_j$ are allowed to vary based upon the the number of responses seen across the two arms in each stage.
+
+Here, for brevity, we denote the $j \times (\sum_{l=1}^jn_{lC}+n_{lE})$ arrays of efficacy and futility stopping boundaries for use after stage $j$ by $\boldsymbol{e}_j$ and $\boldsymbol{f}_j$ respectively.
+
+Similarly to before, we can now prevent early stopping for efficacy or futility by prescribing that $e_{jz_1\dotsz_j}=\infty$ and $f_{jz_1\dotsz_j}=-\infty$ for $j\in\{1,\dots,J\}$ and $(z_1,\dots,z_j) \in \{0,\dots,n_{1C}+n_{1E}\}\times\dots\times\{0,\dots,\sum_{l=1}^jn_{lC}+n_{lE}\}$.
+
+Unlike before though, the boundaries are now not identified using an exhaustive search.
+Firstly, this is because this search procedure would be too computationally intensive to be useful in practice.
+However, the principal reason they are not chosen via an exhaustive assessment is because the motivation for this design framework comes from Fisher's exact test.
+
+
+Way find the boundaries is slightly different.
+Can't perform exhaustive search over possible boundaries for any given sample size as too many designs, so instead take a different approach.
+
+### 2.4.4. Litwin *et al* (2017)
+
+Litwin *et al* (2017) take a different approach to those above, by using a test statistic that is composed of two components.
+It can be specified as:
+
+Then the rejection regions are:
+
+
+Can prevent early topping by doing this.
+
+Can search over all possible, as in Jung (2008)/Shan et al () approaches as above, using the sample space of possible 
+
+# 3. Available functions
+
+At present, __ph2rand__ exports 12 functions for user use, each of which is described in detail below.
+
+Note that the computations in all of the functions are performed using exact binomial probabilities where required; without recourse to simulation or numerical approximations.
+Consequently, we should always have that $S_1(\boldsymbol{\pi}) + S_2(\boldsymbol{\pi}) = 1$, and $P(\boldsymbol{\pi}) = E_1(\boldsymbol{\pi}) + E_2(\boldsymbol{\pi})$.
+
+In addition, where helpful __Rcpp__ is utilised in order to speed up the evaluations.
+Nonetheless, notes are given below on options that may substantially increase run time.
+
+## 3.1. `des_one_stage()`
+
+
+
+## 3.2. `des_two_stage()`
+
+
+
+## 3.3. `build()`
+
+
+
+## 3.4. `terminal()`
+
+
+
+## 3.5. `pmf()`
+
+
+
+## 3.6. `opchar()`
+
+
+
+## 3.7. `plot.ph2rand_des_one_stage()` and `plot.ph2rand_des_two_stage()`
+
+
+
+## 3.8. `summary.ph2rand_des_one_stage()`, `print.ph2rand_des_one_stage()`, `summary.ph2rand_des_two_stage()`, and `print.ph2rand_des_two_stage()`
+
+
+
+# 4. Examples
+
+## 4.1. Single-stage design using Jung (2008)
+
+
+
+## 4.2. Comparing single-stage designs across design frameworks
+
+
+
+## 4.3. The effect of $\Pi_0$ and $\Pi_1$ on design operating characteristics
+
+
+
+## 4.4. Comparing two-stage designs across design frameworks
+
+
+
+## 4.5. Comparing two-stage designs within a design framework
+
+
+
+# 5. Miscellaneous
+
+## 5.1. Contact
+
+The first-line response to a possible bug should be to submit it as a *New issue* [here](https://github.com/mjg211/ph2rand/issues).
+If the issue is more complex, or a patch is not provided in reasonable time, please contact Michael Grayling at michael.grayling@newcastle.ac.uk.
+Similarly, please feel free to contact with suggestions for new features (see Section 5.3 for a list of current plans for new features), or for further support with using the package.
+
+## 5.2. Citing __ph2rand__
+
+The latest details on how to cite __ph2rand__ can be found using `citation()`:
+
+```{r}
+citation("ph2rand")
+```
+
+## 5.3. Future development
+
+Plans are currently in place to support the randomized comparative designs from the following papers:
+
+- Carsten C, Chen P (2016) Curtailed two-stage matched pairs design in double-arm phase II clinical trials. *J Biopharm Stat* 26(5):816--22. DOI: [10.1080/10543406.2015.1074921](https://doi.org/10.1080/10543406.2015.1074921).
+- Cellamare M, Sambucini V (2015) A randomized two‐stage design for phase II clinical trials based on a Bayesian predictive approach. *Stat Med* 34(6):1059--78. DOI: [10.1002/sim.6396](https://doi.org/10.1002/sim.6396).
+- Chen CM, Chi Y, Chang HM (2018) Curtailed two-stage design for comparing two arms in randomized phase II clinical trials. *J Biopharm Stat*. DOI: [10.1080/10543406.2018.1428615](https://doi.org/10.1080/10543406.2018.1428615).
+- Roychoudhury S, Scheuer N, Neuenschwander B (2018) Beyond p-values: A phase II dual-criterion design with statistical significance and clinical relevance. *Stat Meth Med Res*. DOI: [10.1177/1740774518770661](https://doi.org/10.1177/1740774518770661).
+
+In addition, functions for performing post trial inference (construction of point estimates, *p*-values, and confidence intervals) in all supported designs are under development.
+Long-term, support for randomised designs that do not compare to a concurrent control arm, for non-binary outcome variables, and for multi-arm trials will also be added.
+
+# 6. References
+
+Jung SH (2008) Randomized phase II trials with a prospective control. *Stat Med* 27(4):568--83. DOI: [10.1002/sim.2961](https://doi.org/10.1002/sim.2961). PMID: [17573688](https://www.ncbi.nlm.nih.gov/pubmed/17573688).
+
+Jung SH, Sargent DJ (2014) Randomized phase II clinical trials. *J Biopharm Stat* 24(4):802--16. DOI: [10.1080/10543406.2014.901343](https://doi.org/10.1080/10543406.2014.901343). PMID: [24697589](https://www.ncbi.nlm.nih.gov/pubmed/24697589).
+
+Kepner JL (2010) On group sequential designs comparing two binomial proportions. *J Biopharm Stat* 20(1):145--59. DOI: [10.1080/10543400903280621](https://doi.org/10.1080/10543400903280621). PMID: [20077254](https://www.ncbi.nlm.nih.gov/pubmed/20077254).
+
+Litwin S, Basickes S, Ross EA (2017) Two-sample binary phase 2 trials with low type I error and low sample size. *Stat Med* 36(9):1383--94. DOI: [10.1002/sim.7226](http://doi.org/10.1002/sim.7226). PMID: [28118686](https://www.ncbi.nlm.nih.gov/pubmed/28118686).
+
+Shan G, Ma C, Hutson AD, Wilding GE (2013) Randomized two-stage phase II clinical trial designs based on Barnard's exact test. *J Biopharm Stat* 23(5):1081--90. DOI: [10.1080/10543406.2013.813525](https://doi.org/10.1080/10543406.2013.813525). PMID: [23957517](https://www.ncbi.nlm.nih.gov/pubmed/23957517).

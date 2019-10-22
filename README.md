@@ -3,16 +3,18 @@
 
 # ph2rand <img src='man/figures/ph2rand.png' align="right" height="139" />
 
-*Design of randomized comparative phase II oncology trials*
+*Design of Randomized Comparative Phase II Oncology Trials with a Binary
+Primary Outcome*
 
 ## Description
 
-**ph2rand** provides a suite of functions to assist with the design of
-randomized comparative phase II oncology trials. Specifically, support
-is provided to perform a sample size calculation for several randomized
-comparative phase II oncology trial designs (Jung, 2008; Jung and
-Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017, Shan *et al*, 2013),
-for both point and composite null hypotheses.
+**ph2rand** provides a suite of functions to assist in the design of
+randomized comparative phase II oncology trials with a binary primary
+outcome variable. Specifically, support is provided to: (a) perform a
+sample size calculation when using one of several published designs
+(Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017,
+Shan *et al*, 2013), (b) evaluate the operating characteristics of a
+given design, and (c) produce informative plots.
 
 ## Getting started
 
@@ -31,7 +33,40 @@ Michael Grayling at <michael.grayling@newcastle.ac.uk>.
 
 Find a two-stage design from Jung (2008) for the default parameters:
 
-    des <- des_two_stage()
+``` r
+des <- des_two_stage()
+```
+
+Examine its required sample size in each arm, in each stage:
+
+``` r
+des$nC
+#> [1] 17 17
+des$nE
+#> [1] 17 17
+```
+
+Next, look at its operating characteristics:
+
+``` r
+des$opchar
+#> # A tibble: 2 x 13
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1  0.0702      47.0       16.5        34        0   0.0702
+#> 2   0.1   0.3  0.813       64.7       10.1        68        0   0.813 
+#> # … with 5 more variables: `F1(pi)` <dbl>, `F2(pi)` <dbl>, `S1(pi)` <dbl>,
+#> #   `S2(pi)` <dbl>, `max N` <int>
+```
+
+Compare this to the equivalent design from Litwin *et al* (2017):
+
+``` r
+#des <- des_two_stage(type = "single_double")
+#des$nC
+#des$nE
+#des$opchar
+```
 
 ## References
 

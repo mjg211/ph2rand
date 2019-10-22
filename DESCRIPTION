@@ -1,16 +1,18 @@
 Package: ph2rand
 Type: Package
-Title: Design of randomized comparative phase II oncology trials
+Title: Design of Randomized Comparative Phase II Oncology Trials with a Binary
+    Primary Outcome
 Version: 0.1
 Date: 2019-07-11
 Authors@R: c(person(given = "Michael", family = "Grayling",
                     email = "michael.grayling@newcastle.ac.uk",
-                    role = c("aut", "cre")))
-Description: Provides a suite of functions to assist with the design of
-    randomized comparative phase II oncology trials. Specifically, support is
-    provided to perform a sample size calculation for several randomized
-    comparative phase II oncology trial designs, for both point and composite
-    null hypotheses.
+                    role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0002-0680-6668")))
+Description: Provides a suite of functions to assist in the design of randomized
+    comparative phase II oncology trials with a binary primary outcome variable.
+    Specifically, support is provided to: (a) perform a sample size calculation
+    when using one of several published designs, (b) evaluate the operating
+    characteristics of a given design, and (c) produce informative plots.
 License: MIT + file LICENSE
 Imports:
     dplyr,
@@ -19,4 +21,10 @@ Imports:
     tibble
 LinkingTo: Rcpp
 RoxygenNote: 6.1.1
+URL: https://github.com/mjg211/ph2rand
+BugReports: https://github.com/mjg211/ph2rand/issues
 Encoding: UTF-8
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

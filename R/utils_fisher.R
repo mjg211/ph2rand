@@ -1,84 +1,86 @@
-fisher_des_one_stage        <- function(alpha, beta, delta, ratio, pi0_null,
-                                        pi0_alt, n0max, summary) {
-  params                 <- search_parameters(1, "fisher", n0max, ratio)
-  feasible               <-
-    fisher_des_one_stage_cpp(alpha, beta, delta, params$poss_n0,
-                             params$poss_n1, params$poss_x, params$poss_y,
+fisher_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
+                                        nCmax, summary) {
+  params                  <- search_parameters(1, "fisher", nCmax, ratio)
+  feasible                <-
+    fisher_des_one_stage_cpp(alpha, beta, delta, params$poss_nC,
+                             params$poss_nE, params$poss_x, params$poss_y,
                              params$poss_z, params$choose_mat,
-                             (length(pi0_null) == 1), pi0_null,
-                             (length(pi0_alt) == 1), pi0_alt, summary)
+                             (length(Pi0) == 1), Pi0, (length(Pi1) == 1), Pi1,
+                             summary)
   if (feasible[1, 1] > 0) {
     if (summary) {
       message(uc("two_elip"), "feasible designs identified in the range of ",
-              "considered sample sizes. Identifying the optimal design",
+              "considered sample sizes.\n  Identifying the optimal design",
               uc("two_elip"))
     }
-    ncol_feasible        <- ncol(feasible)
-    nrow_feasible        <- nrow(feasible)
+    ncol_feasible         <- ncol(feasible)
+    nrow_feasible         <- nrow(feasible)
     if (nrow_feasible == 1) {
-      feasible_e         <- matrix(c(1, feasible[, 2:(ncol_feasible - 4)]), 1)
-      feasible           <- matrix(c(1, feasible[, 1],
-                                     params$poss_n1[feasible[, 1]],
-                                     feasible[, (ncol_feasible - 3):
-                                                ncol_feasible]), 1)
+      feasible_e1         <- matrix(c(1, feasible[, 2:(ncol_feasible - 4)]), 1)
+      feasible            <- matrix(c(1, feasible[, 1],
+                                      params$poss_nE[feasible[, 1]],
+                                      feasible[, (ncol_feasible - 3):
+                                                 ncol_feasible]), 1)
     } else {
-      feasible_e         <- cbind(1:nrow_feasible,
-                                  feasible[, 2:(ncol_feasible - 4)])
-      feasible           <- cbind(1:nrow(feasible), feasible[, 1],
-                                  params$poss_n1[feasible[, 1]],
-                                  feasible[, (ncol_feasible - 3):ncol_feasible])
+      feasible_e1         <- cbind(1:nrow_feasible,
+                                   feasible[, 2:(ncol_feasible - 4)])
+      feasible            <-
+        cbind(1:nrow(feasible), feasible[, 1], params$poss_nE[feasible[, 1]],
+              feasible[, (ncol_feasible - 3):ncol_feasible])
     }
-    colnames(feasible)   <- c("index", "n0", "n1", "argmax alpha", "max alpha",
-                              "argmin power", "min power")
-    feasible             <- tibble::as_tibble(feasible)
-    feasible[, 1:3]      <- dplyr::mutate_if(feasible[, 1:3], is.double,
-                                             as.integer)
-    feasible_e           <- feasible_e[, 1:(max(rowSums(feasible[, 2:3])) + 2)]
-    colnames(feasible_e) <- c("index",
-                              paste0("e", 0:max(rowSums(feasible[, 2:3]))))
-    feasible_e           <- tibble::as_tibble(feasible_e)
-    feasible_e           <- dplyr::mutate_if(feasible_e, is.double, as.integer)
-    e                    <- as.integer(feasible_e[1, 2:(feasible$n0[1] +
-                                                          feasible$n1[1] + 2)])
-    n0                   <- feasible$n0[1]
-    n1                   <- feasible$n1[1]
-    opchar               <-
+    colnames(feasible)    <- c("index", "nC1", "nE1", "argmax alpha",
+                               "max alpha", "argmin power", "min power")
+    feasible              <- tibble::as_tibble(feasible)
+    feasible[, 1:3]       <- dplyr::mutate_if(feasible[, 1:3], is.double,
+                                              as.integer)
+    feasible_e1           <-
+      feasible_e1[, 1:(max(rowSums(feasible[, 2:3])) + 2)]
+    colnames(feasible_e1) <- c("index",
+                              paste0("e1", 0:max(rowSums(feasible[, 2:3]))))
+    feasible_e1           <- tibble::as_tibble(feasible_e1)
+    feasible_e1           <- dplyr::mutate_if(feasible_e1, is.double,
+                                              as.integer)
+    e1                    <-
+      as.integer(feasible_e1[1, 2:(feasible$nC1[1] + feasible$nE1[1] + 2)])
+    nC                    <- feasible$nC1[1]
+    nE                    <- feasible$nE1[1]
+    opchar                <-
       fisher_opchar_one_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
                                     feasible$`argmin power`[1] + c(0, delta)),
-                              n0, n1, e)
+                              nC, nE, e1)
   } else {
-    e                    <- feasible <- feasible_e <- n0 <- n1 <- opchar <- NULL
+    e1                    <- feasible <- feasible_e1 <- nC <- nE <- opchar <-
+                             NULL
     if (summary) {
       message(uc("two_elip"), "no feasible designs identified in range of ",
-              "considered maximal allowed sample size. Consider increasing ",
-              "n0max", uc("two_elip"))
+              "considered maximal allowed sample size.\n  Consider increasing ",
+              "nCmax", uc("two_elip"))
     }
   }
   output                 <-
-    build_des_one_stage_output(alpha, beta, delta, feasible, n0max, opchar,
-                               pi0_alt, pi0_null, ratio, summary, "fisher",
-                               list(e = e, feasible_e = feasible_e, n0 = n0,
-                                    n1 = n1))
+    build_des_one_stage_output(alpha, beta, delta, feasible, nCmax, opchar,
+                               Pi0, Pi1, ratio, summary, "fisher",
+                               list(e1 = e1, feasible_e1 = feasible_e1, nC = nC,
+                                    nE = nE))
   output
 }
 
-fisher_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
-                                        pi0_alt, n0max, equal, w, pi0_ess,
-                                        efficacy_type, efficacy_param,
-                                        futility_type, futility_param,
-                                        summary) {
-  params                         <- search_parameters(2, "fisher", n0max, ratio)
+fisher_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
+                                        nCmax, equal, w, piO, efficacy_type,
+                                        efficacy_param, futility_type,
+                                        futility_param, summary) {
+  params                         <- search_parameters(2, "fisher", nCmax, ratio)
   feasible                       <-
-    fisher_des_two_stage_cpp(alpha, beta, delta, params$poss_n0, params$poss_n1,
+    fisher_des_two_stage_cpp(alpha, beta, delta, params$poss_nC, params$poss_nE,
                              params$poss_x, params$poss_y, params$poss_z,
-                             params$choose_mat, (length(pi0_null) == 1),
-                             pi0_null, (length(pi0_alt) == 1), pi0_alt, equal,
-                             efficacy_type, efficacy_param, futility_type,
-                             futility_param, pi0_ess, summary)
+                             params$choose_mat, (length(Pi0) == 1), Pi0,
+                             (length(Pi1) == 1), Pi1, equal, efficacy_type,
+                             efficacy_param, futility_type, futility_param, Pi0,
+                             summary)
   if (feasible[[1]][1, 1] > 0) {
     if (summary) {
       message(uc("two_elip"), "feasible designs identified in the range of ",
-              "considered sample sizes. Identifying the optimal design",
+              "considered sample sizes.\n  Identifying the optimal design",
               uc("two_elip"))
     }
     nrow_feasible                <- nrow(feasible[[1]])
@@ -88,45 +90,45 @@ fisher_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
       feasible_f1                <- matrix(c(1, feasible[[3]]), 1)
       feasible                   <- feasible[[1]]
       feasible                   <- matrix(c(1:nrow_feasible, feasible[, 1:2],
-                                             params$poss_n1[feasible[, 1]],
-                                             params$poss_n1[feasible[, 2]],
+                                             params$poss_nE[feasible[, 1]],
+                                             params$poss_nE[feasible[, 2]],
                                              feasible[, -(1:2)]), 1)
     } else {
       feasible_e1                <- cbind(1:nrow_feasible, feasible[[2]])
       feasible_f1                <- cbind(1:nrow_feasible, feasible[[3]])
       feasible                   <- feasible[[1]]
       feasible                   <- cbind(1:nrow_feasible, feasible[, 1:2],
-                                          params$poss_n1[feasible[, 1]],
-                                          params$poss_n1[feasible[, 2]],
+                                          params$poss_nE[feasible[, 1]],
+                                          params$poss_nE[feasible[, 2]],
                                           feasible[, -(1:2)])
     }
-    colnames(feasible)           <- c("index", "n01", "n02", "n11", "n12",
+    colnames(feasible)           <- c("index", "nC1", "nC2", "nE1", "nE2",
                                       "argmax alpha", "max alpha",
-                                      "argmin power", "min power", "ESS0",
-                                      "ESS1")
+                                      "argmin power", "min power",
+                                      "ESS(piO,piO)", "ESS(piO,piO+delta)")
     feasible                     <- tibble::as_tibble(feasible)
     feasible[, 1:5]              <- dplyr::mutate_if(feasible[, 1:5], is.double,
                                                      as.integer)
     feasible_e1                  <-
       feasible_e1[, 1:(max(rowSums(feasible[, c(2, 4)])) + 2)]
     colnames(feasible_e1)        <-
-      c("index", paste0("e", 0:max(rowSums(feasible[, c(2, 4)]))))
+      c("index", paste0("e1", 0:max(rowSums(feasible[, c(2, 4)]))))
     feasible_e1                  <- tibble::as_tibble(feasible_e1)
     feasible_f1                  <-
       feasible_f1[, 1:(max(rowSums(feasible[, c(2, 4)])) + 2)]
     colnames(feasible_f1)        <-
-      c("index", paste0("f", 0:max(rowSums(feasible[, c(2, 4)]))))
+      c("index", paste0("f1", 0:max(rowSums(feasible[, c(2, 4)]))))
     feasible_f1                  <- tibble::as_tibble(feasible_f1)
     feasible_e2                  <- list()
     for (i in 1:nrow_feasible) {
-      n0                         <- as.numeric(feasible[i, 2:3])
-      n1                         <- as.numeric(feasible[i, 4:5])
-      e2_i                       <- matrix(0L, n0[1] + n1[1] + 1,
-                                           n0[2] + n1[2] + 1)
-      counter                    <- 1
-      for (z1p in 1:(max(params$poss_n0) + max(params$poss_n1) + 1)) {
-        for (z2p in 1:(2*(max(params$poss_n0) + max(params$poss_n1)) + 1)) {
-          if (all(z1p <= n0[1] + n1[1] + 1, z2p <= n0[2] + n1[2] + 1)) {
+      nC                         <- as.numeric(feasible[i, 2:3])
+      nE                         <- as.numeric(feasible[i, 4:5])
+      e2_i                       <- matrix(0L, nC[1] + nE[1] + 1,
+                                           nC[2] + nE[2] + 1)
+      counter                    <- 1L
+      for (z1p in 1:(max(params$poss_nC) + max(params$poss_nE) + 1)) {
+        for (z2p in 1:(2*(max(params$poss_nC) + max(params$poss_nE)) + 1)) {
+          if (all(z1p <= nC[1] + nE[1] + 1, z2p <= nC[2] + nE[2] + 1)) {
             if (feasible_e2_vec[i, counter] != -0.5) {
               e2_i[z1p, z2p]     <- feasible_e2_vec[i, counter]
             } else if (feasible_e2_vec[i, counter] == z1p + z2p - 1) {
@@ -135,7 +137,7 @@ fisher_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
               e2_i[z1p, z2p]     <- NA_integer_
             }
           }
-          counter                <- counter + 1
+          counter                <- counter + 1L
         }
       }
       feasible_e2[[i]]           <- e2_i
@@ -144,14 +146,14 @@ fisher_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
       dplyr::mutate(feasible,
                     `argmax ESS(pi,pi)`       = 0,
                     `max ESS(pi,pi)`          = 0,
-                    `argmax_pi0 ESS(pi0,pi1)` = 0,
-                    `argmax_pi1 ESS(pi0,pi1)` = 0,
-                    `max ESS(pi0,pi1)`        = 0,
-                    `max(n)`                  =
+                    `argmax_piC ESS(piC,piE)` = 0,
+                    `argmax_piE ESS(piC,piE)` = 0,
+                    `max ESS(piC,piE)`        = 0,
+                    `max N`                   =
                       as.integer(rowSums(feasible[, 2:5])))
     for (i in 1:nrow_feasible) {
       index                      <-
-        as.numeric(feasible[i, 2] + params$max_poss_n0*(feasible[i, 4] - 1))
+        as.numeric(feasible[i, 2] + params$max_poss_nC*(feasible[i, 4] - 1))
       max_ESS_1d                 <-
         fisher_max_ess_1d_two_stage(as.numeric(feasible[i, 2:3]),
                                     as.numeric(feasible[i, 4:5]),
@@ -170,22 +172,21 @@ fisher_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
                                     params$poss_x[[index]],
                                     params$poss_y[[index]],
                                     params$poss_z[[index]])
-      feasible$`argmax_pi0 ESS(pi0,pi1)`[i] <- max_ESS_2d[1]
-      feasible$`argmax_pi1 ESS(pi0,pi1)`[i] <- max_ESS_2d[2]
-      feasible$`max ESS(pi0,pi1)`[i]        <- max_ESS_2d[3]
+      feasible$`argmax_piC ESS(piC,piE)`[i] <- max_ESS_2d[1]
+      feasible$`argmax_piE ESS(piC,piE)`[i] <- max_ESS_2d[2]
+      feasible$`max ESS(piC,piE)`[i]        <- max_ESS_2d[3]
     }
     feasible$o                   <-
-      rowSums(matrix(w, nrow_feasible, 5, byrow = T)*
-                feasible[, c(10, 11, 13, 16, 17)])
+      rowSums(matrix(w, nrow_feasible, 5, T)*feasible[, c(10:11, 13, 16:17)])
     feasible                     <-
       dplyr::arrange(feasible, .data$o, dplyr::desc(.data$`min power`))
     feasible_e1                  <- feasible_e1[as.matrix(feasible[, 1]), ]
     feasible_f1                  <- feasible_f1[as.matrix(feasible[, 1]), ]
     ncol_feasible_e1             <- ncol(feasible_e1)
     for (i in 1:nrow_feasible) {
-      n01                        <- feasible$n01[i]
-      n11                        <- feasible$n11[i]
-      for (z1 in 0:(n01 + n11)) {
+      nC1                        <- feasible$nC1[i]
+      nE1                        <- feasible$nE1[i]
+      for (z1 in 0:(nC1 + nE1)) {
         if (feasible_e1[i, z1 + 2] >= z1 + 1) {
           feasible_e1[i, z1 + 2] <- Inf
         }
@@ -193,58 +194,58 @@ fisher_des_two_stage        <- function(alpha, beta, delta, ratio, pi0_null,
           feasible_f1[i, z1 + 2] <- -Inf
         }
       }
-      if (n01 + n11 + 2 < ncol_feasible_e1) {
-        range                    <- (n01 + n11 + 3):ncol_feasible_e1
+      if (nC1 + nE1 + 2 < ncol_feasible_e1) {
+        range                    <- (nC1 + nE1 + 3):ncol_feasible_e1
         feasible_e1[i, range]    <- feasible_f1[i, range] <- NA_integer_
       }
     }
     e1                           <-
       as.numeric(feasible_e1[feasible$index[1],
-                             2:(feasible$n01[1] + feasible$n11[1] + 2)])
+                             2:(feasible$nC1[1] + feasible$nE1[1] + 2)])
     e2                           <- feasible_e2[[feasible$index[1]]]
     f1                           <-
       as.numeric(feasible_f1[feasible$index[1],
-                             2:(feasible$n01[1] + feasible$n11[1] + 2)])
-    n0                           <- c(feasible$n01[1],feasible$n02[1])
-    n1                           <- c(feasible$n11[1],feasible$n12[1])
+                             2:(feasible$nC1[1] + feasible$nE1[1] + 2)])
+    nC                           <- c(feasible$nC1[1], feasible$nC2[1])
+    nE                           <- c(feasible$nE1[1], feasible$nE2[1])
     opchar                       <-
       fisher_opchar_two_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
                                     feasible$`argmin power`[1] + c(0, delta)),
-                              n0, n1, e1, f1, e2, 1:2)
-    if (summary) {
-      message(uc("two_elip"), "no feasible designs identified in range of ",
-              "considered maximal allowed sample size. Consider increasing ",
-              "n0max", uc("two_elip"))
-    }
+                              nC, nE, e1, f1, e2, 1:2)
   } else {
-    
-    
+    e1                           <-          e2 <-          f1 <-    feasible <-
+                                    feasible_e1 <- feasible_e2 <- feasible_f1 <-
+                                             nC <-          nE <-      opchar <-
+                                           NULL
     if (summary) {
       message(uc("two_elip"), "no feasible designs identified in range of ",
-              "considered maximal allowed sample size. Consider increasing ",
-              "n0max", uc("two_elip"))
+              "considered maximal allowed sample size.\n  Consider increasing ",
+              "nCmax", uc("two_elip"))
     }
   }
-  output               <-
-    build_des_two_stage_output(alpha, beta, delta, equal, feasible, n0max,
-                               opchar, pi0_alt, pi0_ess, pi0_null, ratio,
-                               summary, w, "fisher",
+  output                         <-
+    build_des_two_stage_output(alpha, beta, delta, equal, feasible, nCmax,
+                               opchar, Pi0, Pi1, piO, ratio, summary, w,
+                               "fisher",
                                list(e1 = e1, e2 = e2,
                                     efficacy_param = efficacy_param,
                                     efficacy_type = efficacy_type,
-                                    f1 = f1, feasible_e1 = feasible_e1,
+                                    futility_type = futility_type,
+                                    futility_param = futility_param,
+                                    f1 = f1, feasible = feasible,
+                                    feasible_e1 = feasible_e1,
                                     feasible_e2 = feasible_e2,
-                                    feasible_f1 = feasible_f1, n0 = n0,
-                                    n1 = n1))
+                                    feasible_f1 = feasible_f1, nC = nC,
+                                    nE = nE))
   output
 }
 
-fisher_max_ess_2d_two_stage <- function(n0, n1, e1, f1, poss_x1, poss_y1,
+fisher_max_ess_2d_two_stage <- function(nC, nE, e1, f1, poss_x1, poss_y1,
                                         poss_z1) {
   max_ESS_2d <- stats::optim(par     = c(0.5, 0.5),
                              fn      = fisher_minus_ess_two_stage,
-                             n0      = n0,
-                             n1      = n1,
+                             nC      = nC,
+                             nE      = nE,
                              e1      = e1,
                              f1      = f1,
                              poss_x1 = poss_x1,
@@ -253,47 +254,47 @@ fisher_max_ess_2d_two_stage <- function(n0, n1, e1, f1, poss_x1, poss_y1,
   c(max_ESS_2d$par, -max_ESS_2d$value)
 }
 
-fisher_minus_ess_two_stage  <- function(pi, n0, n1, e1, f1, poss_x1, poss_y1,
+fisher_minus_ess_two_stage  <- function(pi, nC, nE, e1, f1, poss_x1, poss_y1,
                                         poss_z1) {
   if (!missing(poss_x1)) {
-    -fisher_des_ess_two_stage(pi, n0, n1, e1, f1, poss_x1, poss_y1, poss_z1)
+    -fisher_des_ess_two_stage(pi, nC, nE, e1, f1, poss_x1, poss_y1, poss_z1)
   } else {
-    -fisher_ess_two_stage(pi, n0, n1, e1, f1)
+    -fisher_ess_two_stage(pi, nC, nE, e1, f1)
   }
 }
 
-fisher_opchar_one_stage     <- function(pi, n0, n1, e, pmf_pi) {
+fisher_opchar_one_stage     <- function(pi, nC, nE, e, pmf_pi) {
   if (missing(pmf_pi)) {
-    pmf_pi <- fisher_pmf_one_stage(pi, n0, n1, e)
+    pmf_pi <- fisher_pmf_one_stage(pi, nC, nE, e)
   }
   rows_pi  <- nrow(pi)
   P        <- numeric(rows_pi)
   for (i in 1:rows_pi) {
-    P[i]   <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
-                                  .data$pi1 == pi[i, 2] &
+    P[i]   <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
+                                  .data$piE == pi[i, 2] &
                                   .data$decision == "Reject")$`f(x,m|pi)`)
   }
-  tibble::tibble(pi0           = pi[, 1],
-                 pi1           = pi[, 2],
+  tibble::tibble(piC           = pi[, 1],
+                 piE           = pi[, 2],
                  `P(pi)`       = P)
 }
 
-fisher_opchar_two_stage     <- function(pi, n0, n1, e1, f1, e2, k, pmf_pi) {
+fisher_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
   if (missing(pmf_pi)) {
-    pmf_pi         <- fisher_pmf_two_stage(pi, n0, n1, e1, f1, e2, k)
+    pmf_pi         <- fisher_pmf_two_stage(pi, nC, nE, e1, f1, e2, k)
   }
   rows_pi          <- nrow(pi)
-  n                <- c(n0[1] + n1[1], sum(n0) + sum(n1))
-  opchar           <- matrix(0, nrow = rows_pi, ncol = 15)
+  n                <- c(nC[1] + nE[1], sum(nC) + sum(nE))
+  opchar           <- matrix(0, rows_pi, 13)
   E                <- Fu <- numeric(2)
   for (i in 1:rows_pi) {
     for (j in k) {
-      E[j]         <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
-                                          .data$pi1 == pi[i, 2] &
+      E[j]         <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
+                                          .data$piE == pi[i, 2] &
                                           .data$decision == "Reject" &
                                           .data$k == j)$`f(x,m|pi)`)
-      Fu[j]        <- sum(dplyr::filter(pmf_pi, .data$pi0 == pi[i, 1] &
-                                          .data$pi1 == pi[i, 2] &
+      Fu[j]        <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
+                                          .data$piE == pi[i, 2] &
                                           .data$decision == "Do not reject" &
                                           .data$k == j)$`f(x,m|pi)`)
     }
@@ -307,61 +308,60 @@ fisher_opchar_two_stage     <- function(pi, n0, n1, e1, f1, e2, k, pmf_pi) {
                         n[2])
   }
   opchar           <- tibble::as_tibble(opchar)
-  colnames(opchar) <- c("pi0", "pi1", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",
-                        paste(rep(c("E", "F", "S"), each = 2), rep(1:2, 3),
-                              "(pi)", sep = ""),
-                        paste("cum{S", 1:2, "(pi)}", sep = ""), "max(n)")
-  opchar$`max(n)`  <- as.integer(opchar$`max(n)`)
+  colnames(opchar) <- c("piC", "piE", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",
+                        paste0(rep(c("E", "F", "S"), each = 2), rep(1:2, 3),
+                              "(pi)"), "max N")
+  opchar$`max N`   <- as.integer(opchar$`max N`)
   opchar
 }
 
-fisher_pmf_one_stage        <- function(pi, n0, n1, e) {
-  x                                        <- expand.grid(0:n0, 0:n1)
-  rows_pmf                                 <- (n0 + 1)*(n1 + 1)
+fisher_pmf_one_stage        <- function(pi, nC, nE, e1) {
+  x                                        <- expand.grid(0:nC, 0:nE)
+  rows_pmf                                 <- (nC + 1)*(nE + 1)
   rows_pi                                  <- nrow(pi)
   rows_total                               <- rows_pmf*rows_pi
   f                                        <- numeric(rows_total)
   for (i in 1:rows_pi) {
-    dbinom0                                <- stats::dbinom(0:n0, n0, pi[i, 1])
-    if (all(n0 == n1, pi[i, 1] == pi[i, 2])) {
+    dbinom0                                <- stats::dbinom(0:nC, nC, pi[i, 1])
+    if (all(nC == nE, pi[i, 1] == pi[i, 2])) {
       dbinom1                              <- dbinom0
     } else {
-      dbinom1                              <- stats::dbinom(0:n1, n1, pi[i, 2])
+      dbinom1                              <- stats::dbinom(0:nE, nE, pi[i, 2])
     }
     f[(1 + (i - 1)*rows_pmf):(i*rows_pmf)] <-
       dbinom0[x[, 1] + 1]*dbinom1[x[, 2] + 1]
   }
   pmf                                      <-
-    tibble::tibble(pi0         = rep(pi[, 1], each = rows_pmf),
-                   pi1         = rep(pi[, 2], each = rows_pmf),
-                   x0          = rep(as.vector(x[, 1]), rows_pi),
-                   x1          = rep(as.vector(x[, 2]), rows_pi),
-                   m0          = rep(as.integer(n0), rows_total),
-                   m1          = rep(as.integer(n1), rows_total),
-                   z           = .data$x0 + .data$x1,
-                   statistic   = .data$x1 - .data$x0,
+    tibble::tibble(piC         = rep(pi[, 1], each = rows_pmf),
+                   piE         = rep(pi[, 2], each = rows_pmf),
+                   xC          = rep(as.vector(x[, 1]), rows_pi),
+                   xE          = rep(as.vector(x[, 2]), rows_pi),
+                   mC          = rep(as.integer(nC), rows_total),
+                   mE          = rep(as.integer(nE), rows_total),
+                   z           = .data$xC + .data$xE,
+                   statistic   = .data$xE - .data$xC,
                    decision    = ifelse(.data$statistic >=
-                                          e[.data$x0 + .data$x1 + 1],
+                                          e1[.data$xC + .data$xE + 1],
                                         "Reject", "Do not reject"),
                    k           = factor(rep(1, rows_total), 1),
                    `f(x,m|pi)` = f)
-  dplyr::arrange(pmf, .data$pi0, .data$pi1, .data$x0, .data$x1)
+  dplyr::arrange(pmf, .data$piC, .data$piE, .data$xC, .data$xE)
 }
 
-fisher_pmf_two_stage        <- function(pi, n0, n1, e1, f1, e2, k) {
+fisher_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
   for (z in which(e1 == Inf)) {
     e1[z]                                        <- z
   }
   for (z in which(f1 == -Inf)) {
     f1[z]                                        <- -z
   }
-  for (z1 in 1:(n0[1] + n1[1] + 1)) {
+  for (z1 in 1:(nC[1] + nE[1] + 1)) {
     for (z2 in which(e2[z1, ] == Inf)) {
       e2[z1, z2]                                 <- z1 + z2
     }
   }
   pmf                                            <-
-    fisher_pmf_two_stage_cpp(pi[1, ], n0, n1, e1, f1, e2, k)
+    fisher_pmf_two_stage_cpp(pi[1, ], nC, nE, e1, f1, e2, k)
   rows_pmf                                       <- nrow(pmf)
   rows_pi                                        <- nrow(pi)
   if (rows_pi > 1) {
@@ -369,18 +369,18 @@ fisher_pmf_two_stage        <- function(pi, n0, n1, e1, f1, e2, k) {
       rbind(pmf, matrix(0, (rows_pi - 1)*rows_pmf, 12))
     for (i in 2:rows_pi) {
       pmf[(1 + (i - 1)*rows_pmf):(i*rows_pmf), ] <-
-        fisher_pmf_two_stage_cpp(pi[i, ], n0, n1, e1, f1, e2, k)
+        fisher_pmf_two_stage_cpp(pi[i, ], nC, nE, e1, f1, e2, k)
     }
   }
   pmf                                            <-
-    tibble::tibble(pi0         = rep(pi[, 1], each = rows_pmf),
-                   pi1         = rep(pi[, 2], each = rows_pmf),
-                   x01         = as.integer(pmf[, 1]),
-                   x11         = as.integer(pmf[, 2]),
-                   x02         = as.integer(pmf[, 3]),
-                   x12         = as.integer(pmf[, 4]),
-                   m0          = as.integer(pmf[, 5]),
-                   m1          = as.integer(pmf[, 6]),
+    tibble::tibble(piC         = rep(pi[, 1], each = rows_pmf),
+                   piE         = rep(pi[, 2], each = rows_pmf),
+                   xC1         = as.integer(pmf[, 1]),
+                   xE1         = as.integer(pmf[, 2]),
+                   xC2         = as.integer(pmf[, 3]),
+                   xE2         = as.integer(pmf[, 4]),
+                   mC          = as.integer(pmf[, 5]),
+                   mE          = as.integer(pmf[, 6]),
                    z1          = as.integer(pmf[, 7]),
                    z2          = as.integer(pmf[, 8]),
                    statistic   = as.integer(pmf[, 9]),
@@ -390,47 +390,47 @@ fisher_pmf_two_stage        <- function(pi, n0, n1, e1, f1, e2, k) {
                    `f(x,m|pi)` = pmf[, 12])
   if (2 %in% k) {
     rows                                         <- which(pmf$k == 1)
-    pmf$x02[rows]                                <- pmf$x12[rows] <-
+    pmf$xC2[rows]                                <- pmf$xE2[rows] <-
                                                     pmf$z2[rows]  <- NA_integer_
   }
-  dplyr::arrange(pmf, .data$pi0, .data$pi1, .data$k, .data$x01, .data$x11,
-                 .data$x02, .data$x12)
+  dplyr::arrange(pmf, .data$piC, .data$piE, .data$k, .data$xC1, .data$xE1,
+                 .data$xC2, .data$xE2)
 }
 
-fisher_terminal_one_stage   <- function(n0, n1, e) {
-  x        <- expand.grid(0:n0, 0:n1)
-  rows_pmf <- (n0 + 1)*(n1 + 1)
-  tibble::tibble(x0        = x[, 1],
-                 x1        = x[, 2],
-                 m0        = rep(as.integer(n0), rows_pmf),
-                 m1        = rep(as.integer(n1), rows_pmf),
-                 z         = .data$x0 + .data$x1,
-                 statistic = .data$x1 - .data$x0,
+fisher_terminal_one_stage   <- function(nC, nE, e1) {
+  x        <- expand.grid(0:nC, 0:nE)
+  rows_pmf <- (nC + 1)*(nE + 1)
+  tibble::tibble(xC        = x[, 1],
+                 xE        = x[, 2],
+                 mC        = rep(as.integer(nC), rows_pmf),
+                 mE        = rep(as.integer(nE), rows_pmf),
+                 z         = .data$xC + .data$xE,
+                 statistic = .data$xE - .data$xC,
                  decision  = ifelse(.data$statistic >=
-                                      e[.data$x0 + .data$x1 + 1],
+                                      e1[.data$xC + .data$xE + 1],
                                     "Reject", "Do not reject"),
                  k         = factor(rep(1, rows_pmf), 1))
 }
 
-fisher_terminal_two_stage   <- function(n0, n1, e1, f1, e2, k) {
+fisher_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
   for (z in which(e1 == Inf)) {
     e1[z]              <- z
   }
   for (z in which(f1 == -Inf)) {
     f1[z]              <- -z
   }
-  for (z1 in 1:(n0[1] + n1[1] + 1)) {
+  for (z1 in 1:(nC[1] + nE[1] + 1)) {
     for (z2 in which(e2[z1, ] == Inf)) {
       e2[z1, z2]       <- z1 + z2
     }
   }
-  terminal             <- fisher_terminal_two_stage_cpp(n0, n1, e1, e2, f1, k)
-  terminal             <- tibble::tibble(x01       = as.integer(terminal[, 1]),
-                                         x11       = as.integer(terminal[, 2]),
-                                         x02       = as.integer(terminal[, 3]),
-                                         x12       = as.integer(terminal[, 4]),
-                                         m0        = as.integer(terminal[, 5]),
-                                         m1        = as.integer(terminal[, 6]),
+  terminal             <- fisher_terminal_two_stage_cpp(nC, nE, e1, e2, f1, k)
+  terminal             <- tibble::tibble(xC1       = as.integer(terminal[, 1]),
+                                         xE1       = as.integer(terminal[, 2]),
+                                         xC2       = as.integer(terminal[, 3]),
+                                         xE2       = as.integer(terminal[, 4]),
+                                         mC        = as.integer(terminal[, 5]),
+                                         mE        = as.integer(terminal[, 6]),
                                          z1        = as.integer(terminal[, 7]),
                                          z2        = as.integer(terminal[, 8]),
                                          statistic = as.integer(terminal[, 9]),
@@ -440,7 +440,7 @@ fisher_terminal_two_stage   <- function(n0, n1, e1, f1, e2, k) {
                                          k         = factor(terminal[, 11], k))
   if (2 %in% k) {
     rows               <- which(terminal$k == 1)
-    terminal$x02[rows] <- terminal$x12[rows] <- terminal$z2[rows] <- NA_integer_
+    terminal$xC2[rows] <- terminal$xE2[rows] <- terminal$z2[rows] <- NA_integer_
   }
-  dplyr::arrange(terminal, .data$k, .data$x01, .data$x11, .data$x02, .data$x12)
+  dplyr::arrange(terminal, .data$k, .data$xC1, .data$xE1, .data$xC2, .data$xE2)
 }

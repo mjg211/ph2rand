@@ -6,7 +6,7 @@ using namespace Rcpp;
 
 NumericMatrix dbinom_des_ess(NumericMatrix dbinom, double pi_typeI,
                              double pi_power, double delta, double pi_ess,
-                             int n0, int n1);
+                             int nC, int nE);
 
 #endif
 

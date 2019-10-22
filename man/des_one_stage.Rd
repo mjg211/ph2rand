@@ -2,12 +2,12 @@
 % Please edit documentation in R/des_one_stage.R
 \name{des_one_stage}
 \alias{des_one_stage}
-\title{Design a one-stage two-arm randomised clinical trial for a Bernoulli
-distributed primary outcome}
+\title{Design a one-stage two-arm randomised clinical trial for a binary primary
+outcome variable}
 \usage{
 des_one_stage(type = "binomial", alpha = 0.1, beta = 0.2,
-  delta = 0.2, ratio = 1, pi0_null = 0.1, pi0_alt = 0.1,
-  n0max = 100L, summary = F)
+  delta = 0.2, ratio = 1, Pi0 = 0.1, Pi1 = Pi0[1], nCmax = 50L,
+  summary = F)
 }
 \arguments{
 \item{type}{A \code{\link{character}} string indicating the chosen design
@@ -31,60 +31,60 @@ desired treatment effect. Defaults to \code{0.2}.}
 \ifelse{html}{\out{<b><i>r</i></b>}}{\eqn{\bold{r}}}, the allocation ratio to
 the experimental arm, relative to the control arm. Defaults to \code{1}.}
 
-\item{pi0_null}{A \code{\link{numeric}} \code{\link{vector}} indicating the
+\item{Pi0}{A \code{\link{numeric}} \code{\link{vector}} indicating the
 chosen values of the control arm response rate to allow for in the null
 hypothesis. Must either be of length one, indicating a point null, or of
 length two. Then, the elements indicate the range of possible response rates
-to allow for.}
+to allow for. Defaults to \code{0.1}.}
 
-\item{pi0_alt}{A \code{\link{numeric}} \code{\link{vector}} indicating the
+\item{Pi1}{A \code{\link{numeric}} \code{\link{vector}} indicating the
 chosen values of the control arm response rate to allow for in the
 alternative hypothesis. Must either be of length one, indicating a point
 null, or of length two. Then, the elements indicate the range of possible
-response rates to allow for.}
+response rates to allow for. Defaults to \code{Pi0[1]}.}
 
-\item{n0max}{A \code{\link{numeric}} indicating the maximum value of the
-sample size in the control arm to consider. Defaults to \code{100L}.}
+\item{nCmax}{A \code{\link{numeric}} indicating the maximum value of the
+sample size in the control arm to consider. Defaults to \code{50L}.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
 \code{F}.}
 }
 \value{
-A \code{\link{list}} of class \code{"ph2rand_des_one_stage"}
-containing each of the input parameters, allowing with the following
-elements:
+A \code{\link{list}} of additional class \code{"ph2rand_des"},
+containing each of the input parameters along with several additional
+variables including:
 \itemize{
 \item A selection of elements that prescribe the rejection boundaries of the
 optimal design. The names of these elements depends on the value of
 \code{type}.
 \item A \code{\link{tibble}} in the slot \code{$feasible} summarising the
 operating characteristics of the feasible designs.
-\item A \code{\link{numeric}} in the slot \code{$n0} giving the sample size
+\item A \code{\link{numeric}} in the slot \code{$nC} giving the sample size
 in the control arm for the optimal design.
-\item A \code{\link{numeric}} in the slot \code{$n1} giving the sample size
+\item A \code{\link{numeric}} in the slot \code{$nE} giving the sample size
 in the experimental arm for the optimal design.
 \item A \code{\link{tibble}} in the slot \code{$opchar} summarising the
 operating characteristics of the optimal design.
-\item ...
 }
 }
 \description{
-\code{des_one_stage()} determines one-stage two-arm randomised clinical trial
-designs assuming the primary outcome variable is Bernoulli distributed. It
-supports a flexible framework through which the scenarios to control the
-type-I and type-II error-rates for can be specified, and allows for design
-determination assuming a variety of test statistics. In all instances,
-\code{des_one_stage()} computes the relevant required sample size in each
-arm, and returns information on key operating characteristics.
+\code{des_one_stage} determines one-stage two-arm randomised clinical trial
+designs assuming the primary outcome variable is binary. More specifically,
+under the assumption that it is Bernoulli distributed. It supports a flexible
+framework through which the scenarios to control the type-I and type-II
+error-rates for can be specified, and allows for design determination
+assuming a variety of test statistics. In all instances, \code{des_one_stage}
+computes the relevant required sample size in each arm, and returns
+information on key operating characteristics.
 }
 \examples{
 # The design for the default parameters
 des       <- des_one_stage()
 # Controlling the type-I/II error-rates over a range of possible response
 rates
-des_range <- des_one_stage(pi0_null = c(0, 1),
-                           pi0_alt  = c(0, 0.8))
+des_range <- des_one_stage(Pi0 = c(0, 1),
+                           Pi1 = c(0, 0.8))
 }
 \seealso{
 \code{\link{des_two_stage}}, \code{\link{pmf}},

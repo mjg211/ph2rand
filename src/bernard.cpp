@@ -4,70 +4,71 @@
 #include "dbinom_des_two_stage.h"
 #include "dbinom_one_stage.h"
 #include "dbinom_two_stage.h"
+#include "message_cpp.h"
 #include "pi_power_finder.h"
 #include "pi_typeI_finder.h"
 using namespace Rcpp;
 using namespace std;
 
 // [[Rcpp::export]]
-NumericMatrix bernard_pmf_two_stage_cpp(NumericVector pi, NumericVector n0,
-                                        NumericVector n1, double e1, double f1,
+NumericMatrix bernard_pmf_two_stage_cpp(NumericVector pi, NumericVector nC,
+                                        NumericVector nE, double e1, double f1,
                                         double e2, NumericVector k) {
   
   int           counter                    = 0,
-                sum_n0                     = sum(n0),
-                sum_n1                     = sum(n1);
+                sum_nC                     = sum(nC),
+                sum_nE                     = sum(nE);
   double        fact,
-  statistic;
-  NumericMatrix x1_prob(n0[0] + 1, n1[0] + 1),
-  x2_poss(sum_n0 + 1, sum_n1+ 1),
-  x2_prob(sum_n0 + 1, sum_n1 + 1),
-  pmf((n0[0] + 1)*(n0[1] + 1)*(n1[0] + 1)*(n1[1] + 1), 8),
-  dbinom                     = dbinom_two_stage(pi, n0, n1);
-  for (int x01 = 0; x01 <= n0[0]; x01++) {
-    for (int x11 = 0; x11 <= n1[0]; x11++) {
-      x1_prob(x01, x11)                    = dbinom(0, x01)*dbinom(2, x11);
-      if (((x01 == 0) && (x11 == 0)) || ((x01 == n0[0]) && (x11 == n1[0]))) {
+                statistic;
+  NumericMatrix prob_x1(nC[0] + 1, nE[0] + 1),
+                poss_x2(sum_nC + 1, sum_nE + 1),
+                prob_x2(sum_nC + 1, sum_nE + 1),
+                pmf((nC[0] + 1)*(nC[1] + 1)*(nE[0] + 1)*(nE[1] + 1), 8),
+                dbinom                     = dbinom_two_stage(pi, nC, nE);
+  for (int xC1 = 0; xC1 <= nC[0]; xC1++) {
+    for (int xE1 = 0; xE1 <= nE[0]; xE1++) {
+      prob_x1(xC1, xE1)                    = dbinom(0, xC1)*dbinom(2, xE1);
+      if (((xC1 == 0) && (xE1 == 0)) || ((xC1 == nC[0]) && (xE1 == nE[0]))) {
         statistic                          = 0;
       }
       else {
-        fact                               = (x01 + x11)/(n0[0] + n1[0]);
+        fact                               = (xC1 + xE1)/(nC[0] + nE[0]);
         statistic                          =
-          (x11/n1[0] - x01/n0[0])/sqrt(fact*(1 - fact)*(1/n0[0] + 1/n1[0]));
+          (xE1/nE[0] - xC1/nC[0])/sqrt(fact*(1 - fact)*(1/nC[0] + 1/nE[0]));
       }
       if (((statistic >= e1) || (statistic <= f1)) && (k[0] == 1)) {
         pmf(counter, _)                    =
-          NumericVector::create(x01, x11, n0[0], n1[0], statistic,
-                                (statistic >= e1), 1, x1_prob(x01, x11));
+          NumericVector::create(xC1, xE1, nC[0], nE[0], statistic,
+                                (statistic >= e1), 1, prob_x1(xC1, xE1));
         counter++;
       }
       else if ((k[0] == 2) || (k[k.length() - 1] == 2)) {
-        for (int x02 = 0; x02 <= n0[1]; x02++) {
-          for (int x12 = 0; x12 <= n1[1]; x12++) {
-            x2_poss(x01 + x02, x11 + x12) += 1;
-            x2_prob(x01 + x02, x11 + x12) += x1_prob(x01, x11)*dbinom(1, x02)*
-              dbinom(3, x12);
+        for (int xC2 = 0; xC2 <= nC[1]; xC2++) {
+          for (int xE2 = 0; xE2 <= nE[1]; xE2++) {
+            poss_x2(xC1 + xC2, xE1 + xE2) += 1;
+            prob_x2(xC1 + xC2, xE1 + xE2) += prob_x1(xC1, xE1)*dbinom(1, xC2)*
+              dbinom(3, xE2);
           }
         }
       }
     }
   }
   if ((k[0] == 2) || (k[k.length() - 1] == 2)) {
-    for (int x0 = 0; x0 <= sum_n0; x0++) {
-      for (int x1 = 0; x1 <= sum_n1; x1++) {
-        if (x2_poss(x0, x1) > 0) {
-          if (((x0 == 0) && (x1 == 0)) || ((x0 == sum_n0) && (x1 == sum_n1))) {
+    for (int xC = 0; xC <= sum_nC; xC++) {
+      for (int xE = 0; xE <= sum_nE; xE++) {
+        if (poss_x2(xC, xE) > 0) {
+          if (((xC == 0) && (xE == 0)) || ((xC == sum_nC) && (xE == sum_nE))) {
             statistic                     = 0;
           }
           else {
-            fact                          = (x0 + x1)/(sum_n0 + sum_n1);
+            fact                          = (xC + xE)/(sum_nC + sum_nE);
             statistic                     =
-              (x1/sum_n1 - x0/sum_n0)/sqrt(fact*(1 - fact)*
-              (1/sum_n0 + 1/sum_n1));
+              (xE/sum_nE - xC/sum_nC)/sqrt(fact*(1 - fact)*
+              (1/sum_nC + 1/sum_nE));
           }
           pmf(counter, _)                 =
-            NumericVector::create(x0, x1, sum_n0, sum_n1, statistic,
-                                  (statistic >= e2), 2, x2_prob(x0, x1));
+            NumericVector::create(xC, xE, sum_nC, sum_nE, statistic,
+                                  (statistic >= e2), 2, prob_x2(xC, xE));
           counter++;
         }
       }
@@ -79,11 +80,11 @@ NumericMatrix bernard_pmf_two_stage_cpp(NumericVector pi, NumericVector n0,
 }
 
 // [[Rcpp::export]]
-double bernard_power_one_stage(NumericVector pi, int n0, int n1, double e,
+double bernard_power_one_stage(NumericVector pi, int nC, int nE, double e,
                                NumericMatrix poss_x, NumericMatrix poss_B) {
   double        power  = 0;
-  NumericMatrix dbinom = dbinom_one_stage(pi, n0, n1);
-  for (int o = 0; o <= (n0 + 1)*(n1 + 1) - 1; o++) {
+  NumericMatrix dbinom = dbinom_one_stage(pi, nC, nE);
+  for (int o = 0; o <= (nC + 1)*(nE + 1) - 1; o++) {
     if (poss_B(poss_x(o, 0), poss_x(o, 1)) >= e) {
       power           += dbinom(0, poss_x(o, 0))*dbinom(1, poss_x(o, 1));
     }
@@ -92,8 +93,8 @@ double bernard_power_one_stage(NumericVector pi, int n0, int n1, double e,
 }
 
 // [[Rcpp::export]]
-double bernard_power_two_stage(NumericVector pi, NumericVector n0,
-                               NumericVector n1, NumericVector e,
+double bernard_power_two_stage(NumericVector pi, NumericVector nC,
+                               NumericVector nE, NumericVector e,
                                NumericVector f, List poss_x, List poss_B) {
   double        prob_x1,
                 power   = 0;
@@ -101,15 +102,15 @@ double bernard_power_two_stage(NumericVector pi, NumericVector n0,
                 poss_B2 = poss_B[1],
                 poss_x1 = poss_x[0],
                 poss_x2 = poss_x[1],
-                dbinom  = dbinom_two_stage(pi, n0, n1);
-  if ((f[0] >= poss_B1(n0[0], 0)) && (e[0] <= poss_B1(0, n1[0]))) {
-    for (int o1 = 0; o1 <= (n0[0] + 1)*(n1[0] + 1) - 1; o1++) {
+                dbinom  = dbinom_two_stage(pi, nC, nE);
+  if ((f[0] >= poss_B1(nC[0], 0)) && (e[0] <= poss_B1(0, nE[0]))) {
+    for (int o1 = 0; o1 <= (nC[0] + 1)*(nE[0] + 1) - 1; o1++) {
       if (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) >= e[0]) {
         power          += dbinom(0, poss_x1(o1, 0))*dbinom(2, poss_x1(o1, 1));
       }
       else if (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) > f[0]) {
         prob_x1         = dbinom(0, poss_x1(o1, 0))*dbinom(2, poss_x1(o1, 1));
-        for (int o2 = 0; o2 <= (n0[1] + 1)*(n1[1] + 1) - 1; o2++) {
+        for (int o2 = 0; o2 <= (nC[1] + 1)*(nE[1] + 1) - 1; o2++) {
           if (poss_B2(poss_x1(o1, 0) + poss_x2(o1, 0),
                       poss_x1(o1, 1) + poss_x2(o1, 1)) >= e[1]) {
             power      += prob_x1*dbinom(1, poss_x2(o1, 0))*
@@ -119,11 +120,11 @@ double bernard_power_two_stage(NumericVector pi, NumericVector n0,
       }
     }
   }
-  else if (f[0] >= poss_B1(n0[0], 0)) {
-    for (int o1 = 0; o1 <= (n0[0] + 1)*(n1[0] + 1) - 1; o1++) {
+  else if (f[0] >= poss_B1(nC[0], 0)) {
+    for (int o1 = 0; o1 <= (nC[0] + 1)*(nE[0] + 1) - 1; o1++) {
       if (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) > f[0]) {
         prob_x1         = dbinom(0, poss_x1(o1, 0))*dbinom(2, poss_x1(o1, 1));
-        for (int o2 = 0; o2 <= (n0[1] + 1)*(n1[1] + 1) - 1; o2++) {
+        for (int o2 = 0; o2 <= (nC[1] + 1)*(nE[1] + 1) - 1; o2++) {
           if (poss_B2(poss_x1(o1, 0) + poss_x2(o1, 0),
                       poss_x1(o1, 1) + poss_x2(o1, 1)) >= e[1]) {
             power      += prob_x1*dbinom(1, poss_x2(o1, 0))*
@@ -134,13 +135,13 @@ double bernard_power_two_stage(NumericVector pi, NumericVector n0,
     }
   }
   else {
-    for (int o1 = 0; o1 <= (n0[0] + 1)*(n1[0] + 1) - 1; o1++) {
+    for (int o1 = 0; o1 <= (nC[0] + 1)*(nE[0] + 1) - 1; o1++) {
       if (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) >= e[0]) {
         power          += dbinom(0, poss_x1(o1, 0))*dbinom(2, poss_x1(o1, 1));
       }
       else {
         prob_x1         = dbinom(0, poss_x1(o1, 0))*dbinom(2, poss_x1(o1, 1));
-        for (int o2 = 0; o2 <= (n0[1] + 1)*(n1[1] + 1) - 1; o2++) {
+        for (int o2 = 0; o2 <= (nC[1] + 1)*(nE[1] + 1) - 1; o2++) {
           if (poss_B2(poss_x1(o1, 0) + poss_x2(o1, 0),
                       poss_x1(o1, 1) + poss_x2(o1, 1)) >= e[1]) {
             power      += prob_x1*dbinom(1, poss_x2(o1, 0))*
@@ -154,55 +155,55 @@ double bernard_power_two_stage(NumericVector pi, NumericVector n0,
 }
 
 // [[Rcpp::export]]
-NumericMatrix bernard_terminal_two_stage_cpp(NumericVector n0, NumericVector n1,
+NumericMatrix bernard_terminal_two_stage_cpp(NumericVector nC, NumericVector nE,
                                              double e1, double f1, double e2,
                                              NumericVector k) {
   
-  int           x0,
-                x1,
+  int           xC,
+                xE,
                 counter            = 0,
-                sum_n0             = sum(n0),
-                sum_n1             = sum(n1);
+                sum_nC             = sum(nC),
+                sum_nE             = sum(nE);
   double        fact,
                 statistic;
-  NumericMatrix x2_mat(sum_n0 + 1, sum_n1 + 1),
-                terminal((n0[0] + 1)*(n0[1] + 1)*(n1[0] + 1)*(n1[1] + 1), 7);
-  for (int x01 = 0; x01 <= n0[0]; x01++) {
-    for (int x11 = 0; x11 <= n1[0]; x11++) {
-      if (((x01 == 0) && (x11 == 0)) || ((x01 == n0[0]) && (x11 == n1[0]))) {
+  NumericMatrix x2_mat(sum_nC + 1, sum_nE + 1),
+                terminal((nC[0] + 1)*(nC[1] + 1)*(nE[0] + 1)*(nE[1] + 1), 7);
+  for (int xC1 = 0; xC1 <= nC[0]; xC1++) {
+    for (int xE1 = 0; xE1 <= nE[0]; xE1++) {
+      if (((xC1 == 0) && (xE1 == 0)) || ((xC1 == nC[0]) && (xE1 == nE[0]))) {
         statistic                  = 0;
       }
       else {
-        fact                       = (x01 + x11)/(n0[0] + n1[0]);
+        fact                       = (xC1 + xE1)/(nC[0] + nE[0]);
         statistic                  =
-          (x11/n1[0] - x01/n0[0])/sqrt(fact*(1 - fact)*(1/n0[0] + 1/n1[0]));
+          (xE1/nE[0] - xC1/nC[0])/sqrt(fact*(1 - fact)*(1/nC[0] + 1/nE[0]));
       }
       if (((statistic >= e1) || (statistic <= f1)) && (k[0] == 1)) {
         terminal(counter, _)       =
-          NumericVector::create(x01, x11, n0[0], n1[0], statistic,
+          NumericVector::create(xC1, xE1, nC[0], nE[0], statistic,
                                 (statistic >= e1), 1);
         counter++;
       }
       else if ((k[0] == 2) || (k[k.length() - 1] == 2)) {
-        for (int x02 = 0; x02 <= n0[1]; x02++) {
-          for (int x12 = 0; x12 <= n1[1]; x12++) {
-            x0                     = x01 + x02;
-            x1                     = x11 + x12;
-            if (x2_mat(x0, x1) == 0) {
-              if (((x0 == 0) && (x1 == 0)) ||
-                    ((x0 == sum_n0) && (x1 == sum_n1))) {
+        for (int xC2 = 0; xC2 <= nC[1]; xC2++) {
+          for (int xE2 = 0; xE2 <= nE[1]; xE2++) {
+            xC                     = xC1 + xC2;
+            xE                     = xE1 + xE2;
+            if (x2_mat(xC, xE) == 0) {
+              if (((xC == 0) && (xE == 0)) ||
+                    ((xC == sum_nC) && (xE == sum_nE))) {
                 statistic          = 0;
               }
               else {
-                fact               = (x0 + x1)/(sum_n0 + sum_n1);
+                fact               = (xC + xE)/(sum_nC + sum_nE);
                 statistic          =
-                  (x1/sum_n1 - x0/sum_n0)/
-                    sqrt(fact*(1 - fact)*(1/sum_n0 + 1/sum_n1));
+                  (xE/sum_nE - xC/sum_nC)/
+                    sqrt(fact*(1 - fact)*(1/sum_nC + 1/sum_nE));
               }
               terminal(counter, _) =
-                NumericVector::create(x0, x1, sum_n0, sum_n1, statistic,
+                NumericVector::create(xC, xE, sum_nC, sum_nE, statistic,
                                       (statistic >= e2), 1);
-              x2_mat(x0, x1)      += 1;
+              x2_mat(xC, xE)      += 1;
               counter++;
             }
           }
@@ -216,24 +217,24 @@ NumericMatrix bernard_terminal_two_stage_cpp(NumericVector n0, NumericVector n1,
 }
 
 // [[Rcpp::export]]
-NumericVector bernard_max_typeI(int J, double alpha, NumericVector n0,
-                                NumericVector n1, NumericVector e,
+NumericVector bernard_max_typeI(int J, double alpha, NumericVector nC,
+                                NumericVector nE, NumericVector e,
                                 NumericVector f, List poss_x, List poss_B,
-                                NumericVector pi_null, int check) {
+                                NumericVector Pi0, int check) {
   int           iter    = 0;
   double        f_v,
                 golden  = 0.5*(3 - pow(5, 0.5)),
-                x_left  = pi_null[0],
-                x_right = pi_null[1],
+                x_left  = Pi0[0],
+                x_right = Pi0[1],
                 v       = x_left + golden*(x_right - x_left);
   if (J == 1) {
     f_v                 =
-      -bernard_power_one_stage(NumericVector::create(v, v), n0[0], n1[0], e[0],
+      -bernard_power_one_stage(NumericVector::create(v, v), nC[0], nE[0], e[0],
                                poss_x[0], poss_B[0]);
   }
   else {
     f_v                 =
-      -bernard_power_two_stage(NumericVector::create(v, v), n0, n1, e, f,
+      -bernard_power_two_stage(NumericVector::create(v, v), nC, nE, e, f,
                                poss_x, poss_B);
   }
   NumericVector output(4);
@@ -242,15 +243,15 @@ NumericVector bernard_max_typeI(int J, double alpha, NumericVector n0,
     return output;
   }
   double f_z,
-         z              = pi_typeI_finder(0, pi_null);
+         z              = pi_typeI_finder(0, Pi0);
   if (J == 1) {
     f_z                 =
-      -bernard_power_one_stage(NumericVector::create(z, z), n0[0], n1[0], e[0],
+      -bernard_power_one_stage(NumericVector::create(z, z), nC[0], nE[0], e[0],
                                poss_x[0], poss_B[0]);
   }
   else {
     f_z                 =
-      -bernard_power_two_stage(NumericVector::create(z, z), n0, n1, e, f,
+      -bernard_power_two_stage(NumericVector::create(z, z), nC, nE, e, f,
                                poss_x, poss_B);
   }
   if ((-f_z > alpha) && (check == 1)) {
@@ -310,12 +311,12 @@ NumericVector bernard_max_typeI(int J, double alpha, NumericVector n0,
     }
     if (J == 1) {
       f_u               =
-        -bernard_power_one_stage(NumericVector::create(u, u), n0[0], n1[0],
+        -bernard_power_one_stage(NumericVector::create(u, u), nC[0], nE[0],
                                  e[0], poss_x[0], poss_B[0]);
     }
     else {
       f_u               =
-        -bernard_power_two_stage(NumericVector::create(u, u), n0, n1, e, f,
+        -bernard_power_two_stage(NumericVector::create(u, u), nC, nE, e, f,
                                  poss_x, poss_B);
     }
     if ((-f_u > alpha) && (check == 1)) {
@@ -364,23 +365,23 @@ NumericVector bernard_max_typeI(int J, double alpha, NumericVector n0,
 
 // [[Rcpp::export]]
 NumericVector bernard_min_power(int J, double beta, double delta,
-                                NumericVector n0, NumericVector n1,
+                                NumericVector nC, NumericVector nE,
                                 NumericVector e, NumericVector f, List poss_x,
-                                List poss_B, NumericVector pi_alt, int check) {
+                                List poss_B, NumericVector Pi1, int check) {
   int           iter    = 0;
   double        f_v,
                 golden  = 0.5*(3 - pow(5, 0.5)),
-                x_left  = pi_alt[0],
-                x_right = pi_alt[1],
+                x_left  = Pi1[0],
+                x_right = Pi1[1],
                 v       = x_left + golden*(x_right - x_left);
   if (J == 1) {
     f_v                 =
-      bernard_power_one_stage(NumericVector::create(v, v + delta), n0[0],
-                              n1[0], e[0], poss_x[0], poss_B[0]);
+      bernard_power_one_stage(NumericVector::create(v, v + delta), nC[0],
+                              nE[0], e[0], poss_x[0], poss_B[0]);
   }
   else {
     f_v                 =
-      bernard_power_two_stage(NumericVector::create(v, v + delta), n0, n1, e,
+      bernard_power_two_stage(NumericVector::create(v, v + delta), nC, nE, e,
                               f, poss_x, poss_B);
   }
   NumericVector output(4);
@@ -389,15 +390,15 @@ NumericVector bernard_min_power(int J, double beta, double delta,
     return output;
   }
   double f_z,
-         z              = pi_power_finder(0, pi_alt, delta);
+         z              = pi_power_finder(0, Pi1, delta);
   if (J == 1) {
     f_z                 =
-      bernard_power_one_stage(NumericVector::create(z, z + delta), n0[0],
-                              n1[0], e[0], poss_x[0], poss_B[0]);
+      bernard_power_one_stage(NumericVector::create(z, z + delta), nC[0],
+                              nE[0], e[0], poss_x[0], poss_B[0]);
   }
   else {
     f_z                 =
-      bernard_power_two_stage(NumericVector::create(z, z + delta), n0, n1, e,
+      bernard_power_two_stage(NumericVector::create(z, z + delta), nC, nE, e,
                               f, poss_x, poss_B);
   }
   if ((f_z < 1 - beta) && (check == 1)) {
@@ -457,12 +458,12 @@ NumericVector bernard_min_power(int J, double beta, double delta,
     }
     if (J == 1) {
       f_u               =
-        bernard_power_one_stage(NumericVector::create(u, u + delta), n0[0],
-                                n1[0], e[0], poss_x[0], poss_B[0]);
+        bernard_power_one_stage(NumericVector::create(u, u + delta), nC[0],
+                                nE[0], e[0], poss_x[0], poss_B[0]);
     }
     else {
       f_u               =
-        bernard_power_two_stage(NumericVector::create(u, u + delta), n0, n1, e,
+        bernard_power_two_stage(NumericVector::create(u, u + delta), nC, nE, e,
                                 f, poss_x, poss_B);
     }
     if ((f_u < 1 - beta) && (check == 1)) {
@@ -510,49 +511,49 @@ NumericVector bernard_min_power(int J, double beta, double delta,
 }
 
 // [[Rcpp::export]]
-double bernard_ess_two_stage(NumericVector pi, NumericVector n0,
-                             NumericVector n1, double e1, double f1) {
+double bernard_ess_two_stage(NumericVector pi, NumericVector nC,
+                             NumericVector nE, double e1, double f1) {
   double        statistic,
   fact,
   S1      = 0;
-  NumericMatrix dbinom1 = dbinom_one_stage(pi, n0[0], n1[0]);
-  for (int x01 = 0; x01 <= n0[0]; x01++) {
-    for (int x11 = 0; x11 <= n1[0]; x11++) {
-      if (((x01 == 0) && (x11 == 0)) || ((x01 == n0[0]) && (x11 == n1[0]))) {
+  NumericMatrix dbinom1 = dbinom_one_stage(pi, nC[0], nE[0]);
+  for (int xC1 = 0; xC1 <= nC[0]; xC1++) {
+    for (int xE1 = 0; xE1 <= nE[0]; xE1++) {
+      if (((xC1 == 0) && (xE1 == 0)) || ((xC1 == nC[0]) && (xE1 == nE[0]))) {
         statistic       = 0;
       }
       else {
-        fact            = (x01 + x11)/(n0[0] + n1[0]);
-        statistic       = (x11/n1[0] - x01/n0[0])/
-          sqrt(fact*(1 - fact)*(1/n0[0] + 1/n1[0]));
+        fact            = (xC1 + xE1)/(nC[0] + nE[0]);
+        statistic       = (xE1/nE[0] - xC1/nC[0])/
+          sqrt(fact*(1 - fact)*(1/nC[0] + 1/nE[0]));
       }
       if ((statistic <= f1) | (statistic >= e1)) {
-        S1             += dbinom1(0, x01)*dbinom1(1, x11);
+        S1             += dbinom1(0, xC1)*dbinom1(1, xE1);
       }
     }
   }
-  double ess           = n0[0] + n1[0] + (1 - S1)*(n0[1] + n1[1]);
+  double ess           = nC[0] + nE[0] + (1 - S1)*(nC[1] + nE[1]);
   return ess;
 }
 
 // [[Rcpp::export]]
-double bernard_des_ess_two_stage(NumericVector pi, NumericVector n0,
-                                 NumericVector n1, double e1, double f1,
+double bernard_des_ess_two_stage(NumericVector pi, NumericVector nC,
+                                 NumericVector nE, double e1, double f1,
                                  NumericMatrix poss_x, NumericMatrix poss_B) {
   double        S1      = 0;
-  NumericMatrix dbinom1 = dbinom_one_stage(pi, n0[0], n1[0]);
-  for (int o1 = 0; o1 <= (n0[0] + 1)*(n1[0] + 1) - 1; o1++) {
+  NumericMatrix dbinom1 = dbinom_one_stage(pi, nC[0], nE[0]);
+  for (int o1 = 0; o1 <= (nC[0] + 1)*(nE[0] + 1) - 1; o1++) {
     if ((poss_B(poss_x(o1, 0), poss_x(o1, 1)) <= f1) ||
           (poss_B(poss_x(o1, 0), poss_x(o1, 1)) >= e1)) {
       S1               += dbinom1(0, poss_x(o1, 0))*dbinom1(1, poss_x(o1, 1));
     }
   }
-  double ess            = n0[0] + n1[0] + (1 - S1)*(n0[1] + n1[1]);
+  double ess            = nC[0] + nE[0] + (1 - S1)*(nC[1] + nE[1]);
   return ess;
 }
 
 // [[Rcpp::export]]
-NumericVector bernard_max_ess_1d_two_stage(NumericVector n0, NumericVector n1,
+NumericVector bernard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE,
                                            double e1, double f1,
                                            NumericMatrix poss_x1,
                                            NumericMatrix poss_B1) {
@@ -565,12 +566,12 @@ NumericVector bernard_max_ess_1d_two_stage(NumericVector n0, NumericVector n1,
                 x_right = 1,
                 v       = x_left + golden*(x_right - x_left),
                 f_v     =
-                  -bernard_des_ess_two_stage(NumericVector::create(v, v), n0,
-                                             n1, e1, f1, poss_x1, poss_B1),
+                  -bernard_des_ess_two_stage(NumericVector::create(v, v), nC,
+                                             nE, e1, f1, poss_x1, poss_B1),
                 z       = 0.5,
                 f_z     =
-                  -bernard_des_ess_two_stage(NumericVector::create(z, z), n0,
-                                             n1, e1, f1, poss_x1, poss_B1),
+                  -bernard_des_ess_two_stage(NumericVector::create(z, z), nC,
+                                             nE, e1, f1, poss_x1, poss_B1),
                 w       = v,
                 f_w     = f_v,
                 w_left  = z - x_left,
@@ -621,7 +622,7 @@ NumericVector bernard_max_ess_1d_two_stage(NumericVector n0, NumericVector n1,
       u                 = z + (d > 0 ? tol : -tol);
     }
     f_u                 =
-      -bernard_des_ess_two_stage(NumericVector::create(u, u), n0, n1, e1, f1,
+      -bernard_des_ess_two_stage(NumericVector::create(u, u), nC, nE, e1, f1,
                                  poss_x1, poss_B1);
     if (f_u <= f_z) {
       if (u < z) {
@@ -665,39 +666,39 @@ NumericVector bernard_max_ess_1d_two_stage(NumericVector n0, NumericVector n1,
 
 // [[Rcpp::export]]
 NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
-                                        NumericVector poss_n0,
-                                        NumericVector poss_n1, List poss_x,
+                                        NumericVector poss_nC,
+                                        NumericVector poss_nE, List poss_x,
                                         List poss_B, List unique_B,
-                                        int point_null, NumericVector pi_null,
-                                        int point_alt, NumericVector pi_alt,
+                                        int point_null, NumericVector Pi0,
+                                        int point_alt, NumericVector Pi1,
                                         int summary) {
-  int           n0,
-                n1,
+  int           nC,
+                nE,
                 counter      = 0,
                 interrupt    = 0,
-                n0max        = max(poss_n0);
-  double        e,
-                f,
+                nCmax        = max(poss_nC);
+  double        e1,
+                f1,
                 power,
                 typeI,
-                pi_power     = pi_power_finder(point_alt, pi_alt, delta),
-                pi_typeI     = pi_typeI_finder(point_null, pi_null);
+                pi_power     = pi_power_finder(point_alt, Pi1, delta),
+                pi_typeI     = pi_typeI_finder(point_null, Pi0);
   NumericMatrix feasible_designs(10000000, 6);
-  for (int n = 1; n <= poss_n0.length(); n++) {
-    n0                       = poss_n0[n - 1];
-    n1                       = poss_n1[n - 1];
-    if ((summary == 1) && (n0%10 == 0)) {
-      Rcpp::Rcout << "  currently analysing designs with n0 = " << n0 <<
-        std::endl;
+  for (int n = 1; n <= poss_nC.length(); n++) {
+    nC                       = poss_nC[n - 1];
+    nE                       = poss_nE[n - 1];
+    if ((summary == 1) && (nC%10 == 0)) {
+      string str = std::to_string(nC);
+      message_cpp("currently analysing designs with nC = ", str);
     }
-    NumericVector unique_B_n = unique_B[n0 + n0max*(n1 - 1) - 1];
-    NumericMatrix prob_x_power(n0 + 1, n1 + 1),
-                  prob_x_typeI(n0 + 1, n1 + 1),
-                  poss_B_n   = poss_B[n0 + n0max*(n1 - 1) - 1],
-                  poss_x_n   = poss_x[n0 + n0max*(n1 - 1) - 1],
+    NumericVector unique_B_n = unique_B[nC + nCmax*(nE - 1) - 1];
+    NumericMatrix prob_x_power(nC + 1, nE + 1),
+                  prob_x_typeI(nC + 1, nE + 1),
+                  poss_B_n   = poss_B[nC + nCmax*(nE - 1) - 1],
+                  poss_x_n   = poss_x[nC + nCmax*(nE - 1) - 1],
     dbinom                   = dbinom_des_one_stage(pi_typeI, pi_power, delta,
-                                                    n0, n1);
-    for (int o = 0; o <= (n0 + 1)*(n1 + 1) - 1; o++) {
+                                                    nC, nE);
+    for (int o = 0; o <= (nC + 1)*(nE + 1) - 1; o++) {
       prob_x_power(poss_x_n(o, 0), poss_x_n(o, 1)) =
         dbinom(1, poss_x_n(o, 0))*dbinom(3, poss_x_n(o, 1));
       prob_x_typeI(poss_x_n(o, 0), poss_x_n(o, 1)) =
@@ -708,12 +709,12 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
       if (interrupt % 1000 == 0) {
         Rcpp::checkUserInterrupt();
       }
-      e                      = unique_B_n[ei];
-      f                      = e;
+      e1                     = unique_B_n[ei];
+      f1                     = e1;
       power                  = 0;
       typeI                  = 0;
-      for (int o = 0; o <= (n0 + 1)*(n1 + 1) - 1; o++) {
-        if (poss_B_n(poss_x_n(o, 0), poss_x_n(o, 1)) >= e) {
+      for (int o = 0; o <= (nC + 1)*(nE + 1) - 1; o++) {
+        if (poss_B_n(poss_x_n(o, 0), poss_x_n(o, 1)) >= e1) {
           power             += prob_x_power(poss_x_n(o, 0), poss_x_n(o, 1));
           typeI             += prob_x_typeI(poss_x_n(o, 0), poss_x_n(o, 1));
         }
@@ -725,53 +726,53 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
         if (point_null == 1) {
           if (point_alt == 1) {
             feasible_designs(counter, _)   =
-              NumericVector::create(n0, e, pi_typeI, typeI, pi_power, power);
+              NumericVector::create(nC, e1, pi_typeI, typeI, pi_power, power);
             counter++;
           }
           else {
             NumericVector min_power        =
-              bernard_min_power(1, beta, delta, NumericVector::create(n0),
-                                NumericVector::create(n1),
-                                NumericVector::create(e),
-                                NumericVector::create(f),
+              bernard_min_power(1, beta, delta, NumericVector::create(nC),
+                                NumericVector::create(nE),
+                                NumericVector::create(e1),
+                                NumericVector::create(f1),
                                 List::create(poss_x_n), List::create(poss_B_n),
-                                pi_alt, 1);
+                                Pi1, 1);
             if (min_power[1] < 1 - beta) {
               break;
             }
             feasible_designs(counter, _)   =
-              NumericVector::create(n0, e, pi_typeI, typeI, min_power[0],
+              NumericVector::create(nC, e1, pi_typeI, typeI, min_power[0],
                                     min_power[1]);
             counter++;
           }
         }
         else {
           NumericVector max_typeI          =
-            bernard_max_typeI(1, alpha, NumericVector::create(n0),
-                              NumericVector::create(n1),
-                              NumericVector::create(e),
-                              NumericVector::create(f), List::create(poss_x_n),
-                              List::create(poss_B_n), pi_null, 1);
+            bernard_max_typeI(1, alpha, NumericVector::create(nC),
+                              NumericVector::create(nE),
+                              NumericVector::create(e1),
+                              NumericVector::create(f1), List::create(poss_x_n),
+                              List::create(poss_B_n), Pi0, 1);
           if (max_typeI[1] <= alpha) {
             if (point_alt == 1) {
               feasible_designs(counter, _) =
-                NumericVector::create(n0, e, max_typeI[0], max_typeI[1],
+                NumericVector::create(nC, e1, max_typeI[0], max_typeI[1],
                                       pi_power, power);
               counter++;
             }
             else {
               NumericVector min_power      =
-                bernard_min_power(1, beta, delta, NumericVector::create(n0),
-                                  NumericVector::create(n1),
-                                  NumericVector::create(e),
-                                  NumericVector::create(f),
+                bernard_min_power(1, beta, delta, NumericVector::create(nC),
+                                  NumericVector::create(nE),
+                                  NumericVector::create(e1),
+                                  NumericVector::create(f1),
                                   List::create(poss_x_n),
-                                  List::create(poss_B_n), pi_alt, 1);
+                                  List::create(poss_B_n), Pi1, 1);
               if (min_power[1] < 1 - beta) {
                 break;
               }
               feasible_designs(counter, _) =
-                NumericVector::create(n0, e, max_typeI[0], max_typeI[1],
+                NumericVector::create(nC, e1, max_typeI[0], max_typeI[1],
                                       min_power[0], min_power[1]);
               counter++;
             }
@@ -788,22 +789,22 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
 
 // [[Rcpp::export]]
 NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
-                                        NumericVector poss_n0,
-                                        NumericVector poss_n1, List poss_x,
+                                        NumericVector poss_nC,
+                                        NumericVector poss_nE, List poss_x,
                                         List poss_B, List unique_B,
-                                        int point_null, NumericVector pi_null,
-                                        int point_alt, NumericVector pi_alt,
+                                        int point_null, NumericVector Pi0,
+                                        int point_alt, NumericVector Pi1,
                                         int equal, int efficacy, int futility,
                                         double pi_ess, int summary) {
   int           len_B1,
                 len_B2,
-                n01,
-                n11,
-                n02,
-                n12,
+                nC1,
+                nE1,
+                nC2,
+                nE2,
                 counter                 = 0,
                 interrupt               = 0,
-                n0max                   = max(poss_n0);
+                nCmax                   = max(poss_nC);
   double        e1,
                 e2,
                 f1,
@@ -815,36 +816,40 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                 typeI1,
                 typeI2,
                 typeII1,
-                pi_power                = pi_power_finder(point_alt, pi_alt,
+                pi_power                = pi_power_finder(point_alt, Pi1,
                                                           delta),
-                pi_typeI                = pi_typeI_finder(point_null, pi_null);
+                pi_typeI                = pi_typeI_finder(point_null, Pi0);
   NumericMatrix dbinom_ess,
                 dbinom1,
                 dbinom2,
                 feasible_designs(10000000, 11);
-  for (int n1 = 0; n1 <= poss_n0.length() - 1; n1++) {
-    n01                                 = poss_n0[n1];
-    n11                                 = poss_n1[n1];
-    if (((equal != 1) && (n01 < n0max)) ||
-          ((equal == 1) && (n01 <= 0.5*n0max))) {
-      if ((summary == 1) && (n01%10 == 0)) {
-        Rcpp::Rcout << "  currently analysing designs with n01 = " << n01 <<
-          std::endl;
+  for (int n1 = 0; n1 <= poss_nC.length() - 1; n1++) {
+    nC1                                 = poss_nC[n1];
+    nE1                                 = poss_nE[n1];
+    Rcout << "The value is A = " << n1 << std::endl;
+    if (((equal != 1) && (nC1 < nCmax)) ||
+          ((equal == 1) && (nC1 <= 0.5*nCmax))) {
+      if ((summary == 1) && (nC1%10 == 0)) {
+        string str = std::to_string(nC1);
+        message_cpp("currently analysing designs with nC1 = ", str);
       }
-      NumericVector unique_B1           = unique_B[n01 + n0max*(n11 - 1) - 1];
+      Rcout << "The value is B = " << n1 << std::endl;
+      NumericVector unique_B1           = unique_B[nC1 + nCmax*(nE1 - 1) - 1];
       len_B1                            = unique_B1.length();
-      NumericMatrix prob_x1_ess0(n01 + 1, n11 + 1),
-                    prob_x1_ess1(n01 + 1, n11 + 1),
-                    prob_x1_power(n01 + 1, n11 + 1),
-                    prob_x1_typeI(n01 + 1, n11 + 1),
-                    poss_B1             = poss_B[n01 + n0max*(n11 - 1) - 1],
-                    poss_x1             = poss_x[n01 + n0max*(n11 - 1) - 1],
+      Rcout << "The value is C = " << len_B1 << std::endl;
+      NumericMatrix prob_x1_ess0(nC1 + 1, nE1 + 1),
+                    prob_x1_ess1(nC1 + 1, nE1 + 1),
+                    prob_x1_power(nC1 + 1, nE1 + 1),
+                    prob_x1_typeI(nC1 + 1, nE1 + 1),
+                    poss_B1             = poss_B[nC1 + nCmax*(nE1 - 1) - 1],
+                    poss_x1             = poss_x[nC1 + nCmax*(nE1 - 1) - 1],
                     dbinom1             =
-                      dbinom_des_one_stage(pi_typeI, pi_power, delta, n01, n11),
+                      dbinom_des_one_stage(pi_typeI, pi_power, delta, nC1, nE1),
                     dbinom_ess          =
                       dbinom_des_ess(dbinom1, pi_typeI, pi_power, delta, pi_ess,
-                                     n01, n11);
-      for (int o1 = 0; o1 <= (n01 + 1)*(n11 + 1) - 1; o1++) {
+                                     nC1, nE1);
+      Rcout << "The value is D = " << len_B1 << std::endl;
+      for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
         prob_x1_ess0(poss_x1(o1, 0), poss_x1(o1, 1))  =
           dbinom_ess(0, poss_x1(o1, 0))*dbinom_ess(1, poss_x1(o1, 1));
         prob_x1_ess1(poss_x1(o1, 0), poss_x1(o1, 1))  =
@@ -854,26 +859,30 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
         prob_x1_typeI(poss_x1(o1, 0), poss_x1(o1, 1)) =
           dbinom1(0, poss_x1(o1, 0))*dbinom1(2, poss_x1(o1, 1));
       }
+      Rcout << "The value is E = " << len_B1 << std::endl;
       for (int fi1 = (futility == 1 ? 1 : 0);
            fi1 <= (futility == 1 ?
                      (efficacy == 1 ? len_B1 - 4 : len_B1 - 3) : 0); fi1++) {
         f1                              = unique_B1[fi1];
+        Rcout << "The value is F = " << f1 << std::endl;
         typeII1                         = 0;
-        for (int o1 = 0; o1 <= (n01 + 1)*(n11 + 1) - 1; o1++) {
+        for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
           if (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) <= f1) {
             typeII1                    += prob_x1_power(poss_x1(o1, 0),
                                                         poss_x1(o1, 1));
           }
         }
+        Rcout << "The value is G = " << f1 << std::endl;
         if (typeII1 > beta) {
           break;
         }
+        Rcout << "The value is H = " << f1 << std::endl;
         for (int ei1 = (efficacy == 1 ? fi1 + 2 : len_B1 - 1);
              ei1 <= (efficacy == 1 ? len_B1 - 2 : len_B1 - 1); ei1++) {
           e1                            = unique_B1[ei1];
           power1                        = 0;
           typeI1                        = 0;
-          for (int o1 = 0; o1 <= (n01 + 1)*(n11 + 1) - 1; o1++) {
+          for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
             if (poss_B1(poss_x1(o1, 0), poss_B1(o1, 1)) >= e1) {
               power1                   += prob_x1_power(poss_x1(o1, 0),
                                                         poss_x1(o1, 1));
@@ -881,10 +890,11 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                                                         poss_x1(o1, 1));
             }
           }
+          Rcout << "The value is I = " << f1 << std::endl;
           if (typeI1 < alpha) {
             S1_ess0                     = 0;
             S1_ess1                     = 0;
-            for (int o1 = 0; o1 <= (n01 + 1)*(n11 + 1) - 1; o1++) {
+            for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
               if ((poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) >= e1) ||
                     (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) <= f1)) {
                 S1_ess0                += prob_x1_ess0(poss_x1(o1, 0),
@@ -893,26 +903,30 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                                                        poss_x1(o1, 1));
               }
             }
+            Rcout << "The value is J = " << f1 << std::endl;
             for (int n2 = (equal == 1 ? n1 : 0);
-                 n2 <= (equal == 1 ? n1 : poss_n0.length() - 1); n2++) {
-              n02                       = poss_n0[n2];
-              if (n01 + n02 <= n0max) {
-                n12                     = poss_n1[n2];
-                NumericVector unique_B2 = unique_B[n01 + n02 +
-                  n0max*(n11 + n12 - 1) - 1];
+                 n2 <= (equal == 1 ? n1 : poss_nC.length() - 1); n2++) {
+              nC2                       = poss_nC[n2];
+              Rcout << "The value is K = " << nC2 << std::endl;
+              if (nC1 + nC2 <= nCmax) {
+                nE2                     = poss_nE[n2];
+                Rcout << "The value is nE2 = " << nE2 << std::endl;
+                NumericVector unique_B2 = unique_B[nC1 + nC2 +
+                  nCmax*(nE1 + nE2 - 1) - 1];
                 len_B2                  = unique_B2.length();
-                NumericMatrix prob_x_power(n01 + n02 + 1, n11 + n12 + 1),
-                              prob_x_typeI(n01 + n02 + 1, n11 + n12 + 1),
-                              poss_B2   = poss_B[n01 + n02 +
-                                                   n0max*(n11 + n12 - 1) - 1],
-                              poss_x2   = poss_x[n02 + n0max*(n12 - 1) - 1];
+                NumericMatrix prob_x_power(nC1 + nC2 + 1, nE1 + nE2 + 1),
+                              prob_x_typeI(nC1 + nC2 + 1, nE1 + nE2 + 1),
+                              poss_B2   = poss_B[nC1 + nC2 +
+                                                   nCmax*(nE1 + nE2 - 1) - 1],
+                              poss_x2   = poss_x[nC2 + nCmax*(nE2 - 1) - 1];
                 dbinom2                 =
-                  dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta, n01,
-                                       n02, n11, n12);
-                for (int o1 = 0; o1 <= (n01 + 1)*(n11 + 1) - 1; o1++) {
+                  dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta, nC1,
+                                       nC2, nE1, nE2);
+                Rcout << "The value is L = " << f1 << std::endl;
+                for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
                   if ((poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) > f1) &&
                       (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) < e1)) {
-                    for (int o2 = 0; o2 <= (n02 + 1)*(n12 + 1) - 1; o2++) {
+                    for (int o2 = 0; o2 <= (nC2 + 1)*(nE2 + 1) - 1; o2++) {
                       prob_x_power(poss_x1(o1, 0) + poss_x2(o2, 0),
                                    poss_x1(o1, 1) + poss_x2(o2, 1)) +=
                         prob_x1_power(poss_x1(o1, 0), poss_x1(o1, 1))*
@@ -924,6 +938,7 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                     }
                   }
                 }
+                Rcout << "The value is M = " << f1 << std::endl;
                 for (int ei2 = 1; ei2 <= len_B2; ei2++) {
                   interrupt++;
                   if (interrupt % 1000 == 0) {
@@ -933,100 +948,113 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                   f2                    = e2;
                   power2                = 0;
                   typeI2                = 0;
-                  for (int x0 = 0; x0 <= n01 + n02; x0++) {
-                    for (int x1 = n11 + n12; x1 >= 0; x1--) {
-                      if (poss_B2(x0, x1) >= e2) {
-                        power2         += prob_x_power(x0, x1);
-                        typeI2         += prob_x_typeI(x0, x1);
+                  Rcout << "The value is f1 = " << f1 << std::endl;
+                  Rcout << "The value is e1 = " << e1 << std::endl;
+                  Rcout << "The value is e2 = " << e2 << std::endl;
+                  Rcout << "The value is nC1 = " << nC1 << std::endl;
+                  Rcout << "The value is nC2 = " << nC2 << std::endl;
+                  Rcout << "The value is nE1 = " << nE1 << std::endl;
+                  Rcout << "The value is nE2 = " << nE2 << std::endl;
+                  for (int xC = 0; xC <= nC1 + nC2; xC++) {
+                    for (int xE = nE1 + nE2; xE >= 0; xE--) {
+                      if (poss_B2(xC, xE) >= e2) {
+                        power2         += prob_x_power(xC, xE);
+                        typeI2         += prob_x_typeI(xC, xE);
                       }
                       else {
                         break;
                       }
                     }
                   }
+                  Rcout << "The value is power1 = " << power1 << std::endl;
+                  Rcout << "The value is power2 = " << power2 << std::endl;
+                  Rcout << "The value is typeI1 = " << typeI1 << std::endl;
+                  Rcout << "The value is typeI2 = " << typeI2 << std::endl;
                   if (power1 + power2 < 1 - beta) {
                     break;
                   }
                   if (typeI1 + typeI2 <= alpha) {
                     if (point_null == 1) {
                       if (point_alt == 1) {
+                        Rcout << "The value is P = " << f1 << std::endl;
                         feasible_designs(counter, _)   =
-                          NumericVector::create(n01, n02, e1, e2, f1, pi_typeI,
+                          NumericVector::create(nC1, nC2, e1, e2, f1, pi_typeI,
                                                 typeI1 + typeI2, pi_power,
                                                 power1 + power2,
-                                                n01 + n11 +
-                                                  (1 - S1_ess0)*(n02 + n12),
-                                                n01 + n11 +
-                                                  (1 - S1_ess1)*(n02 + n12));
+                                                nC1 + nE1 +
+                                                  (1 - S1_ess0)*(nC2 + nE2),
+                                                nC1 + nE1 +
+                                                  (1 - S1_ess1)*(nC2 + nE2));
                         counter++;
+                        Rcout << "The value is Q = " << f1 << std::endl;
                       }
                       else {
                         NumericVector min_power        =
                           bernard_min_power(2, beta, delta,
-                                            NumericVector::create(n01, n02),
-                                            NumericVector::create(n11, n12),
+                                            NumericVector::create(nC1, nC2),
+                                            NumericVector::create(nE1, nE2),
                                             NumericVector::create(e1, e2),
                                             NumericVector::create(f1, f2),
                                             List::create(poss_x1, poss_x2),
                                             List::create(poss_B1, poss_B2),
-                                            pi_alt, 1);
+                                            Pi1, 1);
                         if (min_power[1] < 1 - beta) {
                           break;
                         }
                         feasible_designs(counter, _)   =
-                          NumericVector::create(n01, n02, e1, e2, f1, pi_typeI,
+                          NumericVector::create(nC1, nC2, e1, e2, f1, pi_typeI,
                                                 typeI1 + typeI2, min_power[0],
                                                 min_power[1],
-                                                n01 + n11 +
-                                                  (1 - S1_ess0)*(n02 + n12),
-                                                n01 + n11 +
-                                                  (1 - S1_ess1)*(n02 + n12));
+                                                nC1 + nE1 +
+                                                  (1 - S1_ess0)*(nC2 + nE2),
+                                                nC1 + nE1 +
+                                                  (1 - S1_ess1)*(nC2 + nE2));
                         counter++;
                       }
                     }
                     else {
                       NumericVector max_typeI          =
                         bernard_max_typeI(2, alpha,
-                                          NumericVector::create(n01, n02),
-                                          NumericVector::create(n11, n12),
+                                          NumericVector::create(nC1, nC2),
+                                          NumericVector::create(nE1, nE2),
                                           NumericVector::create(e1, e2),
                                           NumericVector::create(f1, f2),
                                           List::create(poss_x1, poss_x2),
                                           List::create(poss_B1, poss_B2),
-                                          pi_null, 1);
+                                          Pi0, 1);
                       if (max_typeI[1] <= alpha) {
                         if (point_alt == 1) {
                           feasible_designs(counter, _) =
-                            NumericVector::create(n01, n02, e1, e2, f1,
+                            NumericVector::create(nC1, nC2, e1, e2, f1,
                                                   max_typeI[0], max_typeI[1],
                                                   pi_power, power1 + power2,
-                                                  n01 + n11 +
-                                                    (1 - S1_ess0)*(n02 + n12),
-                                                  n01 + n11 +
-                                                    (1 - S1_ess1)*(n02 + n12));
+                                                  nC1 + nE1 +
+                                                    (1 - S1_ess0)*(nC2 + nE2),
+                                                  nC1 + nE1 +
+                                                    (1 - S1_ess1)*(nC2 + nE2));
                           counter++;
                         }
                         else {
                           NumericVector min_power      =
                             bernard_min_power(2, beta, delta,
-                                              NumericVector::create(n01, n02),
-                                              NumericVector::create(n11, n12),
+                                              NumericVector::create(nC1, nC2),
+                                              NumericVector::create(nE1, nE2),
                                               NumericVector::create(e1, e2),
                                               NumericVector::create(f1, f2),
                                               List::create(poss_x1, poss_x2),
                                               List::create(poss_B1, poss_B2),
-                                              pi_alt, 1);
+                                              Pi1, 1);
                           if (min_power[1] < 1 - beta) {
                             break;
                           }
                           feasible_designs(counter, _) =
-                            NumericVector::create(n01, n02, e1, e2, f1,
+                            NumericVector::create(nC1, nC2, e1, e2, f1,
                                                   max_typeI[0], max_typeI[1],
                                                   min_power[0], min_power[1],
-                                                  n01 + n11 +
-                                                    (1 - S1_ess0)*(n02 + n12),
-                                                  n01 + n11 +
-                                                    (1 - S1_ess1)*(n02 + n12));
+                                                  nC1 + nE1 +
+                                                    (1 - S1_ess0)*(nC2 + nE2),
+                                                  nC1 + nE1 +
+                                                    (1 - S1_ess1)*(nC2 + nE2));
                           counter++;
                         }
                       }

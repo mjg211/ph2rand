@@ -1,7 +1,7 @@
-summary_des      <- function(J, type, alpha, beta, delta, ratio, pi0_null,
-                             pi0_alt, n0max, equal, w, pi0_ess, efficacy,
-                             futility, efficacy_type, efficacy_param,
-                             futility_type, futility_param) {
+summary_des      <- function(J, type, alpha, beta, delta, ratio, Pi0, Pi1,
+                             nCmax, equal, w, piO, efficacy, futility,
+                             efficacy_type, efficacy_param, futility_type,
+                             futility_param) {
   if (J == 1) {
     stage    <- "single-stage"
   } else {
@@ -17,7 +17,7 @@ summary_des      <- function(J, type, alpha, beta, delta, ratio, pi0_null,
     dashes   <- 59 - 3*(J == 2)
     design   <- "Fisher's exact test"
   } else {
-    dashed   <- 70 + 7*(J == 2)
+    dashes   <- 70 + 7*(J == 2)
     if (J == 1) {
       design <- "single-arm and two-arm testing\n  decisions"
     } else {
@@ -27,95 +27,91 @@ summary_des      <- function(J, type, alpha, beta, delta, ratio, pi0_null,
   message("  ", rep("-", dashes))
   message("  Design of a ", stage, " trial based on ", design)
   message("  ", rep("-", dashes))
-  message("\n  Hypothesis test")
+  message("\n  ---------------")
+  message("  Hypothesis test")
   message("  ---------------")
   message("  You have chosen to test the following hypothesis:")
-  if (length(pi0_null) == 1) {
-    message("      H", uc_sub(0), ": ", uc("pi"), uc_sub(0), " = ", uc("pi"),
-            uc_sub(1), " \u2208 ", uc("Pi"), uc_sub(0), " = ", pi0_null)
+  if (length(Pi0) == 1) {
+    message("    H", uc_sub(0), " : ", uc("pi"), "C = ", uc("pi"), "E \u2208 ",
+            uc("Pi"), uc_sub(0), " = ", Pi0)
   } else {
-    message("      H", uc_sub(0), ": ", uc("pi"), uc_sub(0), " = ", uc("pi"),
-            uc_sub(1), "\u2208 ", uc("Pi"), uc_sub(0), " = [", pi0_null[1], ",",
-            pi0_null[2], "]")
+    message("    H", uc_sub(0), " : ", uc("pi"), "C = ", uc("pi"), "E \u2208 ",
+            uc("Pi"), uc_sub(0), " = [", Pi0[1], ",", Pi0[2], "]")
   }
   message("  with the following type-I error constraint:")
-  if (length(pi0_null) == 1) {
-    message("      P(", pi0_null, ",", pi0_null, ") ", uc("le"), " ",
-            uc("alpha"), " = ", alpha)
+  if (length(Pi0) == 1) {
+    message("    P(", Pi0, ",", Pi0, ") ", uc("le"), " ", uc("alpha"), " = ",
+            alpha)
   } else {
-    message("      max_{", uc("pi"), " \u2208 ", uc("Pi"), uc_sub(0), "} P(",
+    message("    max_{", uc("pi"), " \u2208 ", uc("Pi"), uc_sub(0), "} P(",
             uc("pi"), ",", uc("pi"), ") ", uc("le"), " ", uc("alpha"), " = ",
-            alpha, ", ", uc("Pi"), uc_sub(0), " = [", pi0_null[1], ",",
-            pi0_null[2], "]")
+            alpha, ", ", uc("Pi"), uc_sub(0), " = [", Pi0[1], ",", Pi0[2], "]")
   }
   message("  and the following type-II error constraint:")
-  if (length(pi0_alt) == 1) {
-    message("      P(", pi_alt, ",", pi_alt + delta, ") ", uc("ge"), " 1 - ",
+  if (length(Pi1) == 1) {
+    message("    P(", Pi1, ",", Pi1 + delta, ") ", uc("ge"), " 1 - ",
             uc("beta"), " = ", 1 - beta)
   } else {
-    message("      max_{", uc("pi"), " \u2208 ", uc("Pi"), uc_sub(0), "} P(",
+    message("    max_{", uc("pi"), " \u2208 ", uc("Pi"), uc_sub(1), "} P(",
             uc("pi"), ",", uc("pi"), " + ", uc("delta"), ") ", uc("ge"),
             " 1 - ", uc("beta"), " = ", 1 - beta, ", ", uc("Pi"), uc_sub(1),
-            " = [", pi_alt[1], ",", pi_alt[2], "], ", uc("delta"), " = ",
-            delta)
+            " = [", Pi1[1], ",", Pi1[2], "], ", uc("delta"), " = ", delta)
   }
-  message("\n  Restrictions")
+  message("\n  ------------")
+  message("  Restrictions")
   message("  ------------")
   message("  \u2022 You have chosen to limit the allowed maximal sample ",
-          "size in the control arm, n", uc_sub(0), ", to ", n0max)
+          "size in the control arm, nC,\n    to: ", nCmax)
   if (J == 1) {
-    message("  \u2022 The sample size in the experimental arm, n", uc_sub(1),
-            ", will be set to rn", uc_sub(0), ", with r = ", ratio)
+    message("  \u2022 The sample size in the experimental arm, nE, will be set",
+            " to: r \u00D7 nC, with r = ", ratio)
   } else {
     if (equal) {
       message("  \u2022 You have chosen to restrict the sample sizes in the",
-              " control arm in each stage, n", uc_sub(0), uc_sub(1),
-              " and n", uc_sub(0), uc_sub(2), ", such that n", uc_sub(0),
-              uc_sub(1), " = ", "n", uc_sub(0), uc_sub(2))
+              " control arm in each stage, nC1\n    and nC2, such that: nC1 = ",
+              "nC2")
     } else {
       message("  \u2022 You have chosen to allow the sample sizes in the",
-              " control arm in each stage, n", uc_sub(0), uc_sub(1),
-              " and n", uc_sub(0), uc_sub(2), ", to take different values")
+              " control arm in each stage, nC1\n    and nC2, to take different",
+              " values")
     }
     message("  \u2022 The sample sizes in the experimental arm in each ",
-            "stage, n", uc_sub(1), uc_sub(1), " and n", uc_sub(1), uc_sub(2),
-            "will be set to rn", uc_sub(0), uc_sub(1), " and rn", uc_sub(0),
-            uc_sub(2), " respectively, with r = ", ratio)
+            "stage, nE1 and nE2, will be se\n    to: r \u00D7 nC1 and r \u00D7",
+            " nC2 respectively, with r = ", ratio)
     if (type == "fisher") {
       if (efficacy_type == 0) {
         message("  \u2022 You have chosen to prevent early stopping for ",
-                "efficacy. Thus e_z", uc_sub(1), " = \u221E, for all z",
-                uc_sub(1), " in all considered designs.")
+                "efficacy. Thus e1z1 = \u221E, for all z1, in all",
+                "\n    considered designs")
       } else if (efficacy_type == 1) {
         if (efficacy_param == -0.5) {
           message("  \u2022 You have chosen to include early stopping for ",
-                  "efficacy, with e_z", uc_sub(1), " = [0.5(n", uc_sub(0),
-                  uc_sub(1), " + n", uc_sub(1), uc_sub(1), ")", uc("delta"),
-                  "]_* + 1, for all z", uc_sub(1), ", in all considered ",
-                  "designs")
+                  "efficacy, with e1z1 = [0.5(n1C + n1E)", uc("delta"),
+                  "]_* + 1, for all z1, in all considered designs")
         } else {
           message("  \u2022 You have chosen to include early stopping for ",
-                  "efficacy, with e_z", uc_sub(1), " chosen for each z",
-                  uc_sub(1), ", in each considered design, to control the ",
-                  "probability of committing a type-I error at the end of ",
-                  "stage one to ", efficacy_param)
+                  "efficacy, with e1z1 = ", efficacy_param, ", for all z1, in ",
+                  "all considered designs.")
         }
+      } else {
+        message("  \u2022 You have chosen to include early stopping for ",
+                "efficacy, with e1z1 chosen for each z1, in each considered ",
+                "design, to control the probability of committing a type-I ",
+                "error at the end of stage one to ", efficacy_param)
       }
       if (futility_type == 0) {
         message("  \u2022 You have chosen to prevent early stopping for ",
-                "futility. Thus f_z", uc_sub(1), " = -\u221E, for all z",
-                uc_sub(1), ", in all considered designs")
+                "futility. Thus f1z1 = -\u221E, for all z1, in all considered ",
+                "designs")
       } else if (futility_type == 1) {
         message("  \u2022 You have chosen to include early stopping for ",
-                "futility, with f_z", uc_sub(1), " = ",
-                futility_param, ", for all z", uc_sub(1),
-                ", in all considered designs.")
+                "futility, with f1z1 = ", futility_param, ", for all z1, in ",
+                "all considered designs.")
       } else {
         message("  \u2022 You have chosen to include early stopping for ",
-                "futility, with f_z", uc_sub(1), " chosen for each z",
-                uc_sub(1), ", in each considered design, to control the ",
-                "probability of committing a type-II error at the end of stage",
-                " one to ", futility_param)
+                "futility, with f1z1 chosen for each z1, in each considered ",
+                "design, to control the probability of committing a type-II ",
+                "error at the end of stage one to ", futility_param)
       }
     } else {
       if (futility) {
@@ -124,12 +120,11 @@ summary_des      <- function(J, type, alpha, beta, delta, ratio, pi0_null,
       } else {
         if (type != "single_double") {
           message("  \u2022 You have chosen to prevent early stopping for ",
-                  "futility. Thus f", uc_sub(1), " = -\u221E in all considered",
-                  " designs.")
+                  "futility. Thus f1 = -\u221E in all considered designs")
         } else {
           message("  \u2022 You have chosen to prevent early stopping for ",
-                  "futility. Thus f_S", uc_sub(1), " = ", "f_T", uc_sub(1),
-                  "-\u221E in all considered designs.")
+                  "futility. Thus fS1 = fT1 = -\u221E in all considered ",
+                  "designs")
         }
       }
       if (efficacy) {
@@ -138,33 +133,32 @@ summary_des      <- function(J, type, alpha, beta, delta, ratio, pi0_null,
       } else {
         if (type != "single_double") {
           message("  \u2022 You have chosen to prevent early stopping for ",
-                  "efficacy. Thus e", uc_sub(1), " = \u221E in all considered",
-                  " designs.")
+                  "efficacy. Thus e1 = \u221E in all considered designs")
         } else {
           message("  \u2022 You have chosen to prevent early stopping for ",
-                  "efficacy. Thus e_S", uc_sub(1), " = ", "e_T", uc_sub(1),
-                  "\u221E in all considered designs.")
+                  "efficacy. Thus eS1 = eT1 = \u221E in all considered designs")
         }
       }
     }
-    message("  The design will be optimised for:")
-    message("      w", uc_sub(1), "ESS(", uc("pi"), "_ESS", uc("pi"), "_ESS) +",
-            " w", uc_sub(2), "ESS(", uc("pi"), "_ESS", uc("pi"), "_ESS + ",
-            uc("delta"), ") + w", uc_sub(3), "max_", uc("pi"), " ESS(",
-            uc("pi"), ",", uc("pi"), ") + w", uc_sub(4), "max_{", uc("pi"),
-            uc_sub(0), ",", uc("pi"), uc_sub(1), "} ESS(", uc("pi"), uc_sub(0),
-            ",", uc("pi"), uc_sub(1), ") + w", uc_sub(5), "max N")
+    message("\n  The design will be optimised for:")
+    message("    w", uc_sub(1), "ESS(", uc("pi"), "O,", uc("pi"), "O) + w",
+            uc_sub(2), "ESS(", uc("pi"), "O,", uc("pi"), "O + ", uc("delta"),
+            ") + w", uc_sub(3), "max_", uc("pi"), " ESS(", uc("pi"), ",",
+            uc("pi"), ") +\n      w", uc_sub(4), "max_{", uc("pi"), "C,",
+            uc("pi"), "E} ESS(", uc("pi"), "C,", uc("pi"), "E) + w", uc_sub(5),
+            "max N")
     message("  with:")
-    message("      w", uc_sub(1), " = ", w[1], ", w", uc_sub(2), " = ", w[2],
+    message("    w", uc_sub(1)," = ", w[1], ", w", uc_sub(2), " = ", w[2],
             ", w", uc_sub(3), " = ", w[3], ", w", uc_sub(4), " = ", w[4], ", w",
             uc_sub(5), " = ", w[5])
+    message("  and ", uc("pi"), "O = ", piO)
   }
 }
 
 summary_terminal <- function(des, k) {
-  if (any(class(des) %in% "ph2rand_des_one_stage")) {
+  if (des$J == 1) {
     stage  <- "single-stage"
-  } else if (any(class(des) %in% "ph2rand_des_two_stage")) {
+  } else {
     stage  <- "two-stage"
   }
   if (des$type == "bernard") {
@@ -184,53 +178,49 @@ summary_terminal <- function(des, k) {
   message("  Terminal points of a ", stage, " based on ", design)
   message("\n  You have chosen to find the terminal points of a design with:\n")
   if (any(class(des) %in% "ph2rand_des_one_stage")) {
-    message("      \u2022 n\u2080 = ", des$n0)
-    message("      \u2022 n\u2081 = ", des$n1)
+    message("    \u2022 nC1 = ", des$nC)
+    message("    \u2022 nE1 = ", des$nE)
     if (des$type %in% c("bernard", "binomial")) {
-      message("      \u2022 e = ", des$e)
+      message("    \u2022 e1 = ", des$e1)
     } else if (des$type == "fisher") {
-      message("      \u2022 e\u2080 = ", des$e[1], ", ..., e\u2081 = ",
-              des$e[2], ", ..., e", uc_sub(des$n0 + des$n1), " = ",
-              des$e[des$n0 + des$n1 + 1])
+      message("    \u2022 e10 = ", des$e1[1], ", ..., e11 = ", des$e1[2],
+              ", ..., e1", des$nC + des$nE, " = ", des$e1[des$nC + des$nE + 1])
     } else if (des$type == "single_double") {
-      message("      \u2022 e_S = ", des$eS)
-      message("      \u2022 e_T = ", des$eT)
+      message("    \u2022 eS1 = ", des$eS1)
+      message("    \u2022 eT1 = ", des$eT1)
     }
   } else if (any(class(des) %in% "ph2rand_des_two_stage")) {
-    message("      \u2022 n\u2080\u2081 = ", des$n0[1])
-    message("      \u2022 n\u2080\u2082 = ", des$n0[2])
-    message("      \u2022 n\u2081\u2081 = ", des$n1[1])
-    message("      \u2022 n\u2081\u2082 = ", des$n1[2])
+    message("    \u2022 nC1 = ", des$nC[1])
+    message("    \u2022 nC2 = ", des$nC[2])
+    message("    \u2022 nE1 = ", des$nE[1])
+    message("    \u2022 nE2 = ", des$nE[2])
     if (des$type %in% c("bernard", "binomial")) {
-      message("      \u2022 e\u2081 = ", des$e1)
-      message("      \u2022 f\u2081 = ", des$f1)
-      message("      \u2022 e\u2082 = ", des$e2)
+      message("    \u2022 e1 = ", des$e1)
+      message("    \u2022 f1 = ", des$f1)
+      message("    \u2022 e2 = ", des$e2)
     } else if (des$type == "fisher") {
-      message("      \u2022 e\u2081\u2080 = ", des$e1[1], ", ..., e\u2081",
-              "\u2081 = ", des$e1[2], ", ..., e\u2081", uc_sub(des$n0 + des$n1),
-              " = ", des$e1[des$n0 + des$n1 + 1])
-      message("      \u2022 f\u2081\u2080 = ", des$f1[1], ", ..., f\u2081",
-              "\u2081 = ", des$f1[2], ", ..., f\u2081", uc_sub(des$n0 + des$n1),
-              " = ", des$f1[des$n0 + des$n1 + 1])
-      message("      \u2022 e\u2082\u2080\u2080 = ", des$e2[1, 1], ", ..., ",
-              "e\u2082", uc_sub(des$n0[1] + des$n1[1]),
-              uc_sub(des$n0[2] + des$n1[2]), " = ",
-              des$e2[des$n0[1] + des$n1[1], des$n0[2] + des$n1[2]])
+      message("    \u2022 e10 = ", des$e1[1], ", ..., e11 = ", des$e1[2],
+              ", ..., e1", des$nC + des$nE, " = ", des$e1[des$nC + des$nE + 1])
+      message("    \u2022 f10 = ", des$f1[1], ", ..., f11 = ", des$f1[2],
+              ", ..., f1", des$nC + des$nE, " = ", des$f1[des$nC + des$nE + 1])
+      message("    \u2022 e200 = ", des$e2[1, 1], ", ..., ",
+              "e2", des$nC[1] + des$nE[1], des$nC[2] + des$nE[2], " = ",
+              des$e2[des$nC[1] + des$nE[1], des$nC[2] + des$nE[2]])
     } else if (des$type == "single_double") {
-      message("      \u2022 e_S\u2081 = ", des$eS1)
-      message("      \u2022 e_T\u2081 = ", des$eT1)
-      message("      \u2022 f_S\u2081 = ", des$fS1)
-      message("      \u2022 f_T\u2081 = ", des$fT1)
-      message("      \u2022 e_S\u2082 = ", des$eS2)
-      message("      \u2022 e_T\u2082 = ", des$eT2)
+      message("    \u2022 eS1 = ", des$eS1)
+      message("    \u2022 eT1 = ", des$eT1)
+      message("    \u2022 fS1 = ", des$fS1)
+      message("    \u2022 fT1 = ", des$fT1)
+      message("    \u2022 eS2 = ", des$eS2)
+      message("    \u2022 eT2 = ", des$eT2)
     }
   }
 }
 
 summary_pmf      <- function(des, pi, k) {
-  if (any(class(des) %in% "ph2rand_des_one_stage")) {
+  if (des$J == 1) {
     stage  <- "single-stage"
-  } else if (any(class(des) %in% "ph2rand_des_two_stage")) {
+  } else {
     stage  <- "two-stage"
   }
   if (des$type == "bernard") {
@@ -251,45 +241,41 @@ summary_pmf      <- function(des, pi, k) {
   message("  ", rep("-", dashes))
   message("\n  You have chosen to find the PMF of a design with:")
   if (any(class(des) %in% "ph2rand_des_one_stage")) {
-    message("      \u2022 n\u2080 = ", des$n0)
-    message("      \u2022 n\u2081 = ", des$n1)
+    message("      \u2022 nC1 = ", des$nC)
+    message("      \u2022 nE1 = ", des$nE)
     if (des$type %in% c("bernard", "binomial")) {
-      message("      \u2022 e = ", des$e)
+      message("      \u2022 e1 = ", des$e1)
     } else if (des$type == "fisher") {
-      message("      \u2022 e\u2080 = ", des$e[1], ", ..., e\u2081 = ",
-              des$e[2], ", ..., e", uc_sub(des$n0 + des$n1), " = ",
-              des$e[des$n0 + des$n1 + 1])
+      message("      \u2022 e10 = ", des$e1[1], ", ..., e11 = ", des$e1[2],
+              ", ..., e1", des$nC + des$nE, " = ", des$e1[des$nC + des$nE + 1])
     } else if (des$type == "single_double") {
-      message("      \u2022 e_S = ", des$eS)
-      message("      \u2022 e_T = ", des$eT)
+      message("      \u2022 eS1 = ", des$eS1)
+      message("      \u2022 eT1 = ", des$eT1)
     }
   } else if (any(class(des) %in% "ph2rand_des_two_stage")) {
-    message("      \u2022 n\u2080\u2081 = ", des$n0[1])
-    message("      \u2022 n\u2080\u2082 = ", des$n0[2])
-    message("      \u2022 n\u2081\u2081 = ", des$n1[1])
-    message("      \u2022 n\u2081\u2082 = ", des$n1[2])
+    message("      \u2022 nC1 = ", des$nC[1])
+    message("      \u2022 nC2 = ", des$nC[2])
+    message("      \u2022 nE1 = ", des$nE[1])
+    message("      \u2022 nE2 = ", des$nE[2])
     if (des$type %in% c("bernard", "binomial")) {
-      message("      \u2022 e\u2081 = ", des$e1)
-      message("      \u2022 f\u2081 = ", des$f1)
-      message("      \u2022 e\u2082 = ", des$e2)
+      message("      \u2022 e1 = ", des$e1)
+      message("      \u2022 f1 = ", des$f1)
+      message("      \u2022 e2 = ", des$e2)
     } else if (des$type == "fisher") {
-      message("      \u2022 e\u2081\u2080 = ", des$e1[1], ", ..., e\u2081",
-              "\u2081 = ", des$e1[2], ", ..., e\u2081", uc_sub(des$n0 + des$n1),
-              " = ", des$e1[des$n0 + des$n1 + 1])
-      message("      \u2022 f\u2081\u2080 = ", des$f1[1], ", ..., f\u2081",
-              "\u2081 = ", des$f1[2], ", ..., f\u2081", uc_sub(des$n0 + des$n1),
-              " = ", des$f1[des$n0 + des$n1 + 1])
-      message("      \u2022 e\u2082\u2080\u2080 = ", des$e2[1, 1], ", ..., ",
-              "e\u2082", uc_sub(des$n0[1] + des$n1[1]),
-              uc_sub(des$n0[2] + des$n1[2]), " = ",
-              des$e2[des$n0[1] + des$n1[1], des$n0[2] + des$n1[2]])
+      message("      \u2022 e10 = ", des$e1[1], ", ..., e11 = ", des$e1[2],
+              ", ..., e1", des$nC + des$nE, " = ", des$e1[des$nC + des$nE + 1])
+      message("      \u2022 f10 = ", des$f1[1], ", ..., f11 = ", des$f1[2],
+              ", ..., f1", des$nC + des$nE, " = ", des$f1[des$nC + des$nE + 1])
+      message("      \u2022 e200 = ", des$e2[1, 1], ", ..., ",
+              "e2", des$nC[1] + des$nE[1], des$nC[2] + des$nE[2], " = ",
+              des$e2[des$nC[1] + des$nE[1], des$nC[2] + des$nE[2]])
     } else if (des$type == "single_double") {
-      message("      \u2022 e_S\u2081 = ", des$eS1)
-      message("      \u2022 e_T\u2081 = ", des$eT1)
-      message("      \u2022 f_S\u2081 = ", des$fS1)
-      message("      \u2022 f_T\u2081 = ", des$fT1)
-      message("      \u2022 e_S\u2082 = ", des$eS2)
-      message("      \u2022 e_T\u2082 = ", des$eT2)
+      message("      \u2022 eS1 = ", des$eS1)
+      message("      \u2022 eT1 = ", des$eT1)
+      message("      \u2022 fS1 = ", des$fS1)
+      message("      \u2022 fT1 = ", des$fT1)
+      message("      \u2022 eS2 = ", des$eS2)
+      message("      \u2022 eT2 = ", des$eT2)
     }
   }
   if (nrow(pi) == 1) {

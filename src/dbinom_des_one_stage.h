@@ -5,6 +5,6 @@ using namespace Rcpp;
 #define DBINOM_DES_ONE_STAGE_H
 
 NumericMatrix dbinom_des_one_stage(double pi_typeI, double pi_power,
-                                   double delta, int n0, int n1);
+                                   double delta, int nC, int nE);
 
 #endif
