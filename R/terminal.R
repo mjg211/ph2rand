@@ -3,7 +3,7 @@ terminal <- function(des, k, summary = F) {
   
   ##### Check inputs ###########################################################
   
-  check_des(des, "any", 1:2)
+  check_des(des, "any")
   k <- check_k(k, des)
   check_logical(summary, "summary")
   
@@ -18,7 +18,7 @@ terminal <- function(des, k, summary = F) {
   if (summary) {
     message("  Identifying terminal points", uc("two_elip"))
   }
-  if ("ph2rand_des_one_stage" %in% class(des)) {
+  if (des$J == 1) {
     terminal <- switch(des$type,
                        bernard       =
                          bernard_terminal_one_stage(des$nC, des$nE, des$e1),
@@ -47,7 +47,7 @@ terminal <- function(des, k, summary = F) {
                                                           des$eS2, des$eT2, k))
   }
   if (summary) {
-    message(uc("two_elip"), "outputting.")
+    message(uc("two_elip"), "outputting")
   }
 
   ##### Output results #########################################################
@@ -56,7 +56,7 @@ terminal <- function(des, k, summary = F) {
                         k        = k,
                         summary  = summary,
                         terminal = terminal)
-  class(output) <- c(class(output), "ph2rand_terminal")
+  class(output) <- c("ph2rand_terminal", class(output))
   output
 
 }

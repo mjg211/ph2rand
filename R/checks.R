@@ -20,7 +20,7 @@ check_default                <- function(value, name, default) {
   }
 }
 
-check_des                    <- function(des, type, stages) {
+check_des                    <- function(des, type) {
   if (!any(class(des) == "ph2rand_des")) {
     stop("des must be of class ph2rand_des")
   }
