@@ -3,7 +3,7 @@ pmf <- function(des, pi, k, summary = F) {
 
   ##### Check inputs ###########################################################
 
-  check_des(des, "any", 1:2)
+  check_des(des, "any")
   pi <- check_pi(pi, des)
   k  <- check_k(k, des)
   check_logical(summary, "summary")
@@ -19,7 +19,7 @@ pmf <- function(des, pi, k, summary = F) {
   if (summary) {
     message("  Identifying PMFs", uc("two_elip"))
   }
-  if ("ph2rand_des_one_stage" %in% class(des)) {
+  if (des$J == 1) {
     pmf <- switch(des$type,
                   bernard       =
                     bernard_pmf_one_stage(pi, des$nC, des$nE, des$e1),
@@ -47,7 +47,7 @@ pmf <- function(des, pi, k, summary = F) {
                                                 des$eS2, des$eT2, k))
   }
   if (summary) {
-    message(uc("two_elip"), "outputting.")
+    message(uc("two_elip"), "outputting")
   }
 
   ##### Output results #########################################################
@@ -56,7 +56,7 @@ pmf <- function(des, pi, k, summary = F) {
                         k       = k,
                         pmf     = pmf,
                         summary = summary)
-  class(output) <- c(class(output), "ph2rand_pmf")
+  class(output) <- c("ph2rand_pmf", class(output))
   output
 
 }

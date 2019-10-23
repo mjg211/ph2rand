@@ -2,6 +2,7 @@
 
 export(des_one_stage)
 export(des_two_stage)
+export(opchar)
 export(pmf)
 export(terminal)
 importFrom(Rcpp,sourceCpp)

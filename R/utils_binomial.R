@@ -310,14 +310,17 @@ binomial_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
   if (f1 == -Inf) {
     f1     <- -nC[1] - 1
   }
+  print(k)
   terminal <- binomial_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k)
+  print(dim(terminal))
   terminal <- tibble::tibble(xC        = as.integer(terminal[, 1]),
                              xE        = as.integer(terminal[, 2]),
                              mC        = as.integer(terminal[, 3]),
                              mE        = as.integer(terminal[, 4]),
                              statistic = as.integer(terminal[, 5]),
-                             decision  = ifelse(terminal[, 6] == 1, "Reject",
-                                                "Do not reject"),
+                             decision  =
+                               c("Do not reject", "Reject",
+                                 "Continue to stage 2")[terminal[, 6] + 1],
                              k         = factor(terminal[, 7], k))
   dplyr::arrange(terminal, .data$k, .data$xC, .data$xE)
 }

@@ -261,19 +261,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // binomial_terminal_two_stage_cpp
-NumericMatrix binomial_terminal_two_stage_cpp(NumericVector pi, NumericVector nC, NumericVector nE, double e1, double f1, double e2, NumericVector k);
-RcppExport SEXP _ph2rand_binomial_terminal_two_stage_cpp(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP e2SEXP, SEXP kSEXP) {
+NumericMatrix binomial_terminal_two_stage_cpp(NumericVector nC, NumericVector nE, double e1, double f1, double e2, NumericVector k);
+RcppExport SEXP _ph2rand_binomial_terminal_two_stage_cpp(SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP e2SEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type pi(piSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type nC(nCSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type nE(nESEXP);
     Rcpp::traits::input_parameter< double >::type e1(e1SEXP);
     Rcpp::traits::input_parameter< double >::type f1(f1SEXP);
     Rcpp::traits::input_parameter< double >::type e2(e2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(binomial_terminal_two_stage_cpp(pi, nC, nE, e1, f1, e2, k));
+    rcpp_result_gen = Rcpp::wrap(binomial_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -983,7 +982,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ph2rand_binomial_pmf_two_stage_cpp", (DL_FUNC) &_ph2rand_binomial_pmf_two_stage_cpp, 7},
     {"_ph2rand_binomial_power_one_stage", (DL_FUNC) &_ph2rand_binomial_power_one_stage, 6},
     {"_ph2rand_binomial_power_two_stage", (DL_FUNC) &_ph2rand_binomial_power_two_stage, 7},
-    {"_ph2rand_binomial_terminal_two_stage_cpp", (DL_FUNC) &_ph2rand_binomial_terminal_two_stage_cpp, 7},
+    {"_ph2rand_binomial_terminal_two_stage_cpp", (DL_FUNC) &_ph2rand_binomial_terminal_two_stage_cpp, 6},
     {"_ph2rand_binomial_max_typeI", (DL_FUNC) &_ph2rand_binomial_max_typeI, 10},
     {"_ph2rand_binomial_min_power", (DL_FUNC) &_ph2rand_binomial_min_power, 11},
     {"_ph2rand_binomial_ess_two_stage", (DL_FUNC) &_ph2rand_binomial_ess_two_stage, 5},
