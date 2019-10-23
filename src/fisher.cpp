@@ -811,11 +811,10 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                 feasible_designs_e_z(rows, (nCmax + nEmax + 1)*
                                              (2*(nCmax + nEmax) + 1));
   int           check;
-  for (int nE = 0; nE <= poss_nC.length() - 1; nE++) {
-    Rcout << "The value is A = " << nE << std::endl;
+  for (int n1 = 0; n1 <= poss_nC.length() - 1; n1++) {
     check                   = 0;
-    nC1                     = poss_nC[nE];
-    nE1                     = poss_nE[nE];
+    nC1                     = poss_nC[n1];
+    nE1                     = poss_nE[n1];
     if (((equal != 1) && (nC1 < nCmax)) ||
           ((equal == 1) && (nC1 <= 0.5*nCmax))) {
       NumericVector poss_y1 = poss_y[nC1 + nCmax*(nE1 - 1) - 1],
@@ -975,8 +974,8 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
         S1_ess1                           = sum(ess1_z1*g_ess11);
         power1                            = sum(g_power1*power_z1);
         typeI1                            = sum(g_typeI1*typeI_z1);
-        for (int n2 = (equal == 1 ? nE : 0);
-             n2 <= (equal == 1 ? nE : poss_nC.length() - 1); n2++) {
+        for (int n2 = (equal == 1 ? n1 : 0);
+             n2 <= (equal == 1 ? n1 : poss_nC.length() - 1); n2++) {
           nC2                             = poss_nC[n2];
           if (nC1 + nC2 <= nCmax) {
             nE2                           = poss_nE[n2];

@@ -127,8 +127,7 @@ double binomial_power_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericMatrix binomial_terminal_two_stage_cpp(NumericVector pi,
-                                              NumericVector nC,
+NumericMatrix binomial_terminal_two_stage_cpp(NumericVector nC,
                                               NumericVector nE, double e1,
                                               double f1, double e2,
                                               NumericVector k) {
@@ -139,13 +138,20 @@ NumericMatrix binomial_terminal_two_stage_cpp(NumericVector pi,
   terminal((nC[0] + 1)*(nC[1] + 1)*(nE[0] + 1)*(nE[1] + 1), 7);
   for (int xC1 = 0; xC1 <= nC[0]; xC1++) {
     for (int xE1 = 0; xE1 <= nE[0]; xE1++) {
-      if (((xE1 - xC1 <= f1) || (xE1 - xC1 >= e1)) && (k[0] == 1)) {
-        terminal(counter, _)                =
-          NumericVector::create(xC1, xE1, nC[0], nE[0], xE1 - xC1,
-                                (xE1 - xC1 >= e1), 1);
+      if (k[0] == 1) {
+        if ((xE1 - xC1 <= f1) || (xE1 - xC1 >= e1)) {
+          terminal(counter, _)                =
+            NumericVector::create(xC1, xE1, nC[0], nE[0], xE1 - xC1,
+                                  (xE1 - xC1 >= e1), 1);
+        }
+        else {
+          terminal(counter, _)                =
+            NumericVector::create(xC1, xE1, nC[0], nE[0], xE1 - xC1, 2, 1);
+        }
         counter++;
       }
-      else if ((k[0] == 2) || (k[k.length() - 1] == 2)) {
+      if ((xE1 - xC1 > f1) && (xE1 - xC1 < e1) &&
+            ((k[0] == 2) || (k[k.length() - 1] == 2))) {
         for (int xC2 = 0; xC2 <= nC[1]; xC2++) {
           for (int xE2 = 0; xE2 <= nE[1]; xE2++) {
             if (x2_mat(xC1 + xC2, xE1 + xE2) == 0) {

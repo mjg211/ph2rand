@@ -57,8 +57,8 @@ binomial_power_two_stage <- function(pi, nC, nE, e, f, poss_x, poss_y) {
     .Call('_ph2rand_binomial_power_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, e, f, poss_x, poss_y)
 }
 
-binomial_terminal_two_stage_cpp <- function(pi, nC, nE, e1, f1, e2, k) {
-    .Call('_ph2rand_binomial_terminal_two_stage_cpp', PACKAGE = 'ph2rand', pi, nC, nE, e1, f1, e2, k)
+binomial_terminal_two_stage_cpp <- function(nC, nE, e1, f1, e2, k) {
+    .Call('_ph2rand_binomial_terminal_two_stage_cpp', PACKAGE = 'ph2rand', nC, nE, e1, f1, e2, k)
 }
 
 binomial_max_typeI <- function(J, alpha, nC, nE, e, f, poss_x, poss_y, Pi0, check) {
