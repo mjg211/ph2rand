@@ -304,8 +304,7 @@ fisher_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
                                     n[which(cum_S == 0.5) + 1]),
                              n[which(cum_S > 0.5)[1]])
     opchar[i, ]    <- c(pi[i, 1], pi[i, 2], sum(E), sum(n*S),
-                        sqrt(sum(n^2*S) - sum(n*S)^2), MSS, E, Fu, S, cum_S,
-                        n[2])
+                        sqrt(sum(n^2*S) - sum(n*S)^2), MSS, E, Fu, S, n[2])
   }
   opchar           <- tibble::as_tibble(opchar)
   colnames(opchar) <- c("piC", "piE", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",
