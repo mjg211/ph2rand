@@ -77,6 +77,7 @@ fisher_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
                              (length(Pi1) == 1), Pi1, equal, efficacy_type,
                              efficacy_param, futility_type, futility_param, Pi0,
                              summary)
+  print("here")
   if (feasible[[1]][1, 1] > 0) {
     if (summary) {
       message(uc("two_elip"), "feasible designs identified in the range of ",

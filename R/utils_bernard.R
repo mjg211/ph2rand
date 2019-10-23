@@ -131,13 +131,6 @@ bernard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
     f1                 <- feasible$f1[1]
     nC                 <- c(feasible$nC1[1], feasible$nC2[1])
     nE                 <- c(feasible$nE1[1], feasible$nE2[1])
-    print(nC)
-    print(nE)
-    print(e1)
-    print(f1)
-    print(e2)
-    print(rbind(rep(feasible$`argmax alpha`[1], 2),
-                feasible$`argmin power`[1] + c(0, delta)))
     opchar             <-
       bernard_opchar_two_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
                                      feasible$`argmin power`[1] + c(0, delta)),
@@ -204,7 +197,6 @@ bernard_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
   n                <- c(nC[1] + nE[1], sum(nC) + sum(nE))
   opchar           <- matrix(0, rows_pi, 13)
   E                <- Fu <- numeric(2)
-  print(pmf_pi)
   for (i in 1:rows_pi) {
     for (j in k) {
       E[j]         <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
@@ -260,7 +252,7 @@ bernard_pmf_one_stage        <- function(pi, nC, nE, e1) {
                    mC          = rep(as.integer(nC), rows_total),
                    mE          = rep(as.integer(nE), rows_total),
                    statistic   = rep(statistic, rows_pi),
-                   decision    = ifelse(statistic >= e1, "Reject",
+                   decision    = ifelse(.data$statistic >= e1, "Reject",
                                         "Do not reject"),
                    k           = factor(rep(1, rows_total), 1),
                    `f(x,m|pi)` = f)

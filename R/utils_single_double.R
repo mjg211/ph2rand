@@ -122,6 +122,7 @@ single_double_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0,
       feasible$`argmax_piC ESS(piC,piE)`[i] <- max_ESS_2d[1]
       feasible$`argmax_piE ESS(piC,piE)`[i] <- max_ESS_2d[2]
       feasible$`max ESS(piC,piE)`[i]        <- max_ESS_2d[3]
+      print(100*i/nrow_feasible)
     }
     feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, T)*
                                     feasible[, c(16:17, 19, 22:23)])
@@ -235,8 +236,7 @@ single_double_opchar_two_stage     <- function(pi, nC, nE, eS1, eT1, fS1, fT1,
                                     n[which(cum_S == 0.5) + 1]),
                              n[which(cum_S > 0.5)[1]])
     opchar[i, ]    <- c(pi[i, 1], pi[i, 2], sum(E), sum(n*S),
-                        sqrt(sum(n^2*S) - sum(n*S)^2), MSS, E, Fu, S, cum_S,
-                        n[2])
+                        sqrt(sum(n^2*S) - sum(n*S)^2), MSS, E, Fu, S, n[2])
   }
   opchar           <- tibble::as_tibble(opchar)
   colnames(opchar) <- c("piC", "piE", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",

@@ -812,6 +812,7 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                                              (2*(nCmax + nEmax) + 1));
   int           check;
   for (int nE = 0; nE <= poss_nC.length() - 1; nE++) {
+    Rcout << "The value is A = " << nE << std::endl;
     check                   = 0;
     nC1                     = poss_nC[nE];
     nE1                     = poss_nE[nE];
@@ -1199,6 +1200,7 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
       }
     }
   }
+  Rcout << "The value is B = " << 100 << std::endl;
   List output                             =
     List::create(feasible_designs_info(
                    Range(0, 0 + (counter > 0 ? counter - 1 : 0)), Range(0, 7)),
