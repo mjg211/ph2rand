@@ -990,8 +990,8 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
             NumericMatrix e_z(nCmax + nEmax + 1, 2*(nCmax + nEmax) + 1),
                           power_z(nC1 + nE1 + 1, nC2 + nE2 + 1),
                           typeI_z(nC1 + nE1 + 1, nC2 + nE2 + 1);
-            for (int z1 = 0; z1 <= nCmax + nEmax + 1; z1++) {
-              for (int z2 = 0; z2 <= 2*(nCmax + nEmax) + 1; z2++) {
+            for (int z1 = 0; z1 <= nCmax + nEmax; z1++) {
+              for (int z2 = 0; z2 <= 2*(nCmax + nEmax); z2++) {
                 e_z(z1, z2)               = -0.5;
               }
             }
@@ -1116,7 +1116,7 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                   fisher_max_typeI(2, alpha, NumericVector::create(nC1, nC2),
                                    NumericVector::create(nE1, nE2), e_z1, f_z1,
                                    e_z,
-                                   List::create(poss_x[nC1 +
+                                 List::create(poss_x[nC1 +
                                                          nCmax*(nE1 - 1) - 1],
                                                 poss_x[nC2 +
                                                          nCmax*(nE2 - 1) - 1]),
@@ -1199,7 +1199,6 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
       }
     }
   }
-  Rcout << "The value is B = " << 100 << std::endl;
   List output                             =
     List::create(feasible_designs_info(
                    Range(0, 0 + (counter > 0 ? counter - 1 : 0)), Range(0, 7)),
