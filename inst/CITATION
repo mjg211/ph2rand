@@ -1,4 +1,4 @@
-citHeader("To cite ph2rand in publications please use:")
+citHeader("To cite ph2rand in publications please use")
 
 citEntry(entry       = "Misc",
          key         = "grayling2019",

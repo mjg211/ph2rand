@@ -122,7 +122,6 @@ single_double_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0,
       feasible$`argmax_piC ESS(piC,piE)`[i] <- max_ESS_2d[1]
       feasible$`argmax_piE ESS(piC,piE)`[i] <- max_ESS_2d[2]
       feasible$`max ESS(piC,piE)`[i]        <- max_ESS_2d[3]
-      print(100*i/nrow_feasible)
     }
     feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, T)*
                                     feasible[, c(16:17, 19, 22:23)])

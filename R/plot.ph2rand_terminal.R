@@ -1,5 +1,5 @@
 #' @export
-plot.ph2rand_terminal <- function(x, output = F, summary = F, ...) {
+plot.ph2rand_terminal <- function(x, k, output = F, summary = F, ...) {
 
   ##### Check inputs ###########################################################
 
@@ -66,10 +66,10 @@ plot.ph2rand_terminal <- function(x, output = F, summary = F, ...) {
                                                  levels = levels_state)
     plot                               <-
       ggplot2::ggplot(x_internal$terminal,
-                      ggplot2::aes(x      = xC,
-                                   y      = xE,
-                                   colour = decision,
-                                   shape  = decision)) +
+                      ggplot2::aes(x      = .data$xC,
+                                   y      = .data$xE,
+                                   colour = .data$decision,
+                                   shape  = .data$decision)) +
       ggplot2::geom_point(size = 0.75) +
       ggplot2::xlab(expression(italic(x[C]))) +
       ggplot2::ylab(expression(italic(x[E]))) +
@@ -79,7 +79,7 @@ plot.ph2rand_terminal <- function(x, output = F, summary = F, ...) {
       ggplot2::coord_fixed(ratio = 1) +
       theme_ph2rand() +
       ggplot2::labs(title = '{current_frame}') +
-      gganimate::transition_manual(state) +
+      gganimate::transition_manual(.data$state) +
       gganimate::ease_aes('linear')
     plot                               <-
       gganimate::animate(plot, fps = 2,

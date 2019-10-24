@@ -62,7 +62,7 @@ plot.ph2rand_des <- function(x, k, output = F, summary = F, ...) {
     ggplot2::ggplot(opchar_grid_rej,
                     ggplot2::aes(x    = .data$piC,
                                  y    = .data$piE,
-                                 fill = .data$Probability)) +
+                                 fill = Probability)) +
     ggplot2::geom_raster() +
     ggplot2::facet_wrap(~key,
                         labeller = ggplot2::label_parsed) +
@@ -81,7 +81,7 @@ plot.ph2rand_des <- function(x, k, output = F, summary = F, ...) {
     ggplot2::ggplot(opchar_grid_stop,
                     ggplot2::aes(x    = .data$piC,
                                  y    = .data$piE,
-                                 fill = .data$Probability)) +
+                                 fill = Probability)) +
     ggplot2::geom_raster() +
     ggplot2::facet_wrap(~key,
                         labeller = ggplot2::label_parsed) +

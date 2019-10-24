@@ -61,7 +61,7 @@
 #' # The design for the default parameters
 #' des       <- des_one_stage()
 #' # Controlling the type-I/II error-rates over a range of possible response
-#' rates
+#' # rates
 #' des_range <- des_one_stage(Pi0 = c(0, 1),
 #'                            Pi1 = c(0, 0.8))
 #' @seealso \code{\link{des_two_stage}}, \code{\link{pmf}},
@@ -87,7 +87,7 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
   ##### Print summary ##########################################################
 
   if (summary) {
-    summary_des(1, type, alpha, beta, delta, ratio, Pi0, Pi1, n0max)
+    summary_des(1, type, alpha, beta, delta, ratio, Pi0, Pi1, nCmax)
   }
 
   ##### Main computations ######################################################

@@ -62,10 +62,20 @@ des$opchar
 Compare this to the equivalent design from Litwin *et al* (2017):
 
 ``` r
-#des <- des_two_stage(type = "single_double")
-#des$nC
-#des$nE
-#des$opchar
+des <- des_two_stage(type  = "single_double",
+                     nCmax = 20L)
+des$nC
+#> [1] 10 10
+des$nE
+#> [1] 10 10
+des$opchar
+#> # A tibble: 2 x 13
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1  0.1000      25.2       8.79        20        0   0.1000
+#> 2   0.1   0.3  0.804       36.9       7.20        40        0   0.804 
+#> # … with 5 more variables: `F1(pi)` <dbl>, `F2(pi)` <dbl>, `S1(pi)` <dbl>,
+#> #   `S2(pi)` <dbl>, `max N` <int>
 ```
 
 ## References

@@ -60,10 +60,11 @@ des$opchar
 Compare this to the equivalent design from Litwin *et al* (2017):
 
 ```{r}
-#des <- des_two_stage(type = "single_double")
-#des$nC
-#des$nE
-#des$opchar
+des <- des_two_stage(type  = "single_double",
+                     nCmax = 20L)
+des$nC
+des$nE
+des$opchar
 ```
 
 ## References
