@@ -199,14 +199,12 @@ binomial_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
   opchar           <- matrix(0, rows_pi, 13)
   E                <- Fu <- numeric(2)
   for (i in 1:rows_pi) {
+    pmf_i          <- dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
+                                      .data$piE == pi[i, 2])
     for (j in k) {
-      E[j]         <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
-                                          .data$piE == pi[i, 2] &
-                                          .data$decision == "Reject" &
+      E[j]         <- sum(dplyr::filter(pmf_i, .data$decision == "Reject" &
                                           .data$k == j)$`f(x,m|pi)`)
-      Fu[j]        <- sum(dplyr::filter(pmf_pi, .data$piC == pi[i, 1] &
-                                          .data$piE == pi[i, 2] &
-                                          .data$decision == "Do not reject" &
+      Fu[j]        <- sum(dplyr::filter(pmf_i, .data$decision == "Do not reject" &
                                           .data$k == j)$`f(x,m|pi)`)
     }
     cum_S          <- cumsum(S <- E + Fu)
@@ -214,8 +212,14 @@ binomial_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
                              0.5*(n[which(cum_S == 0.5)] +
                                     n[which(cum_S == 0.5) + 1]),
                              n[which(cum_S > 0.5)[1]])
-    opchar[i, ]    <- c(pi[i, 1], pi[i, 2], sum(E), sum(n*S),
-                        sqrt(sum(n^2*S) - sum(n*S)^2), MSS, E, Fu, S, n[2])
+    ESS            <- sum(n*S)
+    if (any(abs(ESS - n) < 1e-13)) {
+      SDSS         <- 0
+    } else {
+      SDSS         <- sqrt(sum(n^2*S) - sum(n*S)^2)
+    }
+    opchar[i, ]    <- c(pi[i, 1], pi[i, 2], sum(E), ESS, SDSS, MSS, E, Fu, S,
+                        n[2])
   }
   opchar           <- tibble::as_tibble(opchar)
   colnames(opchar) <- c("piC", "piE", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",
@@ -249,8 +253,8 @@ binomial_pmf_one_stage        <- function(pi, nC, nE, e1) {
                    mC          = rep(as.integer(nC), rows_total),
                    mE          = rep(as.integer(nE), rows_total),
                    statistic   = .data$xE - .data$xC,
-                   decision    = ifelse(.data$statistic >= e1, "Reject",
-                                        "Do not reject"),
+                   decision    = factor(ifelse(.data$statistic >= e1, "Reject",
+                                               "Do not reject")),
                    k           = factor(rep(1, rows_total), 1),
                    `f(x,m|pi)` = f)
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$xC, .data$xE)
@@ -283,8 +287,8 @@ binomial_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
                    mC          = as.integer(pmf[, 3]),
                    mE          = as.integer(pmf[, 4]),
                    statistic   = as.integer(pmf[, 5]),
-                   decision    = ifelse(pmf[, 6] == 1, "Reject",
-                                        "Do not reject"),
+                   decision    = factor(c("Do not reject",
+                                          "Reject")[pmf[, 6] + 1]),
                    k           = factor(pmf[, 7], k),
                    `f(x,m|pi)` = pmf[, 8])
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$k, .data$xC, .data$xE)
@@ -298,8 +302,8 @@ binomial_terminal_one_stage   <- function(nC, nE, e1) {
                  mC        = rep(as.integer(nC), rows_pmf),
                  mE        = rep(as.integer(nE), rows_pmf),
                  statistic = .data$xE - .data$xC,
-                 decision  = ifelse(.data$statistic >= e1, "Reject",
-                                    "Do not reject"),
+                 decision  = factor(ifelse(.data$statistic >= e1, "Reject",
+                                           "Do not reject")),
                  k         = factor(rep(1, rows_pmf), 1))
 }
 
@@ -310,17 +314,17 @@ binomial_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
   if (f1 == -Inf) {
     f1     <- -nC[1] - 1
   }
-  print(k)
   terminal <- binomial_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k)
-  print(dim(terminal))
   terminal <- tibble::tibble(xC        = as.integer(terminal[, 1]),
                              xE        = as.integer(terminal[, 2]),
                              mC        = as.integer(terminal[, 3]),
                              mE        = as.integer(terminal[, 4]),
                              statistic = as.integer(terminal[, 5]),
                              decision  =
-                               c("Do not reject", "Reject",
-                                 "Continue to stage 2")[terminal[, 6] + 1],
+                               factor(c("Do not reject", "Reject",
+                                        "Continue to stage 2")[terminal[, 6]],
+                                      sort(unique(c("Do not reject", "Reject",
+                                                    "Continue to stage 2")[terminal[, 6]]))),
                              k         = factor(terminal[, 7], k))
   dplyr::arrange(terminal, .data$k, .data$xC, .data$xE)
 }

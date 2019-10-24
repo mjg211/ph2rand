@@ -109,24 +109,32 @@ NumericMatrix fisher_terminal_two_stage_cpp(NumericVector nC,
   int           counter          = 0,
                 sum_nC           = sum(nC),
                 sum_nE           = sum(nE);
-  NumericMatrix terminal((nC[0] + 1)*(nC[1] + 1)*(nE[0] + 1)*(nE[1] + 1), 11);
+  NumericMatrix terminal(100000000, 11);
   for (int xC1 = 0; xC1 <= nC[0]; xC1++) {
     for (int xE1 = 0; xE1 <= nE[0]; xE1++) {
-      if (((xE1 - xC1 <= f1[xC1 + xE1]) ||
-            (xE1 - xC1 >= e1[xC1 + xE1])) && (k[0] == 1)) {
-        terminal(counter, _)     =
-          NumericVector::create(xC1, xE1, -1, -1, nC[0], nE[0], xC1 + xE1, -1,
-                                xE1 - xC1, (xE1 - xC1 >= e1[xC1 + xE1]), 1);
+      if (k[0] == 1) {
+        if ((xE1 - xC1 <= f1[xC1 + xE1]) || (xE1 - xC1 >= e1[xC1 + xE1])) {
+          terminal(counter, _)     =
+            NumericVector::create(xC1, xE1, -1, -1, nC[0], nE[0], xC1 + xE1, -1,
+                                  xE1 - xC1, (xE1 - xC1 >= e1[xC1 + xE1]) + 1,
+                                  1);
+        }
+        else {
+          terminal(counter, _)     =
+            NumericVector::create(xC1, xE1, -1, -1, nC[0], nE[0], xC1 + xE1, -1,
+                                  xE1 - xC1, 3, 1);
+        }
         counter++;
       }
-      else if ((k[0] == 2) || (k[k.length() - 1] == 2)) {
+      if ((xE1 - xC1 > f1[xC1 + xE1]) && (xE1 - xC1 < e1[xC1 + xE1]) &&
+            ((k[0] == 2) || (k[k.length() - 1] == 2))) {
         for (int xC2 = 0; xC2 <= nC[1]; xC2++) {
           for (int xE2 = 0; xE2 <= nE[1]; xE2++) {
             terminal(counter, _) =
               NumericVector::create(xC1, xE1, xC2, xE2, sum_nC, sum_nE,
                                     xC1 + xE1, xC2 + xE2, xE1 + xE2 - xC1 - xC2,
                                     (xE1 + xE2 - xC1 - xC2 >=
-                                      e2(xC1 + xE1, xC2 + xE2)), 2);
+                                      e2(xC1 + xE1, xC2 + xE2)) + 1, 2);
             counter++;
           }
         }

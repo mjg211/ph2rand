@@ -463,6 +463,7 @@ check_k                      <- function(k, des) {
     if (any(!(k %in% allowed))) {
       stop("k must contain values in {", paste(allowed, sep = ", "), "}")
     }
+    k
   }
 }
 

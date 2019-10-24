@@ -339,9 +339,9 @@ fisher_pmf_one_stage        <- function(pi, nC, nE, e1) {
                    mE          = rep(as.integer(nE), rows_total),
                    z           = .data$xC + .data$xE,
                    statistic   = .data$xE - .data$xC,
-                   decision    = ifelse(.data$statistic >=
-                                          e1[.data$xC + .data$xE + 1],
-                                        "Reject", "Do not reject"),
+                   decision    = factor(ifelse(.data$statistic >=
+                                                 e1[.data$xC + .data$xE + 1],
+                                               "Reject", "Do not reject")),
                    k           = factor(rep(1, rows_total), 1),
                    `f(x,m|pi)` = f)
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$xC, .data$xE)
@@ -383,8 +383,8 @@ fisher_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
                    z1          = as.integer(pmf[, 7]),
                    z2          = as.integer(pmf[, 8]),
                    statistic   = as.integer(pmf[, 9]),
-                   decision    = ifelse(pmf[, 10] == 1, "Reject",
-                                        "Do not reject"),
+                   decision    = factor(c("Do not reject",
+                                          "Reject")[pmf[, 10] + 1]),
                    k           = factor(pmf[, 11], k),
                    `f(x,m|pi)` = pmf[, 12])
   if (2 %in% k) {
@@ -405,9 +405,9 @@ fisher_terminal_one_stage   <- function(nC, nE, e1) {
                  mE        = rep(as.integer(nE), rows_pmf),
                  z         = .data$xC + .data$xE,
                  statistic = .data$xE - .data$xC,
-                 decision  = ifelse(.data$statistic >=
-                                      e1[.data$xC + .data$xE + 1],
-                                    "Reject", "Do not reject"),
+                 decision  = factor(ifelse(.data$statistic >=
+                                             e1[.data$xC + .data$xE + 1],
+                                           "Reject", "Do not reject")),
                  k         = factor(rep(1, rows_pmf), 1))
 }
 
@@ -424,19 +424,22 @@ fisher_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
     }
   }
   terminal             <- fisher_terminal_two_stage_cpp(nC, nE, e1, e2, f1, k)
-  terminal             <- tibble::tibble(xC1       = as.integer(terminal[, 1]),
-                                         xE1       = as.integer(terminal[, 2]),
-                                         xC2       = as.integer(terminal[, 3]),
-                                         xE2       = as.integer(terminal[, 4]),
-                                         mC        = as.integer(terminal[, 5]),
-                                         mE        = as.integer(terminal[, 6]),
-                                         z1        = as.integer(terminal[, 7]),
-                                         z2        = as.integer(terminal[, 8]),
-                                         statistic = as.integer(terminal[, 9]),
-                                         decision  = ifelse(terminal[, 10] == 1,
-                                                            "Reject",
-                                                            "Do not reject"),
-                                         k         = factor(terminal[, 11], k))
+  terminal             <-
+    tibble::tibble(xC1       = as.integer(terminal[, 1]),
+                   xE1       = as.integer(terminal[, 2]),
+                   xC2       = as.integer(terminal[, 3]),
+                   xE2       = as.integer(terminal[, 4]),
+                   mC        = as.integer(terminal[, 5]),
+                   mE        = as.integer(terminal[, 6]),
+                   z1        = as.integer(terminal[, 7]),
+                   z2        = as.integer(terminal[, 8]),
+                   statistic = as.integer(terminal[, 9]),
+                   decision  =
+                     factor(c("Do not reject", "Reject",
+                              "Continue to stage 2")[terminal[, 10]],
+                            sort(unique(c("Do not reject", "Reject",
+                                          "Continue to stage 2")[terminal[, 10]]))),
+                   k         = factor(terminal[, 11], k))
   if (2 %in% k) {
     rows               <- which(terminal$k == 1)
     terminal$xC2[rows] <- terminal$xE2[rows] <- terminal$z2[rows] <- NA_integer_

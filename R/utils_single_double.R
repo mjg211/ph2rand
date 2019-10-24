@@ -271,9 +271,9 @@ single_double_pmf_one_stage        <- function(pi, nC, nE, eS1, eT1) {
                    mE          = rep(as.integer(nE), rows_total),
                    statisticS  = .data$xE,
                    statisticT  = .data$xE - .data$xC,
-                   decision    = ifelse((.data$statisticS >= eS1) &
-                                          (.data$statisticT >= eT1),
-                                        "Reject", "Do not reject"),
+                   decision    = factor(ifelse((.data$statisticS >= eS1) &
+                                               (.data$statisticT >= eT1),
+                                        "Reject", "Do not reject")),
                    k           = factor(rep(1, rows_total), 1),
                    `f(x,m|pi)` = f)
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$xC, .data$xE)
@@ -316,8 +316,8 @@ single_double_pmf_two_stage        <- function(pi, nC, nE, eS1, eT1, fS1, fT1,
                    mE          = as.integer(pmf[, 4]),
                    statisticS  = as.integer(pmf[, 5]),
                    statisticD  = as.integer(pmf[, 6]),
-                   decision    = ifelse(pmf[, 7] == 1, "Reject",
-                                        "Do not reject"),
+                   decision    = factor(c("Do not reject",
+                                          "Reject")[pmf[, 7] + 1]),
                    k           = factor(pmf[, 8], k),
                    `f(x,m|pi)` = pmf[, 9])
    dplyr::arrange(pmf, .data$piC, .data$piE, .data$k, .data$xC, .data$xE)
@@ -332,9 +332,9 @@ single_double_terminal_one_stage   <- function(nC, nE, eS1, eT1) {
                  mE         = rep(as.integer(nE), rows_pmf),
                  statisticS = .data$xE,
                  statisticT = .data$xE - .data$xC,
-                 decision   = ifelse(all(.data$statisticS >= eS1,
-                                         .data$statisticT >= eT1),
-                                     "Reject", "Do not reject"),
+                 decision   = factor(ifelse(all(.data$statisticS >= eS1,
+                                                .data$statisticT >= eT1),
+                                            "Reject", "Do not reject")),
                  k          = factor(rep(1, rows_pmf), 1))
 }
 
@@ -360,8 +360,11 @@ single_double_terminal_two_stage   <- function(nC, nE, eS1, eT1, fS1, fT1, eS2,
                              mE         = as.integer(terminal[, 4]),
                              statisticS = as.integer(terminal[, 5]),
                              statisticT = as.integer(terminal[, 6]),
-                             decision   = ifelse(terminal[, 7] == 1, "Reject",
-                                                 "Do not reject"),
+                             decision   =
+                               factor(c("Do not reject", "Reject",
+                                        "Continue to stage 2")[terminal[, 7]],
+                                      sort(unique(c("Do not reject", "Reject",
+                                                    "Continue to stage 2")[terminal[, 7]]))),
                              k          = factor(terminal[, 8], k))
   dplyr::arrange(terminal, .data$k, .data$xC, .data$xE)
 }

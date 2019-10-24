@@ -688,12 +688,11 @@ BEGIN_RCPP
 END_RCPP
 }
 // single_double_terminal_two_stage_cpp
-NumericMatrix single_double_terminal_two_stage_cpp(NumericVector pi, NumericVector nC, NumericVector nE, double eS1, double eT1, double fS1, double fT1, double eS2, double eT2, NumericVector k);
-RcppExport SEXP _ph2rand_single_double_terminal_two_stage_cpp(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eS1SEXP, SEXP eT1SEXP, SEXP fS1SEXP, SEXP fT1SEXP, SEXP eS2SEXP, SEXP eT2SEXP, SEXP kSEXP) {
+NumericMatrix single_double_terminal_two_stage_cpp(NumericVector nC, NumericVector nE, double eS1, double eT1, double fS1, double fT1, double eS2, double eT2, NumericVector k);
+RcppExport SEXP _ph2rand_single_double_terminal_two_stage_cpp(SEXP nCSEXP, SEXP nESEXP, SEXP eS1SEXP, SEXP eT1SEXP, SEXP fS1SEXP, SEXP fT1SEXP, SEXP eS2SEXP, SEXP eT2SEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type pi(piSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type nC(nCSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type nE(nESEXP);
     Rcpp::traits::input_parameter< double >::type eS1(eS1SEXP);
@@ -703,7 +702,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type eS2(eS2SEXP);
     Rcpp::traits::input_parameter< double >::type eT2(eT2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(single_double_terminal_two_stage_cpp(pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k));
+    rcpp_result_gen = Rcpp::wrap(single_double_terminal_two_stage_cpp(nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1004,7 +1003,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ph2rand_single_double_pmf_two_stage_cpp", (DL_FUNC) &_ph2rand_single_double_pmf_two_stage_cpp, 10},
     {"_ph2rand_single_double_power_one_stage", (DL_FUNC) &_ph2rand_single_double_power_one_stage, 7},
     {"_ph2rand_single_double_power_two_stage", (DL_FUNC) &_ph2rand_single_double_power_two_stage, 9},
-    {"_ph2rand_single_double_terminal_two_stage_cpp", (DL_FUNC) &_ph2rand_single_double_terminal_two_stage_cpp, 10},
+    {"_ph2rand_single_double_terminal_two_stage_cpp", (DL_FUNC) &_ph2rand_single_double_terminal_two_stage_cpp, 9},
     {"_ph2rand_single_double_max_typeI", (DL_FUNC) &_ph2rand_single_double_max_typeI, 12},
     {"_ph2rand_single_double_min_power", (DL_FUNC) &_ph2rand_single_double_min_power, 13},
     {"_ph2rand_single_double_ess_two_stage", (DL_FUNC) &_ph2rand_single_double_ess_two_stage, 7},

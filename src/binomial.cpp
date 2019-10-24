@@ -142,11 +142,11 @@ NumericMatrix binomial_terminal_two_stage_cpp(NumericVector nC,
         if ((xE1 - xC1 <= f1) || (xE1 - xC1 >= e1)) {
           terminal(counter, _)                =
             NumericVector::create(xC1, xE1, nC[0], nE[0], xE1 - xC1,
-                                  (xE1 - xC1 >= e1), 1);
+                                  (xE1 - xC1 >= e1) + 1, 1);
         }
         else {
           terminal(counter, _)                =
-            NumericVector::create(xC1, xE1, nC[0], nE[0], xE1 - xC1, 2, 1);
+            NumericVector::create(xC1, xE1, nC[0], nE[0], xE1 - xC1, 3, 1);
         }
         counter++;
       }
@@ -158,7 +158,7 @@ NumericMatrix binomial_terminal_two_stage_cpp(NumericVector nC,
               terminal(counter, _)          =
                 NumericVector::create(xC1 + xC2, xE1 + xE2, sum_nC, sum_nE,
                                       xE1 + xE2 - xC1 - xC2,
-                                      (xE1 + xE2 - xC1 - xC2 >= e2), 2);
+                                      (xE1 + xE2 - xC1 - xC2 >= e2) + 1, 2);
               x2_mat(xC1 + xC2, xE1 + xE2) += 1;
               counter++;
             }

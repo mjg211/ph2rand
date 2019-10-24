@@ -145,8 +145,8 @@ single_double_power_two_stage <- function(pi, nC, nE, eS, eT, fS, fT, poss_x, po
     .Call('_ph2rand_single_double_power_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS, eT, fS, fT, poss_x, poss_y)
 }
 
-single_double_terminal_two_stage_cpp <- function(pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k) {
-    .Call('_ph2rand_single_double_terminal_two_stage_cpp', PACKAGE = 'ph2rand', pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k)
+single_double_terminal_two_stage_cpp <- function(nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k) {
+    .Call('_ph2rand_single_double_terminal_two_stage_cpp', PACKAGE = 'ph2rand', nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k)
 }
 
 single_double_max_typeI <- function(J, alpha, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_null, check) {
