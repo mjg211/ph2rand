@@ -20,25 +20,25 @@ check_default                <- function(value, name, default) {
   }
 }
 
-check_des                    <- function(des, type) {
+check_des                    <- function(des, type, name = "des") {
   if (!any(class(des) == "ph2rand_des")) {
-    stop("des must be of class ph2rand_des")
+    stop(name, " must be of class ph2rand_des")
   }
   if (type == "bernard") {
     if (des$type != "bernard") {
-      stop("des must correspond to a design of type ", type)
+      stop(name, " must correspond to a design of type ", type)
     }
   } else if (type == "binomial") {
     if (des$type != "binomial") {
-      stop("des must correspond to a design of type ", type)
+      stop(name, " must correspond to a design of type ", type)
     }
   } else if (type == "fisher") {
     if (des$type != "fisher") {
-      stop("des must correspond to a design of type ", type)
+      stop(name, " must correspond to a design of type ", type)
     }
   } else if (type == "single_double") {
     if (des$type != "single_double") {
-      stop("des must correspond to a design of type ", type)
+      stop(name, " must correspond to a design of type ", type)
     }
   }
 }
