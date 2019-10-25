@@ -212,6 +212,9 @@ search_parameters          <- function(J, type, nCmax, ratio) {
         }
       }
       unique_B[[index]]                            <- unique_B[[index]][keep]
+      unique_B[[index]]                            <-
+        c(unique_B[[index]][1] - 1, unique_B[[index]],
+          unique_B[[index]][length(unique_B[[index]])] + 1)
     }
   }
   list(choose_mat  = choose_mat,

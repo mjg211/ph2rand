@@ -915,7 +915,7 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                               poss_x2   = poss_x[nC2 + nCmax*(nE2 - 1) - 1];
                 dbinom2                 =
                   dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta, nC1,
-                                       nC2, nE1, nE2);
+                                      nC2, nE1, nE2);
                 for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
                   if ((poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) > f1) &&
                       (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) < e1)) {
@@ -931,7 +931,7 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                     }
                   }
                 }
-                for (int ei2 = 1; ei2 <= len_B2; ei2++) {
+                for (int ei2 = 2; ei2 <= len_B2 - 2; ei2++) {
                   interrupt++;
                   if (interrupt % 1000 == 0) {
                     Rcpp::checkUserInterrupt();
