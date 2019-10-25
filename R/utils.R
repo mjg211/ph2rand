@@ -1,7 +1,7 @@
 build_des_one_stage_output <- function(alpha, beta, delta, feasible, nCmax,
                                        opchar, Pi0, Pi1, ratio, summary, type,
                                        type_components) {
-  if (type %in% c("bernard", "binomial")) {
+  if (type %in% c("barnard", "binomial")) {
     output      <- list(alpha       = alpha,
                         beta        = beta,
                         delta       = delta,
@@ -63,7 +63,7 @@ build_des_one_stage_output <- function(alpha, beta, delta, feasible, nCmax,
 build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
                                        nCmax, opchar, Pi0, Pi1, piO, ratio,
                                        summary, w, type, type_components) {
-  if (type %in% c("bernard", "binomial")) {
+  if (type %in% c("barnard", "binomial")) {
     output      <- list(alpha          = alpha,
                         beta           = beta,
                         delta          = delta,
@@ -184,7 +184,7 @@ search_parameters          <- function(J, type, nCmax, ratio) {
                                                               all_x[, 2] <= nE)
     poss_x[[index]]                                <- all_x[keep, ]
       
-    if (type != "bernard") {
+    if (type != "barnard") {
       poss_y[[index]]                              <- all_y[keep]
       if (type == "fisher") {
         poss_z[[index]]                            <- all_z[keep]

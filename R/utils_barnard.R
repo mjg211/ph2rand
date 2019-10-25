@@ -1,8 +1,8 @@
-bernard_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
+barnard_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
                                          nCmax, summary) {
-  params               <- search_parameters(1, "bernard", nCmax, ratio)
+  params               <- search_parameters(1, "barnard", nCmax, ratio)
   feasible             <-
-    bernard_des_one_stage_cpp(alpha, beta, delta, params$poss_nC,
+    barnard_des_one_stage_cpp(alpha, beta, delta, params$poss_nC,
                               params$poss_nE, params$poss_x, params$poss_B,
                               params$unique_B, (length(Pi0) == 1), Pi0,
                               (length(Pi1) == 1), Pi1, summary)
@@ -32,7 +32,7 @@ bernard_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
     nC                 <- feasible$nC1[1]
     nE                 <- feasible$nE1[1]
     opchar             <-
-      bernard_opchar_one_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
+      barnard_opchar_one_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
                                      feasible$`argmin power`[1] + c(0, delta)),
                                nC, nE, e1)
   } else {
@@ -45,17 +45,17 @@ bernard_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
   }
   output               <-
     build_des_one_stage_output(alpha, beta, delta, feasible, nCmax, opchar,
-                               Pi0, Pi1, ratio, summary, "bernard",
+                               Pi0, Pi1, ratio, summary, "barnard",
                                list(e1 = e1, nC = nC, nE = nE))
   output
 }
 
-bernard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
+barnard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
                                          nCmax, equal, w, piO, efficacy,
                                          futility, summary) {
-  params               <- search_parameters(2, "bernard", nCmax, ratio)
+  params               <- search_parameters(2, "barnard", nCmax, ratio)
   feasible             <-
-    bernard_des_two_stage_cpp(alpha, beta, delta, params$poss_nC,
+    barnard_des_two_stage_cpp(alpha, beta, delta, params$poss_nC,
                               params$poss_nE, params$poss_x, params$poss_B,
                               params$unique_B, (length(Pi0) == 1), Pi0,
                               (length(Pi1) == 1), Pi1, equal, efficacy,
@@ -97,7 +97,7 @@ bernard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
       index            <- as.numeric(feasible[i, 2] +
                                        params$max_poss_nC*(feasible[i, 4] - 1))
       max_ESS_1d       <-
-        bernard_max_ess_1d_two_stage(as.numeric(feasible[i, 2:3]),
+        barnard_max_ess_1d_two_stage(as.numeric(feasible[i, 2:3]),
                                      as.numeric(feasible[i, 4:5]),
                                      as.numeric(feasible[i, 6]),
                                      as.numeric(feasible[i, 8]),
@@ -106,7 +106,7 @@ bernard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
       feasible$`argmax ESS(pi,pi)`[i]       <- max_ESS_1d[1]
       feasible$`max ESS(pi,pi)`[i]          <- max_ESS_1d[2]
       max_ESS_2d       <-
-        bernard_max_ess_2d_two_stage(as.numeric(feasible[i, 2:3]),
+        barnard_max_ess_2d_two_stage(as.numeric(feasible[i, 2:3]),
                                      as.numeric(feasible[i, 4:5]),
                                      as.numeric(feasible[i, 6]),
                                      as.numeric(feasible[i, 8]),
@@ -132,7 +132,7 @@ bernard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
     nC                 <- c(feasible$nC1[1], feasible$nC2[1])
     nE                 <- c(feasible$nE1[1], feasible$nE2[1])
     opchar             <-
-      bernard_opchar_two_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
+      barnard_opchar_two_stage(rbind(rep(feasible$`argmax alpha`[1], 2),
                                      feasible$`argmin power`[1] + c(0, delta)),
                                nC, nE, e1, f1, e2, 1:2)
   } else {
@@ -146,16 +146,16 @@ bernard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
   output               <-
     build_des_two_stage_output(alpha, beta, delta, equal, feasible, nCmax,
                                opchar, Pi0, Pi1, piO, ratio, summary, w,
-                               "bernard",
+                               "barnard",
                                list(e1 = e1, e2 = e2, efficacy = efficacy,
                                     f1 = f1, futility = futility, nC = nC,
                                     nE = nE))
   output
 }
 
-bernard_max_ess_2d_two_stage <- function(nC, nE, e1, f1, poss_x1, poss_B1) {
+barnard_max_ess_2d_two_stage <- function(nC, nE, e1, f1, poss_x1, poss_B1) {
   max_ESS_2d <- stats::optim(par     = c(0.5, 0.5),
-                             fn      = bernard_minus_ess_two_stage,
+                             fn      = barnard_minus_ess_two_stage,
                              nC      = nC,
                              nE      = nE,
                              e1      = e1,
@@ -165,17 +165,17 @@ bernard_max_ess_2d_two_stage <- function(nC, nE, e1, f1, poss_x1, poss_B1) {
   c(max_ESS_2d$par, -max_ESS_2d$value)
 }
 
-bernard_minus_ess_two_stage  <- function(pi, nC, nE, e1, f1, poss_x1, poss_B1) {
+barnard_minus_ess_two_stage  <- function(pi, nC, nE, e1, f1, poss_x1, poss_B1) {
   if (!missing(poss_x1)) {
-    -bernard_des_ess_two_stage(pi, nC, nE, e1, f1, poss_x1, poss_B1)
+    -barnard_des_ess_two_stage(pi, nC, nE, e1, f1, poss_x1, poss_B1)
   } else {
-    -bernard_ess_two_stage(pi, nC, nE, e1, f1)
+    -barnard_ess_two_stage(pi, nC, nE, e1, f1)
   }
 }
 
-bernard_opchar_one_stage     <- function(pi, nC, nE, e1, pmf_pi) {
+barnard_opchar_one_stage     <- function(pi, nC, nE, e1, pmf_pi) {
   if (missing(pmf_pi)) {
-    pmf_pi <- bernard_pmf_one_stage(pi, nC, nE, e1)
+    pmf_pi <- barnard_pmf_one_stage(pi, nC, nE, e1)
   }
   rows_pi  <- nrow(pi)
   P        <- numeric(rows_pi)
@@ -189,9 +189,9 @@ bernard_opchar_one_stage     <- function(pi, nC, nE, e1, pmf_pi) {
                  `P(pi)`       = P)
 }
 
-bernard_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
+barnard_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
   if (missing(pmf_pi)) {
-    pmf_pi         <- bernard_pmf_two_stage(pi, nC, nE, e1, f1, e2, k)
+    pmf_pi         <- barnard_pmf_two_stage(pi, nC, nE, e1, f1, e2, k)
   }
   rows_pi          <- nrow(pi)
   n                <- c(nC[1] + nE[1], sum(nC) + sum(nE))
@@ -224,7 +224,7 @@ bernard_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
   opchar
 }
 
-bernard_pmf_one_stage        <- function(pi, nC, nE, e1) {
+barnard_pmf_one_stage        <- function(pi, nC, nE, e1) {
   x                                        <- expand.grid(0:nC, 0:nE)
   rows_pmf                                 <- (nC + 1)*(nE + 1)
   rows_pi                                  <- nrow(pi)
@@ -259,7 +259,7 @@ bernard_pmf_one_stage        <- function(pi, nC, nE, e1) {
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$xC, .data$xE)
 }
 
-bernard_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
+barnard_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
   if (e1 == Inf) {
     fact                                         <- nE[1]/(nC[1] + nE[1])
     e1                                           <-
@@ -271,7 +271,7 @@ bernard_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
       -1/sqrt(fact*(1 - fact)*(1/nC[1] + 1/nE[1])) - 1
   }
   pmf                                            <-
-    bernard_pmf_two_stage_cpp(pi[1, ], nC, nE, e1, f1, e2, k)
+    barnard_pmf_two_stage_cpp(pi[1, ], nC, nE, e1, f1, e2, k)
   rows_pmf                                       <- nrow(pmf)
   rows_pi                                        <- nrow(pi)
   if (rows_pi > 1) {
@@ -279,7 +279,7 @@ bernard_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
       rbind(pmf, matrix(0, (rows_pi - 1)*rows_pmf, 8))
     for (i in 2:rows_pi) {
       pmf[(1 + (i - 1)*rows_pmf):(i*rows_pmf), ] <-
-        bernard_pmf_two_stage_cpp(pi[i, ], nC, nE, e1, f1, e2, k)
+        barnard_pmf_two_stage_cpp(pi[i, ], nC, nE, e1, f1, e2, k)
     }
   }
   pmf                                            <-
@@ -297,7 +297,7 @@ bernard_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$k, .data$xC, .data$xE)
 }
 
-bernard_terminal_one_stage   <- function(nC, nE, e1) {
+barnard_terminal_one_stage   <- function(nC, nE, e1) {
   x                            <- expand.grid(0:nC, 0:nE)
   rows_pmf                     <- (nC + 1)*(nE + 1)
   fact                         <- (x[, 1] + x[, 2])/(nC + nE)
@@ -314,7 +314,7 @@ bernard_terminal_one_stage   <- function(nC, nE, e1) {
                         k         = factor(rep(1, rows_pmf), 1)))
 }
 
-bernard_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
+barnard_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
   if (e1 == Inf) {
     fact   <- nE[1]/(nC[1] + nE[1])
     e1     <- 1/sqrt(fact*(1 - fact)*(1/nC[1] + 1/nE[1])) + 1
@@ -323,7 +323,7 @@ bernard_terminal_two_stage   <- function(nC, nE, e1, f1, e2, k) {
     fact   <- nC[1]/(nC[1] + nE[1])
     f1     <- -1/sqrt(fact*(1 - fact)*(1/nC[1] + 1/nE[1])) - 1
   }
-  terminal <- bernard_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k)
+  terminal <- barnard_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k)
   terminal <- tibble::tibble(xC        = as.integer(terminal[, 1]),
                              xE        = as.integer(terminal[, 2]),
                              mC        = as.integer(terminal[, 3]),

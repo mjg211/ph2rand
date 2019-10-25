@@ -7,9 +7,9 @@ summary_des      <- function(J, type, alpha, beta, delta, ratio, Pi0, Pi1,
   } else {
     stage    <- "two-stage"
   }
-  if (type == "bernard") {
+  if (type == "barnard") {
     dashes   <- 60 - 3*(J == 2)
-    design   <- "Bernard's exact test"
+    design   <- "Barnard's exact test"
   } else if (type == "binomial") {
     dashes   <- 62 - 3*(J == 2)
     design   <- "an exact binomial test"
@@ -161,8 +161,8 @@ summary_terminal <- function(des, k) {
   } else {
     stage  <- "two-stage"
   }
-  if (des$type == "bernard") {
-    design <- "Bernard's exact test"
+  if (des$type == "barnard") {
+    design <- "barnard's exact test"
     dashes <- switch(stage, "single-stage" = 70, "two-stage" = 67)
   } else if (des$type == "binomial") {
     design <- "an exact binomial test"
@@ -180,7 +180,7 @@ summary_terminal <- function(des, k) {
   if (any(class(des) %in% "ph2rand_des_one_stage")) {
     message("    \u2022 nC1 = ", des$nC)
     message("    \u2022 nE1 = ", des$nE)
-    if (des$type %in% c("bernard", "binomial")) {
+    if (des$type %in% c("barnard", "binomial")) {
       message("    \u2022 e1 = ", des$e1)
     } else if (des$type == "fisher") {
       message("    \u2022 e10 = ", des$e1[1], ", ..., e11 = ", des$e1[2],
@@ -194,7 +194,7 @@ summary_terminal <- function(des, k) {
     message("    \u2022 nC2 = ", des$nC[2])
     message("    \u2022 nE1 = ", des$nE[1])
     message("    \u2022 nE2 = ", des$nE[2])
-    if (des$type %in% c("bernard", "binomial")) {
+    if (des$type %in% c("barnard", "binomial")) {
       message("    \u2022 e1 = ", des$e1)
       message("    \u2022 f1 = ", des$f1)
       message("    \u2022 e2 = ", des$e2)
@@ -223,8 +223,8 @@ summary_pmf      <- function(des, pi, k) {
   } else {
     stage  <- "two-stage"
   }
-  if (des$type == "bernard") {
-    design <- "Bernard's exact test"
+  if (des$type == "barnard") {
+    design <- "barnard's exact test"
     dashes <- switch(stage, "single-stage" = 58, "two-stage" = 55)
   } else if (des$type == "binomial") {
     design <- "an exact binomial test"
@@ -243,7 +243,7 @@ summary_pmf      <- function(des, pi, k) {
   if (any(class(des) %in% "ph2rand_des_one_stage")) {
     message("      \u2022 nC1 = ", des$nC)
     message("      \u2022 nE1 = ", des$nE)
-    if (des$type %in% c("bernard", "binomial")) {
+    if (des$type %in% c("barnard", "binomial")) {
       message("      \u2022 e1 = ", des$e1)
     } else if (des$type == "fisher") {
       message("      \u2022 e10 = ", des$e1[1], ", ..., e11 = ", des$e1[2],
@@ -257,7 +257,7 @@ summary_pmf      <- function(des, pi, k) {
     message("      \u2022 nC2 = ", des$nC[2])
     message("      \u2022 nE1 = ", des$nE[1])
     message("      \u2022 nE2 = ", des$nE[2])
-    if (des$type %in% c("bernard", "binomial")) {
+    if (des$type %in% c("barnard", "binomial")) {
       message("      \u2022 e1 = ", des$e1)
       message("      \u2022 f1 = ", des$f1)
       message("      \u2022 e2 = ", des$e2)

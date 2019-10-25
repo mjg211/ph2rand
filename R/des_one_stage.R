@@ -11,7 +11,7 @@
 #' information on key operating characteristics.
 #'
 #' @param type A \code{\link{character}} string indicating the chosen design
-#' framework/test statistic to assume. Must be one of \code{"bernard"},
+#' framework/test statistic to assume. Must be one of \code{"barnard"},
 #' \code{"binomial"}, \code{"fisher"}, or \code{"single_double"}. Defaults to
 #' \code{"binomial"}.
 #' @param alpha A \code{\link{numeric}} indicating the chosen value for
@@ -73,7 +73,7 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
 
   ##### Check inputs ###########################################################
 
-  check_belong(type, "type", c("bernard", "binomial", "fisher",
+  check_belong(type, "type", c("barnard", "binomial", "fisher",
                                "single_double"), 1)
   check_real_range_strict(alpha, "alpha", c(0, 1),   1)
   check_real_range_strict(beta,  "beta",  c(0, 1),   1)
@@ -99,8 +99,8 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
     message("  Identifying feasible designs", uc("two_elip"))
   }
   output <- switch(type,
-                   bernard       =
-                     bernard_des_one_stage(alpha, beta, delta, ratio, Pi0, Pi1,
+                   barnard       =
+                     barnard_des_one_stage(alpha, beta, delta, ratio, Pi0, Pi1,
                                            nCmax, summary),
                    binomial      =
                      binomial_des_one_stage(alpha, beta, delta, ratio, Pi0, Pi1,

@@ -21,8 +21,8 @@ pmf <- function(des, pi, k, summary = F) {
   }
   if (des$J == 1) {
     pmf <- switch(des$type,
-                  bernard       =
-                    bernard_pmf_one_stage(pi, des$nC, des$nE, des$e1),
+                  barnard       =
+                    barnard_pmf_one_stage(pi, des$nC, des$nE, des$e1),
                   binomial      =
                     binomial_pmf_one_stage(pi, des$nC, des$nE, des$e1),
                   fisher        =
@@ -32,8 +32,8 @@ pmf <- function(des, pi, k, summary = F) {
                                                    des$eT1))
   } else {
     pmf <- switch(des$type,
-                  bernard       =
-                    bernard_pmf_two_stage(pi, des$nC, des$nE, des$e1, des$f1,
+                  barnard       =
+                    barnard_pmf_two_stage(pi, des$nC, des$nE, des$e1, des$f1,
                                           des$e2, k),
                   binomial      =
                     binomial_pmf_two_stage(pi, des$nC, des$nE, des$e1, des$f1,

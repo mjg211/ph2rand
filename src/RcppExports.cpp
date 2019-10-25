@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// bernard_pmf_two_stage_cpp
-NumericMatrix bernard_pmf_two_stage_cpp(NumericVector pi, NumericVector nC, NumericVector nE, double e1, double f1, double e2, NumericVector k);
-RcppExport SEXP _ph2rand_bernard_pmf_two_stage_cpp(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP e2SEXP, SEXP kSEXP) {
+// barnard_pmf_two_stage_cpp
+NumericMatrix barnard_pmf_two_stage_cpp(NumericVector pi, NumericVector nC, NumericVector nE, double e1, double f1, double e2, NumericVector k);
+RcppExport SEXP _ph2rand_barnard_pmf_two_stage_cpp(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP e2SEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,13 +18,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type f1(f1SEXP);
     Rcpp::traits::input_parameter< double >::type e2(e2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_pmf_two_stage_cpp(pi, nC, nE, e1, f1, e2, k));
+    rcpp_result_gen = Rcpp::wrap(barnard_pmf_two_stage_cpp(pi, nC, nE, e1, f1, e2, k));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_power_one_stage
-double bernard_power_one_stage(NumericVector pi, int nC, int nE, double e, NumericMatrix poss_x, NumericMatrix poss_B);
-RcppExport SEXP _ph2rand_bernard_power_one_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP) {
+// barnard_power_one_stage
+double barnard_power_one_stage(NumericVector pi, int nC, int nE, double e, NumericMatrix poss_x, NumericMatrix poss_B);
+RcppExport SEXP _ph2rand_barnard_power_one_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,13 +34,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type e(eSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type poss_x(poss_xSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type poss_B(poss_BSEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_power_one_stage(pi, nC, nE, e, poss_x, poss_B));
+    rcpp_result_gen = Rcpp::wrap(barnard_power_one_stage(pi, nC, nE, e, poss_x, poss_B));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_power_two_stage
-double bernard_power_two_stage(NumericVector pi, NumericVector nC, NumericVector nE, NumericVector e, NumericVector f, List poss_x, List poss_B);
-RcppExport SEXP _ph2rand_bernard_power_two_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP fSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP) {
+// barnard_power_two_stage
+double barnard_power_two_stage(NumericVector pi, NumericVector nC, NumericVector nE, NumericVector e, NumericVector f, List poss_x, List poss_B);
+RcppExport SEXP _ph2rand_barnard_power_two_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP fSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,13 +51,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type f(fSEXP);
     Rcpp::traits::input_parameter< List >::type poss_x(poss_xSEXP);
     Rcpp::traits::input_parameter< List >::type poss_B(poss_BSEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_power_two_stage(pi, nC, nE, e, f, poss_x, poss_B));
+    rcpp_result_gen = Rcpp::wrap(barnard_power_two_stage(pi, nC, nE, e, f, poss_x, poss_B));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_terminal_two_stage_cpp
-NumericMatrix bernard_terminal_two_stage_cpp(NumericVector nC, NumericVector nE, double e1, double f1, double e2, NumericVector k);
-RcppExport SEXP _ph2rand_bernard_terminal_two_stage_cpp(SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP e2SEXP, SEXP kSEXP) {
+// barnard_terminal_two_stage_cpp
+NumericMatrix barnard_terminal_two_stage_cpp(NumericVector nC, NumericVector nE, double e1, double f1, double e2, NumericVector k);
+RcppExport SEXP _ph2rand_barnard_terminal_two_stage_cpp(SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP e2SEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -67,13 +67,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type f1(f1SEXP);
     Rcpp::traits::input_parameter< double >::type e2(e2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k));
+    rcpp_result_gen = Rcpp::wrap(barnard_terminal_two_stage_cpp(nC, nE, e1, f1, e2, k));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_max_typeI
-NumericVector bernard_max_typeI(int J, double alpha, NumericVector nC, NumericVector nE, NumericVector e, NumericVector f, List poss_x, List poss_B, NumericVector Pi0, int check);
-RcppExport SEXP _ph2rand_bernard_max_typeI(SEXP JSEXP, SEXP alphaSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP fSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP Pi0SEXP, SEXP checkSEXP) {
+// barnard_max_typeI
+NumericVector barnard_max_typeI(int J, double alpha, NumericVector nC, NumericVector nE, NumericVector e, NumericVector f, List poss_x, List poss_B, NumericVector Pi0, int check);
+RcppExport SEXP _ph2rand_barnard_max_typeI(SEXP JSEXP, SEXP alphaSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP fSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP Pi0SEXP, SEXP checkSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -87,13 +87,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type poss_B(poss_BSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Pi0(Pi0SEXP);
     Rcpp::traits::input_parameter< int >::type check(checkSEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_max_typeI(J, alpha, nC, nE, e, f, poss_x, poss_B, Pi0, check));
+    rcpp_result_gen = Rcpp::wrap(barnard_max_typeI(J, alpha, nC, nE, e, f, poss_x, poss_B, Pi0, check));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_min_power
-NumericVector bernard_min_power(int J, double beta, double delta, NumericVector nC, NumericVector nE, NumericVector e, NumericVector f, List poss_x, List poss_B, NumericVector Pi1, int check);
-RcppExport SEXP _ph2rand_bernard_min_power(SEXP JSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP fSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP Pi1SEXP, SEXP checkSEXP) {
+// barnard_min_power
+NumericVector barnard_min_power(int J, double beta, double delta, NumericVector nC, NumericVector nE, NumericVector e, NumericVector f, List poss_x, List poss_B, NumericVector Pi1, int check);
+RcppExport SEXP _ph2rand_barnard_min_power(SEXP JSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP eSEXP, SEXP fSEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP Pi1SEXP, SEXP checkSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -108,13 +108,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type poss_B(poss_BSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Pi1(Pi1SEXP);
     Rcpp::traits::input_parameter< int >::type check(checkSEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_min_power(J, beta, delta, nC, nE, e, f, poss_x, poss_B, Pi1, check));
+    rcpp_result_gen = Rcpp::wrap(barnard_min_power(J, beta, delta, nC, nE, e, f, poss_x, poss_B, Pi1, check));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_ess_two_stage
-double bernard_ess_two_stage(NumericVector pi, NumericVector nC, NumericVector nE, double e1, double f1);
-RcppExport SEXP _ph2rand_bernard_ess_two_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP) {
+// barnard_ess_two_stage
+double barnard_ess_two_stage(NumericVector pi, NumericVector nC, NumericVector nE, double e1, double f1);
+RcppExport SEXP _ph2rand_barnard_ess_two_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -123,13 +123,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type nE(nESEXP);
     Rcpp::traits::input_parameter< double >::type e1(e1SEXP);
     Rcpp::traits::input_parameter< double >::type f1(f1SEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_ess_two_stage(pi, nC, nE, e1, f1));
+    rcpp_result_gen = Rcpp::wrap(barnard_ess_two_stage(pi, nC, nE, e1, f1));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_des_ess_two_stage
-double bernard_des_ess_two_stage(NumericVector pi, NumericVector nC, NumericVector nE, double e1, double f1, NumericMatrix poss_x, NumericMatrix poss_B);
-RcppExport SEXP _ph2rand_bernard_des_ess_two_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP poss_xSEXP, SEXP poss_BSEXP) {
+// barnard_des_ess_two_stage
+double barnard_des_ess_two_stage(NumericVector pi, NumericVector nC, NumericVector nE, double e1, double f1, NumericMatrix poss_x, NumericMatrix poss_B);
+RcppExport SEXP _ph2rand_barnard_des_ess_two_stage(SEXP piSEXP, SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP poss_xSEXP, SEXP poss_BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -140,13 +140,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type f1(f1SEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type poss_x(poss_xSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type poss_B(poss_BSEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_des_ess_two_stage(pi, nC, nE, e1, f1, poss_x, poss_B));
+    rcpp_result_gen = Rcpp::wrap(barnard_des_ess_two_stage(pi, nC, nE, e1, f1, poss_x, poss_B));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_max_ess_1d_two_stage
-NumericVector bernard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE, double e1, double f1, NumericMatrix poss_x1, NumericMatrix poss_B1);
-RcppExport SEXP _ph2rand_bernard_max_ess_1d_two_stage(SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP poss_x1SEXP, SEXP poss_B1SEXP) {
+// barnard_max_ess_1d_two_stage
+NumericVector barnard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE, double e1, double f1, NumericMatrix poss_x1, NumericMatrix poss_B1);
+RcppExport SEXP _ph2rand_barnard_max_ess_1d_two_stage(SEXP nCSEXP, SEXP nESEXP, SEXP e1SEXP, SEXP f1SEXP, SEXP poss_x1SEXP, SEXP poss_B1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -156,13 +156,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type f1(f1SEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type poss_x1(poss_x1SEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type poss_B1(poss_B1SEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_max_ess_1d_two_stage(nC, nE, e1, f1, poss_x1, poss_B1));
+    rcpp_result_gen = Rcpp::wrap(barnard_max_ess_1d_two_stage(nC, nE, e1, f1, poss_x1, poss_B1));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_des_one_stage_cpp
-NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta, NumericVector poss_nC, NumericVector poss_nE, List poss_x, List poss_B, List unique_B, int point_null, NumericVector Pi0, int point_alt, NumericVector Pi1, int summary);
-RcppExport SEXP _ph2rand_bernard_des_one_stage_cpp(SEXP alphaSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP poss_nCSEXP, SEXP poss_nESEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP unique_BSEXP, SEXP point_nullSEXP, SEXP Pi0SEXP, SEXP point_altSEXP, SEXP Pi1SEXP, SEXP summarySEXP) {
+// barnard_des_one_stage_cpp
+NumericMatrix barnard_des_one_stage_cpp(double alpha, double beta, double delta, NumericVector poss_nC, NumericVector poss_nE, List poss_x, List poss_B, List unique_B, int point_null, NumericVector Pi0, int point_alt, NumericVector Pi1, int summary);
+RcppExport SEXP _ph2rand_barnard_des_one_stage_cpp(SEXP alphaSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP poss_nCSEXP, SEXP poss_nESEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP unique_BSEXP, SEXP point_nullSEXP, SEXP Pi0SEXP, SEXP point_altSEXP, SEXP Pi1SEXP, SEXP summarySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -179,13 +179,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type point_alt(point_altSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Pi1(Pi1SEXP);
     Rcpp::traits::input_parameter< int >::type summary(summarySEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_des_one_stage_cpp(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_B, unique_B, point_null, Pi0, point_alt, Pi1, summary));
+    rcpp_result_gen = Rcpp::wrap(barnard_des_one_stage_cpp(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_B, unique_B, point_null, Pi0, point_alt, Pi1, summary));
     return rcpp_result_gen;
 END_RCPP
 }
-// bernard_des_two_stage_cpp
-NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta, NumericVector poss_nC, NumericVector poss_nE, List poss_x, List poss_B, List unique_B, int point_null, NumericVector Pi0, int point_alt, NumericVector Pi1, int equal, int efficacy, int futility, double pi_ess, int summary);
-RcppExport SEXP _ph2rand_bernard_des_two_stage_cpp(SEXP alphaSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP poss_nCSEXP, SEXP poss_nESEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP unique_BSEXP, SEXP point_nullSEXP, SEXP Pi0SEXP, SEXP point_altSEXP, SEXP Pi1SEXP, SEXP equalSEXP, SEXP efficacySEXP, SEXP futilitySEXP, SEXP pi_essSEXP, SEXP summarySEXP) {
+// barnard_des_two_stage_cpp
+NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta, NumericVector poss_nC, NumericVector poss_nE, List poss_x, List poss_B, List unique_B, int point_null, NumericVector Pi0, int point_alt, NumericVector Pi1, int equal, int efficacy, int futility, double pi_ess, int summary);
+RcppExport SEXP _ph2rand_barnard_des_two_stage_cpp(SEXP alphaSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP poss_nCSEXP, SEXP poss_nESEXP, SEXP poss_xSEXP, SEXP poss_BSEXP, SEXP unique_BSEXP, SEXP point_nullSEXP, SEXP Pi0SEXP, SEXP point_altSEXP, SEXP Pi1SEXP, SEXP equalSEXP, SEXP efficacySEXP, SEXP futilitySEXP, SEXP pi_essSEXP, SEXP summarySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -206,7 +206,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type futility(futilitySEXP);
     Rcpp::traits::input_parameter< double >::type pi_ess(pi_essSEXP);
     Rcpp::traits::input_parameter< int >::type summary(summarySEXP);
-    rcpp_result_gen = Rcpp::wrap(bernard_des_two_stage_cpp(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_B, unique_B, point_null, Pi0, point_alt, Pi1, equal, efficacy, futility, pi_ess, summary));
+    rcpp_result_gen = Rcpp::wrap(barnard_des_two_stage_cpp(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_B, unique_B, point_null, Pi0, point_alt, Pi1, equal, efficacy, futility, pi_ess, summary));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -967,17 +967,17 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_ph2rand_bernard_pmf_two_stage_cpp", (DL_FUNC) &_ph2rand_bernard_pmf_two_stage_cpp, 7},
-    {"_ph2rand_bernard_power_one_stage", (DL_FUNC) &_ph2rand_bernard_power_one_stage, 6},
-    {"_ph2rand_bernard_power_two_stage", (DL_FUNC) &_ph2rand_bernard_power_two_stage, 7},
-    {"_ph2rand_bernard_terminal_two_stage_cpp", (DL_FUNC) &_ph2rand_bernard_terminal_two_stage_cpp, 6},
-    {"_ph2rand_bernard_max_typeI", (DL_FUNC) &_ph2rand_bernard_max_typeI, 10},
-    {"_ph2rand_bernard_min_power", (DL_FUNC) &_ph2rand_bernard_min_power, 11},
-    {"_ph2rand_bernard_ess_two_stage", (DL_FUNC) &_ph2rand_bernard_ess_two_stage, 5},
-    {"_ph2rand_bernard_des_ess_two_stage", (DL_FUNC) &_ph2rand_bernard_des_ess_two_stage, 7},
-    {"_ph2rand_bernard_max_ess_1d_two_stage", (DL_FUNC) &_ph2rand_bernard_max_ess_1d_two_stage, 6},
-    {"_ph2rand_bernard_des_one_stage_cpp", (DL_FUNC) &_ph2rand_bernard_des_one_stage_cpp, 13},
-    {"_ph2rand_bernard_des_two_stage_cpp", (DL_FUNC) &_ph2rand_bernard_des_two_stage_cpp, 17},
+    {"_ph2rand_barnard_pmf_two_stage_cpp", (DL_FUNC) &_ph2rand_barnard_pmf_two_stage_cpp, 7},
+    {"_ph2rand_barnard_power_one_stage", (DL_FUNC) &_ph2rand_barnard_power_one_stage, 6},
+    {"_ph2rand_barnard_power_two_stage", (DL_FUNC) &_ph2rand_barnard_power_two_stage, 7},
+    {"_ph2rand_barnard_terminal_two_stage_cpp", (DL_FUNC) &_ph2rand_barnard_terminal_two_stage_cpp, 6},
+    {"_ph2rand_barnard_max_typeI", (DL_FUNC) &_ph2rand_barnard_max_typeI, 10},
+    {"_ph2rand_barnard_min_power", (DL_FUNC) &_ph2rand_barnard_min_power, 11},
+    {"_ph2rand_barnard_ess_two_stage", (DL_FUNC) &_ph2rand_barnard_ess_two_stage, 5},
+    {"_ph2rand_barnard_des_ess_two_stage", (DL_FUNC) &_ph2rand_barnard_des_ess_two_stage, 7},
+    {"_ph2rand_barnard_max_ess_1d_two_stage", (DL_FUNC) &_ph2rand_barnard_max_ess_1d_two_stage, 6},
+    {"_ph2rand_barnard_des_one_stage_cpp", (DL_FUNC) &_ph2rand_barnard_des_one_stage_cpp, 13},
+    {"_ph2rand_barnard_des_two_stage_cpp", (DL_FUNC) &_ph2rand_barnard_des_two_stage_cpp, 17},
     {"_ph2rand_binomial_pmf_two_stage_cpp", (DL_FUNC) &_ph2rand_binomial_pmf_two_stage_cpp, 7},
     {"_ph2rand_binomial_power_one_stage", (DL_FUNC) &_ph2rand_binomial_power_one_stage, 6},
     {"_ph2rand_binomial_power_two_stage", (DL_FUNC) &_ph2rand_binomial_power_two_stage, 7},

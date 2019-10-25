@@ -20,8 +20,8 @@ terminal <- function(des, k, summary = F) {
   }
   if (des$J == 1) {
     terminal <- switch(des$type,
-                       bernard       =
-                         bernard_terminal_one_stage(des$nC, des$nE, des$e1),
+                       barnard       =
+                         barnard_terminal_one_stage(des$nC, des$nE, des$e1),
                        binomial      =
                          binomial_terminal_one_stage(des$nC, des$nE, des$e1),
                        fisher        =
@@ -31,8 +31,8 @@ terminal <- function(des, k, summary = F) {
                                                           des$e1))
   } else {
     terminal <- switch(des$type,
-                       bernard       =
-                         bernard_terminal_two_stage(des$nC, des$nE, des$e1,
+                       barnard       =
+                         barnard_terminal_two_stage(des$nC, des$nE, des$e1,
                                                     des$f1, des$e2, k),
                        binomial      =
                          binomial_terminal_two_stage(des$nC, des$nE, des$e1,

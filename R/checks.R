@@ -24,8 +24,8 @@ check_des                    <- function(des, type, name = "des") {
   if (!any(class(des) == "ph2rand_des")) {
     stop(name, " must be of class ph2rand_des")
   }
-  if (type == "bernard") {
-    if (des$type != "bernard") {
+  if (type == "barnard") {
+    if (des$type != "barnard") {
       stop(name, " must correspond to a design of type ", type)
     }
   } else if (type == "binomial") {
@@ -43,7 +43,7 @@ check_des                    <- function(des, type, name = "des") {
   }
 }
 
-check_des_bernard            <- function(des) {
+check_des_barnard            <- function(des) {
   if (any(!("ph2rand_des" %in% class(des)), !is.list(des))) {
     stop("des must be of class ph2rand_des and of class list")
   } else if (any(is.null(des$J), !(des$J %in% c(1, 2)))) {

@@ -11,7 +11,7 @@ using namespace Rcpp;
 using namespace std;
 
 // [[Rcpp::export]]
-NumericMatrix bernard_pmf_two_stage_cpp(NumericVector pi, NumericVector nC,
+NumericMatrix barnard_pmf_two_stage_cpp(NumericVector pi, NumericVector nC,
                                          NumericVector nE, double e1, double f1,
                                          double e2, NumericVector k) {
   int           counter                    = 0,
@@ -79,7 +79,7 @@ NumericMatrix bernard_pmf_two_stage_cpp(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-double bernard_power_one_stage(NumericVector pi, int nC, int nE, double e,
+double barnard_power_one_stage(NumericVector pi, int nC, int nE, double e,
                                NumericMatrix poss_x, NumericMatrix poss_B) {
   double        power  = 0;
   NumericMatrix dbinom = dbinom_one_stage(pi, nC, nE);
@@ -92,7 +92,7 @@ double bernard_power_one_stage(NumericVector pi, int nC, int nE, double e,
 }
 
 // [[Rcpp::export]]
-double bernard_power_two_stage(NumericVector pi, NumericVector nC,
+double barnard_power_two_stage(NumericVector pi, NumericVector nC,
                                NumericVector nE, NumericVector e,
                                NumericVector f, List poss_x, List poss_B) {
   double        prob_x1,
@@ -154,7 +154,7 @@ double bernard_power_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericMatrix bernard_terminal_two_stage_cpp(NumericVector nC, NumericVector nE,
+NumericMatrix barnard_terminal_two_stage_cpp(NumericVector nC, NumericVector nE,
                                              double e1, double f1, double e2,
                                              NumericVector k) {
   
@@ -223,7 +223,7 @@ NumericMatrix bernard_terminal_two_stage_cpp(NumericVector nC, NumericVector nE,
 }
 
 // [[Rcpp::export]]
-NumericVector bernard_max_typeI(int J, double alpha, NumericVector nC,
+NumericVector barnard_max_typeI(int J, double alpha, NumericVector nC,
                                 NumericVector nE, NumericVector e,
                                 NumericVector f, List poss_x, List poss_B,
                                 NumericVector Pi0, int check) {
@@ -235,12 +235,12 @@ NumericVector bernard_max_typeI(int J, double alpha, NumericVector nC,
                 v       = x_left + golden*(x_right - x_left);
   if (J == 1) {
     f_v                 =
-      -bernard_power_one_stage(NumericVector::create(v, v), nC[0], nE[0], e[0],
+      -barnard_power_one_stage(NumericVector::create(v, v), nC[0], nE[0], e[0],
                                poss_x[0], poss_B[0]);
   }
   else {
     f_v                 =
-      -bernard_power_two_stage(NumericVector::create(v, v), nC, nE, e, f,
+      -barnard_power_two_stage(NumericVector::create(v, v), nC, nE, e, f,
                                poss_x, poss_B);
   }
   NumericVector output(4);
@@ -252,12 +252,12 @@ NumericVector bernard_max_typeI(int J, double alpha, NumericVector nC,
          z              = pi_typeI_finder(0, Pi0);
   if (J == 1) {
     f_z                 =
-      -bernard_power_one_stage(NumericVector::create(z, z), nC[0], nE[0], e[0],
+      -barnard_power_one_stage(NumericVector::create(z, z), nC[0], nE[0], e[0],
                                poss_x[0], poss_B[0]);
   }
   else {
     f_z                 =
-      -bernard_power_two_stage(NumericVector::create(z, z), nC, nE, e, f,
+      -barnard_power_two_stage(NumericVector::create(z, z), nC, nE, e, f,
                                poss_x, poss_B);
   }
   if ((-f_z > alpha) && (check == 1)) {
@@ -317,12 +317,12 @@ NumericVector bernard_max_typeI(int J, double alpha, NumericVector nC,
     }
     if (J == 1) {
       f_u               =
-        -bernard_power_one_stage(NumericVector::create(u, u), nC[0], nE[0],
+        -barnard_power_one_stage(NumericVector::create(u, u), nC[0], nE[0],
                                  e[0], poss_x[0], poss_B[0]);
     }
     else {
       f_u               =
-        -bernard_power_two_stage(NumericVector::create(u, u), nC, nE, e, f,
+        -barnard_power_two_stage(NumericVector::create(u, u), nC, nE, e, f,
                                  poss_x, poss_B);
     }
     if ((-f_u > alpha) && (check == 1)) {
@@ -370,7 +370,7 @@ NumericVector bernard_max_typeI(int J, double alpha, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericVector bernard_min_power(int J, double beta, double delta,
+NumericVector barnard_min_power(int J, double beta, double delta,
                                 NumericVector nC, NumericVector nE,
                                 NumericVector e, NumericVector f, List poss_x,
                                 List poss_B, NumericVector Pi1, int check) {
@@ -382,12 +382,12 @@ NumericVector bernard_min_power(int J, double beta, double delta,
                 v       = x_left + golden*(x_right - x_left);
   if (J == 1) {
     f_v                 =
-      bernard_power_one_stage(NumericVector::create(v, v + delta), nC[0],
+      barnard_power_one_stage(NumericVector::create(v, v + delta), nC[0],
                               nE[0], e[0], poss_x[0], poss_B[0]);
   }
   else {
     f_v                 =
-      bernard_power_two_stage(NumericVector::create(v, v + delta), nC, nE, e,
+      barnard_power_two_stage(NumericVector::create(v, v + delta), nC, nE, e,
                               f, poss_x, poss_B);
   }
   NumericVector output(4);
@@ -399,12 +399,12 @@ NumericVector bernard_min_power(int J, double beta, double delta,
          z              = pi_power_finder(0, Pi1, delta);
   if (J == 1) {
     f_z                 =
-      bernard_power_one_stage(NumericVector::create(z, z + delta), nC[0],
+      barnard_power_one_stage(NumericVector::create(z, z + delta), nC[0],
                               nE[0], e[0], poss_x[0], poss_B[0]);
   }
   else {
     f_z                 =
-      bernard_power_two_stage(NumericVector::create(z, z + delta), nC, nE, e,
+      barnard_power_two_stage(NumericVector::create(z, z + delta), nC, nE, e,
                               f, poss_x, poss_B);
   }
   if ((f_z < 1 - beta) && (check == 1)) {
@@ -464,12 +464,12 @@ NumericVector bernard_min_power(int J, double beta, double delta,
     }
     if (J == 1) {
       f_u               =
-        bernard_power_one_stage(NumericVector::create(u, u + delta), nC[0],
+        barnard_power_one_stage(NumericVector::create(u, u + delta), nC[0],
                                 nE[0], e[0], poss_x[0], poss_B[0]);
     }
     else {
       f_u               =
-        bernard_power_two_stage(NumericVector::create(u, u + delta), nC, nE, e,
+        barnard_power_two_stage(NumericVector::create(u, u + delta), nC, nE, e,
                                 f, poss_x, poss_B);
     }
     if ((f_u < 1 - beta) && (check == 1)) {
@@ -517,7 +517,7 @@ NumericVector bernard_min_power(int J, double beta, double delta,
 }
 
 // [[Rcpp::export]]
-double bernard_ess_two_stage(NumericVector pi, NumericVector nC,
+double barnard_ess_two_stage(NumericVector pi, NumericVector nC,
                              NumericVector nE, double e1, double f1) {
   double        statistic,
   fact,
@@ -543,7 +543,7 @@ double bernard_ess_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-double bernard_des_ess_two_stage(NumericVector pi, NumericVector nC,
+double barnard_des_ess_two_stage(NumericVector pi, NumericVector nC,
                                  NumericVector nE, double e1, double f1,
                                  NumericMatrix poss_x, NumericMatrix poss_B) {
   double        S1      = 0;
@@ -559,7 +559,7 @@ double bernard_des_ess_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericVector bernard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE,
+NumericVector barnard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE,
                                            double e1, double f1,
                                            NumericMatrix poss_x1,
                                            NumericMatrix poss_B1) {
@@ -572,11 +572,11 @@ NumericVector bernard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE,
                 x_right = 1,
                 v       = x_left + golden*(x_right - x_left),
                 f_v     =
-                  -bernard_des_ess_two_stage(NumericVector::create(v, v), nC,
+                  -barnard_des_ess_two_stage(NumericVector::create(v, v), nC,
                                              nE, e1, f1, poss_x1, poss_B1),
                 z       = 0.5,
                 f_z     =
-                  -bernard_des_ess_two_stage(NumericVector::create(z, z), nC,
+                  -barnard_des_ess_two_stage(NumericVector::create(z, z), nC,
                                              nE, e1, f1, poss_x1, poss_B1),
                 w       = v,
                 f_w     = f_v,
@@ -628,7 +628,7 @@ NumericVector bernard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE,
       u                 = z + (d > 0 ? tol : -tol);
     }
     f_u                 =
-      -bernard_des_ess_two_stage(NumericVector::create(u, u), nC, nE, e1, f1,
+      -barnard_des_ess_two_stage(NumericVector::create(u, u), nC, nE, e1, f1,
                                  poss_x1, poss_B1);
     if (f_u <= f_z) {
       if (u < z) {
@@ -671,7 +671,7 @@ NumericVector bernard_max_ess_1d_two_stage(NumericVector nC, NumericVector nE,
 }
 
 // [[Rcpp::export]]
-NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
+NumericMatrix barnard_des_one_stage_cpp(double alpha, double beta, double delta,
                                         NumericVector poss_nC,
                                         NumericVector poss_nE, List poss_x,
                                         List poss_B, List unique_B,
@@ -737,7 +737,7 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
           }
           else {
             NumericVector min_power        =
-              bernard_min_power(1, beta, delta, NumericVector::create(nC),
+              barnard_min_power(1, beta, delta, NumericVector::create(nC),
                                 NumericVector::create(nE),
                                 NumericVector::create(e1),
                                 NumericVector::create(f1),
@@ -754,7 +754,7 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
         }
         else {
           NumericVector max_typeI          =
-            bernard_max_typeI(1, alpha, NumericVector::create(nC),
+            barnard_max_typeI(1, alpha, NumericVector::create(nC),
                               NumericVector::create(nE),
                               NumericVector::create(e1),
                               NumericVector::create(f1), List::create(poss_x_n),
@@ -768,7 +768,7 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
             }
             else {
               NumericVector min_power      =
-                bernard_min_power(1, beta, delta, NumericVector::create(nC),
+                barnard_min_power(1, beta, delta, NumericVector::create(nC),
                                   NumericVector::create(nE),
                                   NumericVector::create(e1),
                                   NumericVector::create(f1),
@@ -794,7 +794,7 @@ NumericMatrix bernard_des_one_stage_cpp(double alpha, double beta, double delta,
 }
 
 // [[Rcpp::export]]
-NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
+NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                                         NumericVector poss_nC,
                                         NumericVector poss_nE, List poss_x,
                                         List poss_B, List unique_B,
@@ -969,7 +969,7 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                       }
                       else {
                         NumericVector min_power        =
-                          bernard_min_power(2, beta, delta,
+                          barnard_min_power(2, beta, delta,
                                             NumericVector::create(nC1, nC2),
                                             NumericVector::create(nE1, nE2),
                                             NumericVector::create(e1, e2),
@@ -993,7 +993,7 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                     }
                     else {
                       NumericVector max_typeI          =
-                        bernard_max_typeI(2, alpha,
+                        barnard_max_typeI(2, alpha,
                                           NumericVector::create(nC1, nC2),
                                           NumericVector::create(nE1, nE2),
                                           NumericVector::create(e1, e2),
@@ -1015,7 +1015,7 @@ NumericMatrix bernard_des_two_stage_cpp(double alpha, double beta, double delta,
                         }
                         else {
                           NumericVector min_power      =
-                            bernard_min_power(2, beta, delta,
+                            barnard_min_power(2, beta, delta,
                                               NumericVector::create(nC1, nC2),
                                               NumericVector::create(nE1, nE2),
                                               NumericVector::create(e1, e2),

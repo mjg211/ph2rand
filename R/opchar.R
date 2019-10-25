@@ -21,8 +21,8 @@ opchar <- function(des, pi, k, summary = F) {
   }
   if (des$J == 1) {
     opchar <- switch(des$type,
-                     bernard       =
-                       bernard_opchar_one_stage(pi, des$nC, des$nE, des$e1),
+                     barnard       =
+                       barnard_opchar_one_stage(pi, des$nC, des$nE, des$e1),
                      binomial      =
                        binomial_opchar_one_stage(pi, des$nC, des$nE, des$e1),
                      fisher        =
@@ -32,8 +32,8 @@ opchar <- function(des, pi, k, summary = F) {
                                                       des$eS1, des$eT1))
   } else {
     opchar <- switch(des$type,
-                     bernard       =
-                       bernard_opchar_two_stage(pi, des$nC, des$nE, des$e1,
+                     barnard       =
+                       barnard_opchar_two_stage(pi, des$nC, des$nE, des$e1,
                                                 des$f1, des$e2, k),
                      binomial      =
                        binomial_opchar_two_stage(pi, des$nC, des$nE, des$e1,

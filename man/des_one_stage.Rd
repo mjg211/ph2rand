@@ -11,7 +11,7 @@ des_one_stage(type = "binomial", alpha = 0.1, beta = 0.2,
 }
 \arguments{
 \item{type}{A \code{\link{character}} string indicating the chosen design
-framework/test statistic to assume. Must be one of \code{"bernard"},
+framework/test statistic to assume. Must be one of \code{"barnard"},
 \code{"binomial"}, \code{"fisher"}, or \code{"single_double"}. Defaults to
 \code{"binomial"}.}
 
