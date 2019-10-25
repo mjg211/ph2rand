@@ -8,4 +8,4 @@ comparative designs, assuming a binary primary outcome variable
 return PMFs (`pmf()`), terminal points (`terminal()`), and operating
 characteristics (`opchar()`) of such designs. As too are a selection of S3
 method functions (`plot.ph2rand_des()`, `plot.ph2rand_pmf()`,
-`plot.ph2rand_terminal()`, `print.ph2rand_des()`, and `summary.ph2rand_des()`).
+`plot.ph2rand_terminal()`, and `summary.ph2rand_des()`).
