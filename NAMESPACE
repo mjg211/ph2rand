@@ -2,7 +2,6 @@
 
 S3method(plot,ph2rand_des)
 S3method(plot,ph2rand_terminal)
-S3method(print,ph2rand_des)
 export(des_one_stage)
 export(des_two_stage)
 export(opchar)

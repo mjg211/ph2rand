@@ -27,7 +27,7 @@ __ph2rand__ provides a suite of functions to assist in the design of randomized 
 
 ## Getting started
 
-You can install the the latest development version of __ph2rand__, available from [GitHub](https://github.com/), with:
+You can install the the latest development version of __ph2rand__, available from [GitHub](https://github.com/), with
 
 ```{r, eval = F}
 devtools::install_github("mjg211/ph2rand")
@@ -36,36 +36,84 @@ devtools::install_github("mjg211/ph2rand")
 An introductory example of how to make use of the package’s core functionality can be found below.
 For further help, please contact Michael Grayling at michael.grayling@newcastle.ac.uk.
 
-## Example
+## Example: Two-stage designs
 
-Find a two-stage design from Jung (2008) for the default parameters:
-
-```{r}
-des <- des_two_stage()
-```
-
-Examine its required sample size in each arm, in each stage:
+We demonstrate functionality for two-stage designs, with the approach for single-stage designs being equivalent.
+First, find a two-stage design from Jung (2008) for the default parameters
 
 ```{r}
-des$nC
-des$nE
+des_jung <- des_two_stage()
 ```
 
-Next, look at its operating characteristics:
+Then examine its required sample size in each arm, in each stage
 
 ```{r}
-des$opchar
+des_jung$nC
+des_jung$nE
 ```
 
-Compare this to the equivalent design from Litwin *et al* (2017):
+Next, look at its key operating characteristics
 
 ```{r}
-des <- des_two_stage(type  = "single_double",
-                     nCmax = 20L)
-des$nC
-des$nE
-des$opchar
+des_jung$opchar
 ```
+
+Compare this to the equivalent design from Litwin *et al* (2017)
+
+```{r}
+des_litwin_et_al <- des_two_stage(type  = "single_double",
+                                  nCmax = 20L)
+des_litwin_et_al$nC
+des_litwin_et_al$nE
+des_litwin_et_al$opchar
+```
+
+Now to that from Shan (2013)
+
+```{r}
+des_shan_et_al <- des_two_stage(type  = "barnard",
+                                nCmax = 40L)
+des_shan_et_al$nC
+des_shan_et_al$nE
+des_shan_et_al$opchar
+```
+
+And finally that from Jung and Sargent (2014)
+
+```{r}
+des_jung_sargent <- des_two_stage(type  = "fisher")
+des_jung_sargent$nC
+des_jung_sargent$nE
+des_jung_sargent$opchar
+```
+
+We can then readily find the terminal points of any of these designs, along with their probability mass functions and operating characteristics for any true response rates.
+For example, consider two scenarios given by
+
+```{r}
+pi <- rbind(c(0.1, 0.1),
+            c(0.1, 0.3))
+```
+
+Then find the terminal points, probability mass functions, and operating characteristics of the Jung (2008) design with
+
+```{r}
+terminal_jung <- terminal(des_jung)
+terminal_jung$terminal
+pmf_jung      <- pmf(des_jung, pi)
+pmf_jung$pmf
+opchar_jung   <- opchar(des_jung, pi)
+opchar_jung$opchar
+```
+
+Finally, we can plot various factors relating to the designs.
+For example, plot the terminal points of the Jung (2008) design (with their associated decisions), along with the probability of rejecting the null hypothesis when the response probabilities are equal in the two arms or when the difference in the response probabilities is the chosen treatment effect
+
+```{r}
+plot(des_jung)
+```
+
+See the package vignette for further details.
 
 ## References
 

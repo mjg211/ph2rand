@@ -56,7 +56,7 @@ build_des_one_stage_output <- function(alpha, beta, delta, feasible, nCmax,
                         summary     = summary,
                         type        = type)
   }
-  class(output) <- c("ph2rand_des", class(output))
+  class(output) <- "ph2rand_des"
   output
 }
 
@@ -144,7 +144,7 @@ build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
                         type           = type,
                         w              = w)
   }
-  class(output) <- c("ph2rand_des", class(output))
+  class(output) <- "ph2rand_des"
   output
 }
 

@@ -129,7 +129,7 @@ information on key operating characteristics.
 # The design for the default parameters
 des       <- des_two_stage()
 # Controlling the type-I/II error-rates over a range of possible response
-rates
+# rates
 des_range <- des_two_stage(Pi0 = c(0, 1),
                            Pi1 = c(0, 0.8))
 }
