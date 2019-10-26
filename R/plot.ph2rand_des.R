@@ -1,18 +1,38 @@
+#' Plot the operating characteristics of a two-arm randomised clinical trial
+#' design for a binary primary outcome variable
+#'
+#' \code{plot.ph2rand_des} plots key operating characteristics of a design
+#' returned by \code{\link{des_one_stage}} or \code{\link{des_two_stage}}, under
+#' a range of response rate scenarios.
+#' 
+#' @param x An object of class \code{ph2rand_des}, as returned by
+#' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.
+#' @param k A \code{\link{numeric}} \code{\link{vector}} indicating which stages
+#' to consider in determining the probability mass function. That is, it will
+#' condition the calculations on the trial ending in the stages given in
+#' \code{k}. Defaults internally to all stages of the given design.
+#' @param output A \code{\link{logical}} variable indicating whether outputs
+#' should be returned by the function.
+#' @return If \code{output = T}, a \code{\link{list}} containing each of the
+#' input parameters along with a \code{\link{list}} in the slot \code{$plots},
+#' which gives all of the available produced plots.
+#' @examples
+#' # The default two-stage design
+#' des   <- des_two_stage()
+#' # Print several key plots
+#' plot(des)
+#' # Determine and store all available plots
+#' plots <- plot(des, output = T)
+#' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
+#' \code{\link{plot.ph2rand_terminal}}.
 #' @export
-plot.ph2rand_des <- function(x, k, output = F, summary = F, ...) {
+plot.ph2rand_des <- function(x, k, output = F, ...) {
 
   ##### Check inputs ###########################################################
 
-  check_des(x, "any", "x")
+  check_ph2rand_des(x, "any", "x")
   k  <- check_k(k, x)
   check_logical(output, "output")
-  check_logical(summary, "summary")
-
-  ##### Print summary ##########################################################
-
-  if (summary) {
-    #summary_plot_des(x, k)
-  }
 
   ##### Perform main computations ##############################################
 
@@ -232,12 +252,11 @@ plot.ph2rand_des <- function(x, k, output = F, summary = F, ...) {
   ##### Outputting #############################################################
 
   if (output) {
-    return(list(k       = k,
-                opchar  = opchar,
-                output  = output,
-                plots   = plots,
-                summary = summary,
-                x       = x))
+    return(list(k      = k,
+                opchar = opchar,
+                output = output,
+                plots  = plots,
+                x      = x))
   }
 
 }

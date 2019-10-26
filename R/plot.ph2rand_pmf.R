@@ -1,16 +1,38 @@
-plot.ph2rand_pmf <- function(x, output = F, summary = F, ...) {
+#' Plot probability mass functions of a two-arm randomised clinical trial design
+#' for a binary primary outcome variable
+#'
+#' \code{plot.ph2rand_pmf} plots the terminal points of a design returned by
+#' \code{\link{pmf}}.
+#' 
+#' @param x An object of class \code{ph2rand_pmf}, as returned by
+#' \code{\link{pmf}}.
+#' @param output A \code{\link{logical}} variable indicating whether outputs
+#' should be returned by the function.
+#' @return If \code{output = T}, a \code{\link{list}} containing each of the
+#' input parameters along with a plot in the slot \code{$plot}, which gives the
+#' produced plot of the terminal points.
+#' @examples
+#' # The default two-stage design
+#' des <- des_two_stage()
+#' # Its probability mass function under the uninteresting and interesting
+#' # scenarios
+#' pmf <- pmf(des)
+#' # The plot of them
+#' plot(pmf)
+#' # The same probability mass functions, conditioning on the trial ending in
+#' # stage 2
+#' pmf <- pmf(des, k = 2)
+#' # The plot of them
+#' plot(pmf)
+#' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
+#' \code{\link{pmf}}, \code{\link{plot.ph2rand_des}}.
+#' @export
+plot.ph2rand_pmf <- function(x, output = F, ...) {
   
   ##### Check inputs ###########################################################
   
-  #check_pmf(x, "any")
+  check_ph2rand_pmf(x)
   check_logical(output, "output")
-  check_logical(summary, "summary")
-  
-  ##### Print summary ##########################################################
-  
-  if (summary) {
-    #summary_plot_pmf(x)
-  }
   
   ##### Perform main computations ##############################################
   
@@ -41,6 +63,10 @@ plot.ph2rand_pmf <- function(x, output = F, summary = F, ...) {
       pmf_ij$k                 <- factor(pmf_ij$k,
                                          labels = paste("italic(k) ==",
                                                         x_internal$k))
+      if (sum(pmf_ij$f) != 1) {
+        warning("PMF for piC = ", unique_piC[i], " and piE = ", unique_piE[j],
+                " does not sum to 1")
+      }
       plots[[counter]]         <-
         ggplot2::ggplot(pmf_ij,
                         ggplot2::aes(x    = xC,
@@ -72,10 +98,9 @@ plot.ph2rand_pmf <- function(x, output = F, summary = F, ...) {
   ##### Outputting #############################################################
   
   if (output) {
-    return(list(output  = output,
-                plots   = plots,
-                summary = summary,
-                x       = x))
+    return(list(output = output,
+                plots  = plots,
+                x      = x))
   }
   
 }

@@ -24,8 +24,8 @@ Defaults to \code{0.1}.}
 the desired power. Defaults to \code{0.2}.}
 
 \item{delta}{A \code{\link{numeric}} indicating the chosen value for
-\ifelse{html}{\out{<i>&delta;</i><sub>1</sub>}}{\eqn{\delta_1}}, the
-desired treatment effect. Defaults to \code{0.2}.}
+\ifelse{html}{\out{<i>&delta;</i>}}{\eqn{\delta}}, the desired treatment
+effect. Defaults to \code{0.2}.}
 
 \item{ratio}{A \code{\link{numeric}} indicating the chosen value for
 \ifelse{html}{\out{<b><i>r</i></b>}}{\eqn{\bold{r}}}, the allocation ratio to
@@ -33,15 +33,16 @@ the experimental arm, relative to the control arm. Defaults to \code{1}.}
 
 \item{Pi0}{A \code{\link{numeric}} \code{\link{vector}} indicating the
 chosen values of the control arm response rate to allow for in the null
-hypothesis. Must either be of length one, indicating a point null, or of
-length two. Then, the elements indicate the range of possible response rates
-to allow for. Defaults to \code{0.1}.}
+hypothesis. Must either be of \code{\link{length}} one, indicating a point
+null, or of \code{\link{length}} two. In this case, the elements indicate the
+range of possible response rates to allow for. Defaults to \code{0.1}.}
 
 \item{Pi1}{A \code{\link{numeric}} \code{\link{vector}} indicating the
 chosen values of the control arm response rate to allow for in the
-alternative hypothesis. Must either be of length one, indicating a point
-null, or of length two. Then, the elements indicate the range of possible
-response rates to allow for. Defaults to \code{Pi0[1]}.}
+alternative hypothesis. Must either be of \code{\link{length}} one,
+indicating a point null, or of \code{\link{length}} two. Then, the elements
+indicate the range of possible response rates to allow for. Defaults to
+\code{Pi0[1]}.}
 
 \item{nCmax}{A \code{\link{numeric}} indicating the maximum value of the
 sample size in the control arm to consider. Defaults to \code{50L}.}
@@ -51,9 +52,8 @@ of the function's progress should be printed to the console. Defaults to
 \code{F}.}
 }
 \value{
-A \code{\link{list}} of additional class \code{"ph2rand_des"},
-containing each of the input parameters along with several additional
-variables including:
+An object of class \code{"ph2rand_des"}, containing each of the input
+parameters along with several additional variables, including:
 \itemize{
 \item A selection of elements that prescribe the rejection boundaries of the
 optimal design. The names of these elements depends on the value of
@@ -70,13 +70,13 @@ operating characteristics of the optimal design.
 }
 \description{
 \code{des_one_stage} determines one-stage two-arm randomised clinical trial
-designs assuming the primary outcome variable is binary. More specifically,
+designs, assuming the primary outcome variable is binary. More specifically,
 under the assumption that it is Bernoulli distributed. It supports a flexible
-framework through which the scenarios to control the type-I and type-II
-error-rates for can be specified, and allows for design determination
-assuming a variety of test statistics. In all instances, \code{des_one_stage}
-computes the relevant required sample size in each arm, and returns
-information on key operating characteristics.
+framework for specifying which scenarios to control the type-I and type-II
+error-rates for, and allows for design determination assuming a variety of
+test statistics. In all instances, \code{des_one_stage} computes the relevant
+required sample size in each arm, and returns information on key operating
+characteristics.
 }
 \examples{
 # The design for the default parameters
@@ -87,6 +87,7 @@ des_range <- des_one_stage(Pi0 = c(0, 1),
                            Pi1 = c(0, 0.8))
 }
 \seealso{
-\code{\link{des_two_stage}}, \code{\link{pmf}},
-\code{\link{terminal}}.
+\code{\link{des_two_stage}}, \code{\link{opchar}},
+\code{\link{pmf}}, \code{\link{terminal}}, \code{\link{plot.ph2rand_des}},
+\code{\link{summary.ph2rand_des}}.
 }

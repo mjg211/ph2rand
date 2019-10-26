@@ -30,10 +30,10 @@ For further help, please contact Michael Grayling at
 
 \section{Details}{
 
-Currently, the following functions are provided:
+Currently, the following functions are available (exported):
 
 \itemize{
-\item \code{\link{des_one_stage}}: Determine a single-stage randomized
+\item \code{\link{des_one_stage}}: Determine a one-stage randomized
 comparative phase II oncology trial design, assuming a binary primary outcome
 variable.
 \item \code{\link{des_two_stage}}: Determine a two-stage randomized
@@ -42,15 +42,19 @@ variable.
 \item \code{\link{opchar}}: Evaluate the operating characteristics of a
 randomized comparative phase II oncology trial design, assuming a binary
 primary outcome variable.
-\item \code{\link{plot.ph2rand_des}}: Plot a randomized comparative phase II
-oncology trial design, assuming a binary primary outcome variable.
+\item \code{\link{plot.ph2rand_des}}: Plot the operating characteristics of a
+randomized comparative phase II oncology trial design, assuming a binary
+primary outcome variable.
+\item \code{\link{plot.ph2rand_pmf}}: Plot the probability mass function of a
+randomized comparative phase II oncology trial design, assuming a binary
+primary outcome variable.
+\item \code{\link{plot.ph2rand_terminal}}: Plot the terminal points of a
+randomized comparative phase II oncology trial design, assuming a binary
+primary outcome variable.
 \item \code{\link{pmf}}: Find the probability mass function of a randomized
 comparative phase II oncology trial design, assuming a binary primary outcome
 variable.
-\item \code{\link{print.ph2rand_des}}: Print a summary of a randomized
-comparative phase II oncology trial design, assuming a binary primary outcome
-variable.
-\item \code{\link{summary.ph2rand_des}}: Print a summary of a randomized
+\item \code{\link{summary.ph2rand_des}}: Display a summary of a randomized
 comparative phase II oncology trial design, assuming a binary primary outcome
 variable.
 \item \code{\link{terminal}}: Find the terminal points of a randomized

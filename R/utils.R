@@ -148,11 +148,6 @@ build_des_two_stage_output <- function(alpha, beta, delta, equal, feasible,
   output
 }
 
-row_match                  <- function(vec, mat) {
-  match(do.call("paste", c(vec[, , drop = F], sep = "\r")),
-        do.call("paste", c(mat[, , drop = F], sep = "\r")))
-}
-
 search_parameters          <- function(J, type, nCmax, ratio) {
   poss_nC                                          <- 1:nCmax
   poss_nE                                          <- poss_nC*ratio
@@ -255,75 +250,4 @@ theme_ph2rand              <- function(base_size = 11, base_family = "") {
                    strip.text       =
                      ggplot2::element_text(colour = "white",
                                            size   = ggplot2::rel(0.8)))
-}
-
-uc                         <- function(char) {
-  lookup <- matrix(c("alpha",    "\u03B1",
-                     "beta",     "\u03B2",
-                     "gamma",    "\u03B3",
-                     "delta",    "\u03B4",
-                     "epsilon",  "\u03B5",
-                     "zeta",     "\u03B6",
-                     "eta",      "\u03B7",
-                     "theta",    "\u03B8",
-                     "iota",     "\u03B9",
-                     "kappa",    "\u03BA",
-                     "lambda",   "\u03BB",
-                     "mu",       "\u03BC",
-                     "nu",       "\u03BD",
-                     "xi",       "\u03BE",
-                     "omicron",  "\u03BF",
-                     "pi",       "\u03C0",
-                     "rho",      "\u03C1",
-                     "sigma",    "\u03C3",
-                     "tau",      "\u03C4",
-                     "upsilon",  "\u03C5",
-                     "phi",      "\u03C6",
-                     "chi",      "\u03C7",
-                     "psi",      "\u03C8",
-                     "omega",    "\u03C9",
-                     "Alpha",    "\u0391",
-                     "Beta",     "\u0392",
-                     "Gamma",    "\u0393",
-                     "Delta",    "\u0394",
-                     "Epsilon",  "\u0395",
-                     "Zeta",     "\u0396",
-                     "Eta",      "\u0397",
-                     "Theta",    "\u0398",
-                     "Iota",     "\u0399",
-                     "Kappa",    "\u039A",
-                     "Lambda",   "\u039B",
-                     "Mu",       "\u039C",
-                     "Nu",       "\u039D",
-                     "Xi",       "\u039E",
-                     "Omicron",  "\u039F",
-                     "Pi",       "\u03A0",
-                     "Rho",      "\u03A1",
-                     "Sigma",    "\u03A3",
-                     "Tau",      "\u03A4",
-                     "Upsilon",  "\u03A5",
-                     "Phi",      "\u03A6",
-                     "Chi",      "\u03A7",
-                     "Psi",      "\u03A8",
-                     "Omega",    "\u03A9",
-                     "le",       "\u2264",
-                     "ge",       "\u2265",
-                     "third",    "\u2153",
-                     "quarter",  "\u00BC",
-                     "fifth",    "\u2155",
-                     "sixth",    "\u2159",
-                     "eigth",    "\u215B",
-                     "two_elip", "\u2026\u2026"),
-                   ncol = 2, byrow = T)
-  lookup[which(lookup[, 1] == char), 2]
-}
-
-uc_sub                     <- function(n) {
-  codes <- c("\u2080", "\u2081", "\u2082", "\u2083", "\u2084", "\u2085",
-             "\u2086", "\u2087", "\u2088", "\u2089")
-  if (n < 10) {
-    codes[n + 1]
-  } else {
-    paste0(codes[n%/%10 + 1], codes[n%%10 + 1])
-  }
 }

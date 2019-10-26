@@ -1,18 +1,36 @@
+#' Plot the terminal points of a two-arm randomised clinical trial design for a
+#' binary primary outcome variable
+#'
+#' \code{plot.ph2rand_terminal} plots the terminal points of a design returned
+#' by \code{\link{terminal}}.
+#' 
+#' @param x An object of class \code{ph2rand_terminal}, as returned by
+#' \code{\link{terminal}}.
+#' @param output A \code{\link{logical}} variable indicating whether outputs
+#' should be returned by the function.
+#' @return If \code{output = T}, a \code{\link{list}} containing each of the
+#' input parameters along with a plot in the slot \code{$plot}, which gives the
+#' produced plot of the terminal points.
+#' @examples
+#' # The default two-stage design
+#' des  <- des_two_stage()
+#' # Its terminal points across stages 1 and 2
+#' term <- terminal(des)
+#' # The plot of them
+#' plot(term)
+#' # Its terminal points from stage 2 only
+#' term <- terminal(des, 2)
+#' # The plot of them
+#' plot(term)
+#' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
+#' \code{\link{terminal}}, \code{\link{plot.ph2rand_des}}.
 #' @export
-plot.ph2rand_terminal <- function(x, k, output = F, summary = F, ...) {
+plot.ph2rand_terminal <- function(x, output = F, ...) {
 
   ##### Check inputs ###########################################################
 
-  #check_terminal(x, "any")
-  k  <- check_k(k, x$des)
+  check_ph2rand_terminal(x)
   check_logical(output, "output")
-  check_logical(summary, "summary")
-
-  ##### Print summary ##########################################################
-
-  if (summary) {
-    #summary_plot_terminal(x)
-  }
 
   ##### Perform main computations ##############################################
 
@@ -90,11 +108,9 @@ plot.ph2rand_terminal <- function(x, k, output = F, summary = F, ...) {
   ##### Outputting #############################################################
 
   if (output) {
-    return(list(k       = k,
-                output  = output,
-                plot    = plot,
-                summary = summary,
-                x       = x))
+    return(list(output = output,
+                plot   = plot,
+                x      = x))
   }
 
 }

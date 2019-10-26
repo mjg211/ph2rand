@@ -1,9 +1,35 @@
+#' Terminal points of a two-arm randomised clinical trial design for a binary
+#' primary outcome variable
+#'
+#' \code{terminal} determines terminal points of a design returned by
+#' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.
+#' 
+#' @param des An object of class \code{ph2rand_des}, as returned by
+#' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.
+#' @param k A \code{\link{numeric}} \code{\link{vector}} indicating which stages
+#' to consider in determining the terminal points. Defaults internally to all
+#' stages of the given design.
+#' @param summary A \code{\link{logical}} variable indicating whether a summary
+#' of the function's progress should be printed to the console. Defaults to
+#' \code{F}.
+#' @return An object of class \code{"ph2rand_terminal"}, containing each of the
+#' input parameters along with a tibble in the slot \code{$terminal}, which
+#' gives the determined terminal points.
+#' @examples
+#' # The default two-stage design
+#' des  <- des_two_stage()
+#' # Its terminal points across stages 1 and 2
+#' term <- terminal(des)
+#' # Its terminal points from stage 2 only
+#' term <- terminal(des, 2)
+#' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
+#' \code{\link{plot.ph2rand_terminal}}.
 #' @export
 terminal <- function(des, k, summary = F) {
   
   ##### Check inputs ###########################################################
   
-  check_des(des, "any")
+  check_ph2rand_des(des, "any")
   k <- check_k(k, des)
   check_logical(summary, "summary")
   
@@ -16,7 +42,10 @@ terminal <- function(des, k, summary = F) {
   ##### Perform main computations ##############################################
 
   if (summary) {
-    message("  Identifying terminal points", uc("two_elip"))
+    message("\n  ------------")
+    message("  Computations")
+    message("  ------------")
+    message("  Identifying terminal points...")
   }
   if (des$J == 1) {
     terminal <- switch(des$type,
@@ -47,7 +76,7 @@ terminal <- function(des, k, summary = F) {
                                                           des$eS2, des$eT2, k))
   }
   if (summary) {
-    message(uc("two_elip"), "outputting")
+    message("..outputting")
   }
 
   ##### Output results #########################################################
@@ -56,7 +85,7 @@ terminal <- function(des, k, summary = F) {
                         k        = k,
                         summary  = summary,
                         terminal = terminal)
-  class(output) <- c("ph2rand_terminal", class(output))
+  class(output) <- "ph2rand_terminal"
   output
 
 }

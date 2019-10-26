@@ -20,382 +20,6 @@ check_default                <- function(value, name, default) {
   }
 }
 
-check_des                    <- function(des, type, name = "des") {
-  if (!any(class(des) == "ph2rand_des")) {
-    stop(name, " must be of class ph2rand_des")
-  }
-  if (type == "barnard") {
-    if (des$type != "barnard") {
-      stop(name, " must correspond to a design of type ", type)
-    }
-  } else if (type == "binomial") {
-    if (des$type != "binomial") {
-      stop(name, " must correspond to a design of type ", type)
-    }
-  } else if (type == "fisher") {
-    if (des$type != "fisher") {
-      stop(name, " must correspond to a design of type ", type)
-    }
-  } else if (type == "single_double") {
-    if (des$type != "single_double") {
-      stop(name, " must correspond to a design of type ", type)
-    }
-  }
-}
-
-check_des_barnard            <- function(des) {
-  if (any(!("ph2rand_des" %in% class(des)), !is.list(des))) {
-    stop("des must be of class ph2rand_des and of class list")
-  } else if (any(is.null(des$J), !(des$J %in% c(1, 2)))) {
-    stop("des$J must be equal to 1 or 2")
-  }
-  if (des$J == 1) {
-    if (any(is.null(des$nC), length(des$nC) != 1, !is.numeric(des$nC),
-            !is.finite(des$nC), des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 1, des$nC must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 1, !is.numeric(des$nE),
-            !is.finite(des$nE), des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 1, des$nE must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1))) {
-      stop("For des$J = 1, des$e1 must be a single numeric")
-    } else if (is.infinite(des$e)) {
-      warning("For des$J = 1, des$e1 should typically be finite")
-    }
-  } else {
-    if (any(is.null(des$nC), length(des$nC) != 2, !is.numeric(des$nC),
-            des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 2, des$nC must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 2, !is.numeric(des$nE),
-            des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 2, des$nE must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1),
-            des$e1 == -Inf)) {
-      stop("For des$J = 2, des$e1 must be a single numeric not equal to -Inf")
-    }
-    if (any(is.null(des$f1), length(des$f1) != 1, !is.numeric(des$f1),
-            des$f1 >= des$e1)) {
-      stop("For des$J = 2, des$f1 must be a single numeric that is strictly ",
-           "less than des$e1")
-    }
-    if (any(is.null(des$e2), length(des$e2) != 1, !is.numeric(des$e2))) {
-      stop("For des$J = 2, des$e2 must be a single numeric")
-    } else if (is.infinite(des$e2)) {
-      warning("For des$J = 2, des$e2 should typically be finite")
-    }
-  }
-}
-
-check_des_binomial           <- function(des) {
-  if (any(!("ph2rand_des" %in% class(des)), !is.list(des))) {
-    stop("des must be of class ph2rand_des and of class list")
-  } else if (any(is.null(des$J), !(des$J %in% c(1, 2)))) {
-    stop("des$J must be equal to 1 or 2")
-  }
-  if (des$J == 1) {
-    if (any(is.null(des$nC), length(des$nC) != 1, !is.numeric(des$nC),
-            !is.finite(des$nC), des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 1, des$nC must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 1, !is.numeric(des$nE),
-            !is.finite(des$nE), des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 1, des$nE must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1))) {
-      stop("For des$J = 1, des$e1 must be a single numeric")
-    } else if (any(is.infinite(des$e1), des$e1%%1 != 0, des$e1 <= -des$nC,
-                   des$e1 > des$nE)) {
-      warning("For des$J = 1, des$e1 should typically be a single integer in ",
-              "(-des$nC, des$nE]")
-    }
-  } else {
-    if (any(is.null(des$nC), length(des$nC) != 2, !is.numeric(des$nC),
-            des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 2, des$nC must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 2, !is.numeric(des$nE),
-            des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 2, des$nE must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1),
-            des$e1 == -Inf)) {
-      stop("For des$J = 2, des$e1 must be a single numeric not equal to -Inf")
-    }
-    if (any(is.null(des$f1), length(des$f1) != 1, !is.numeric(des$f1),
-            des$f1 >= des$e1)) {
-      stop("For des$J = 2, des$f1 must be a single numeric that is strictly ",
-           "less than des$e1")
-    }
-    if (any(is.null(des$e2), length(des$e2) != 1, !is.numeric(des$e2))) {
-      stop("For des$J = 2, des$e2 must be a single numeric")
-    }
-    if (all(is.finite(des$e1), is.finite(des$f1))) {
-      if (any(des$e1%%1 != 0, des$e1 <= -des$nC[1] + 1, des$e1 > des$nE[1])) {
-        warning("For des$J = 2, when des$e1 and des$f1 are finite, des$e1 ",
-                "should typically be a single integer in (-des$nC[1] + 1, ",
-                "des$nE[1]]")
-      }
-      if (any(des$f1%%1 != 0, des$f1 < -des$nC[1], des$f1 >= des$nE[1] - 1)) {
-        warning("For des$J = 2, when des$e1 and des$f1 are finite, des$f1 ",
-                "should typically be a single integer in [-des$nC[1], ",
-                "des$nE[1] - 1)")
-      }
-      if (any(is.infinite(des$e2), des$e2%%1 != 0,
-              des$e2 < des$f1 + 2 - des$nC[2],
-              des$e2 > des$e1 - 1 + des$nE[2])) {
-        warning("For des$J = 2, when des$e1 and des$f1 are finite, des$e2 ",
-                "should typically be a single integer in ",
-                "[des$f1 + 2 - des$nC[2], des$e1 - 1 + des$nE[2]]")
-      }
-    } else if (is.finite(des$e1)) {
-      if (any(des$e1%%1 != 0, des$e1 <= -des$nC[1], des$e1 > des$nE[1])) {
-        warning("For des$J = 2, when des$e1 is finite and des$f1 is not, ",
-                "des$e1 should typically be a single integer in (-des$nC[1], ",
-                "des$nE[1]]")
-      }
-      if (any(is.infinite(des$e2), des$e2%%1 != 0,
-              des$e2 <= -des$nC[1] - des$nC[2],
-              des$e2 > des$e1 - 1 + des$nE[2])) {
-        warning("For des$J = 2, when des$e1 is finite and des$f1 is not, ",
-                "des$e2 should typically be a single integer in ",
-                "(-des$nC[1] - des$nC[2], des$e1 - 1 + des$nE[2]]")
-      }
-    } else if (is.finite(des$f1)) {
-      if (any(des$f1%%1 != 0, des$f1 <= -des$nC[1], des$f1 >= des$nE[1])) {
-        warning("For des$J = 2, when des$f1 is finite and des$e1 is not, ",
-                "des$f1 should typically be a single integer in [-des$nC[1], ",
-                "des$nE[1])")
-      }
-      if (any(is.infinite(des$e2), des$e2%%1 != 0,
-              des$e2 <= des$f1 + 2 - des$nC[2],
-              des$e2 > des$nE[1] + des$nE[2])) {
-        warning("For des$J = 2, when des$f1 is finite and des$e1 is not, ",
-                "des$e2 should typically be a single integer in ",
-                "(des$f1 + 2 - des$nC[2], des$nE[1] + des$nE[2])")
-      }
-    }
-  }
-}
-
-check_des_fisher             <- function(des) {
-  if (any(!("ph2rand_des" %in% class(des)), !is.list(des))) {
-    stop("des must be of class ph2rand_des and of class list")
-  } else if (any(is.null(des$J), !(des$J %in% c(1, 2)))) {
-    stop("des$J must be equal to 1 or 2")
-  }
-  if (des$J == 1) {
-    if (any(is.null(des$nC), length(des$nC) != 1, !is.numeric(des$nC),
-            !is.finite(des$nC), des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 1, des$nC must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 1, !is.numeric(des$nE),
-            !is.finite(des$nE), des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 1, des$nE must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$e1), length(des$e1) != des$nC + des$nE + 1,
-            !is.numeric(des$e1))) {
-      stop("For des$J = 1, des$e1 must be a numeric vector of length des$nC + ",
-           "des$nE + 1")
-    }
-  } else {
-    if (any(is.null(des$nC), length(des$nC) != 2, !is.numeric(des$nC),
-            des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 2, des$nC must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 2, !is.numeric(des$nE),
-            des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 2, des$nE must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$e1), length(des$e1) != des$nC[1] + des$nE[1] + 1,
-            !is.numeric(des$e1), des$e1 == -Inf)) {
-      stop("For des$J = 2, des$e1 must be a numeric vector of length des$nC[1]",
-           " + des$nE[1] + 1, with all elements strictly greater than -Inf")
-    }
-    if (any(is.null(des$f1), length(des$f1) != des$nC[1] + des$nE[1] + 1,
-            !is.numeric(des$f1), des$f1 >= des$e1)) {
-      stop("For des$J = 2, des$f1 must be a numeric vector of length des$nC[1]",
-           " + des$nE[1] + 1, with des$e1 >= des$f1 for all elements")
-    }
-    if (any(is.null(des$e2), nrow(des$e2) != des$nC[1] + des$nE[1] + 1,
-            ncol(des$e2) != des$nC[2] + des$nE[2] + 1, !is.matrix(des$e2),
-            !is.numeric(des$e2))) {
-      stop("For des$J = 2, des$e2 must be a nnumeric matrix with des$nC[1] + ",
-           "des$nE[1] + 1 rows and des$nC[2] + des$nE[2] + 1 columns")
-    }
-  }
-}
-
-check_des_single_double      <- function(des) {
-  if (any(!("ph2rand_des" %in% class(des)), !is.list(des))) {
-    stop("des must be of class ph2rand_des and of class list")
-  } else if (any(is.null(des$J), !(des$J %in% c(1, 2)))) {
-    stop("des$J must be equal to 1 or 2")
-  }
-  if (des$J == 1) {
-    if (any(is.null(des$nC), length(des$nC) != 1, !is.numeric(des$nC),
-            !is.finite(des$nC), des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 1, des$nC must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 1, !is.numeric(des$nE),
-            !is.finite(des$nE), des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 1, des$nE must be a single integer in the range ",
-           "[1, \u221E)")
-    }
-    if (any(is.null(des$eS1), length(des$eS1) != 1, !is.numeric(des$eS1))) {
-      stop("For des$J = 1, des$eS1 must be a single numeric")
-    } else if (any(is.infinite(des$eS1), des$eS1 <= 0, des$eS1 > des$nE)) {
-      warning("For des$J = 1, des$eS1 should typically be a single integer in ",
-              "(0, des$nE]")
-    }
-    if (any(is.null(des$eT1), length(des$eT1) != 1, !is.numeric(des$eT1))) {
-      stop("For des$J = 1, des$eT1 must be a single numeric")
-    } else if (any(is.infinite(des$eT1), des$eT1%%1 != 0, des$eT1 <= -des$nC,
-                   des$eT1 > des$nE)) {
-      warning("For des$J = 1, des$eT1 should typically be a single integer in ",
-              "(-des$nC, des$nE]")
-    }
-  } else {
-    if (any(is.null(des$nC), length(des$nC) != 2, !is.numeric(des$nC),
-            des$nC%%1 != 0, des$nC < 1)) {
-      stop("For des$J = 2, des$nC must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$nE), length(des$nE) != 2, !is.numeric(des$nE),
-            des$nE%%1 != 0, des$nE < 1)) {
-      stop("For des$J = 2, des$nE must be a numeric vector of length two,", 
-           " containing integers in the range [1, \u221E)")
-    }
-    if (any(is.null(des$eS1), length(des$eS1) != 1, !is.numeric(des$eS1),
-            des$eS1 == -Inf)) {
-      stop("For des$J = 2, des$eS1 must be a single numeric not equal to -Inf")
-    }
-    if (any(is.null(des$fS1), length(des$fS1) != 1, !is.numeric(des$fS1),
-            des$fS1 >= des$eS1)) {
-      stop("For des$J = 2, des$fS1 must be a single numeric that is strictly ",
-           "less than des$eS1")
-    }
-    if (any(is.null(des$eT1), length(des$eT1) != 1, !is.numeric(des$eT1),
-            des$eT1 == -Inf)) {
-      stop("For des$J = 2, des$eT1 must be a single numeric not equal to -Inf")
-    }
-    if (any(is.null(des$fT1), length(des$fT1) != 1, !is.numeric(des$fT1),
-            des$fT1 >= des$eT1)) {
-      stop("For des$J = 2, des$fT1 must be a single numeric that is strictly ",
-           "less than des$eT1")
-    }
-    if (any(is.null(des$eS2), length(des$eS2) != 1, !is.numeric(des$eS2))) {
-      stop("For des$J = 2, des$eS2 must be a single numeric")
-    }
-    if (any(is.null(des$eT2), length(des$eT2) != 1, !is.numeric(des$eT2))) {
-      stop("For des$J = 2, des$eT2 must be a single numeric")
-    }
-    if (all(is.finite(des$eS1), is.finite(des$fS1))) {
-      if (any(des$eS1%%1 != 0, des$eS1 <= 1, des$eS1 > des$nE[1])) {
-        warning("For des$J = 2, when des$eS1 and des$fS1 are finite, des$eS1 ",
-                "should typically be a single integer in (1, des$nE[1]]")
-      }
-      if (any(des$fS1%%1 != 0, des$fS1 < 0, des$fS1 >= des$nE[1] - 1)) {
-        warning("For des$J = 2, when des$eS1 and des$fS1 are finite, des$fS1 ",
-                "should typically be a single integer in [0, des$nE[1] - 1)")
-      }
-      if (any(is.infinite(des$eS2), des$eS2%%1 != 0, des$eS2 < des$fS1 + 2,
-              des$eS2 > des$eS1 - 1 + des$nE[2])) {
-        warning("For des$J = 2, when des$eS1 and des$fS1 are finite, des$eS2 ",
-                "should typically be a single integer in ",
-                "[des$fS1 + 2, des$eS1 - 1 + des$nE[2]]")
-      }
-    } else if (is.finite(des$eS1)) {
-      if (any(des$eS1%%1 != 0, des$eS1 <= 0, des$e1 > des$nE[1])) {
-        warning("For des$J = 2, when des$eS1 is finite and des$fS1 is not, ",
-                "des$eS1 should typically be a single integer in (0, ",
-                "des$nE[1]]")
-      }
-      if (any(is.infinite(des$eS2), des$eS2%%1 != 0,
-              des$eS2 <= 0,
-              des$eS2 > des$e1 - 1 + des$nE[2])) {
-        warning("For des$J = 2, when des$eS1 is finite and des$fS1 is not, ",
-                "des$eS2 should typically be a single integer in ",
-                "(0, des$e1 - 1 + des$nE[2]]")
-      }
-    } else if (is.finite(des$fS1)) {
-      if (any(des$fS1%%1 != 0, des$fS1 < 0, des$fS1 >= des$nE[1])) {
-        warning("For des$J = 2, when des$fS1 is finite and des$eS1 is not, ",
-                "des$fS1 should typically be a single integer in [0, ",
-                "des$nE[1] - 1]")
-      }
-      if (any(is.infinite(des$eS2), des$eS2%%1 != 0,
-              des$eS2 <= des$fS1 + 1,
-              des$eS2 > des$nE[1] + des$nE[2])) {
-        warning("For des$J = 2, when des$fS1 is finite and des$eS1 is not, ",
-                "des$eS2 should typically be a single integer in ",
-                "(des$fS1 + 1, des$nE[1] + des$nE[2]]")
-      }
-    }
-    if (all(is.finite(des$eT1), is.finite(des$fT1))) {
-      if (any(des$eT1%%1 != 0, des$eT1 <= -des$nC[1] + 1,
-              des$eT1 > des$nE[1])) {
-        warning("For des$J = 2, when des$eT1 and des$fT1 are finite, des$eT1 ",
-                "should typically be a single integer in (-des$nC[1] + 1, ",
-                "des$nE[1]]")
-      }
-      if (any(des$fT1%%1 != 0, des$fT1 < -des$nC[1], des$fT1 >= des$nE[1] - 1)) {
-        warning("For des$J = 2, when des$eT1 and des$fT1 are finite, des$fT1 ",
-                "should typically be a single integer in [-des$nC[1], ",
-                "des$nE[1] - 1)")
-      }
-      if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
-              des$eT2 < des$fT1 + 2 - des$nC[2],
-              des$eT2 > des$eT1 - 1 + des$nE[2])) {
-        warning("For des$J = 2, when des$eT1 and des$fT1 are finite, des$eT2 ",
-                "should typically be a single integer in ",
-                "[des$fT1 + 2 - des$nC[2], des$eT1 - 1 + des$nE[2]]")
-      }
-    } else if (is.finite(des$eT1)) {
-      if (any(des$eT1%%1 != 0, des$eT1 <= -des$nC[1], des$eT1 > des$nE[1])) {
-        warning("For des$J = 2, when des$eT1 is finite and des$fT1 is not, ",
-                "des$eT1 should typically be a single integer in (-des$nC[1], ",
-                "des$nE[1]]")
-      }
-      if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
-              des$eT2 <= -des$nC[1] - des$nC[2],
-              des$eT2 > des$eT1 - 1 + des$nE[2])) {
-        warning("For des$J = 2, when des$eT1 is finite and des$fT1 is not, ",
-                "des$eT2 should typically be a single integer in ",
-                "(-des$nC[1] - des$nC[2], des$eT1 - 1 + des$nE[2]]")
-      }
-    } else if (is.finite(des$fT1)) {
-      if (any(des$fT1%%1 != 0, des$fT1 <= -des$nC[1], des$fT1 >= des$nE[1])) {
-        warning("For des$J = 2, when des$fT1 is finite and des$eT1 is not, ",
-                "des$fT1 should typically be a single integer in [-des$nC[1], ",
-                "des$nE[1])")
-      }
-      if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
-              des$eT2 <= des$fT1 + 2 - des$nC[2],
-              des$eT2 > des$nE[1] + des$nE[2])) {
-        warning("For des$J = 2, when des$fT1 is finite and des$eT1 is not, ",
-                "des$eT2 should typically be a single integer in ",
-                "(des$fT1 + 2 - des$nC[2], des$nE[1] + des$nE[2])")
-      }
-    }
-  }
-}
-
 check_integer_pair_range     <- function(value1, value2, name1, name2, range) {
   if (any(length(value1) != 1, value1 <= range[1], value1 >= range[2])){
     stop(name1, " must be a single integer in (", range[1], ",", range[2], ")")
@@ -520,6 +144,413 @@ check_fisher_params          <- function(efficacy_type, efficacy_param,
          "param must be strictly less than efficacy_param")
   }
   return(efficacy_param)
+}
+
+check_ph2rand_des            <- function(des, type, name = "des") {
+  if (class(des) != "ph2rand_des") {
+    stop(name, " must be of class ph2rand_des")
+  }
+  if (all(type == "any", !(des$type %in% c("barnard", "binomial", "fisher",
+                                           "single_double")))) {
+    stop(name, "$type must be one of \"barnard\", \"binomial\", \"fisher\", or",
+         " \"single_double\"")
+  } else if (all(type == "barnard", des$type != "barnard")) {
+    stop(name, "$type must be equal to \"barnard\"")
+  } else if (all(type == "binomial", des$type != "binomial")) {
+    stop(name, "$type must be equal to \"binomial\"")
+  } else if (all(type == "fisher", des$type != "fisher")) {
+    stop(name, "$type must be equal to \"fisher\"")
+  } else if (all(type == "single_double", des$type != "single_double")) {
+    stop(name, "$type must be equal to \"single_double\"")
+  }
+  if (any(is.null(des$J), !(des$J %in% c(1, 2)))) {
+    stop(name, "$J must be equal to 1 or 2")
+  } else if (des$J == 1) {
+    if (any(is.null(des$nC), length(des$nC) != 1, !is.numeric(des$nC),
+            !is.finite(des$nC), des$nC%%1 != 0, des$nC < 1)) {
+      stop("For ", name, "$J = 1, ", name, "$nC must be a single integer in ",
+           "{1, 2, 3, ...}")
+    }
+    if (any(is.null(des$nE), length(des$nE) != 1, !is.numeric(des$nE),
+            !is.finite(des$nE), des$nE%%1 != 0, des$nE < 1)) {
+      stop("For ", name, "$J = 1, ", name, "$nE must be a single integer in ",
+           "{1, 2, 3, ...}")
+    }
+  } else {
+    if (any(is.null(des$nC), length(des$nC) != 2, !is.numeric(des$nC),
+            des$nC%%1 != 0, des$nC < 1)) {
+      stop("For ", name, "$J = 2, ", name, "$nC must be a numeric vector of ", 
+           "length two, whose elements are integers in {1, 2, 3, ...}")
+    }
+    if (any(is.null(des$nE), length(des$nE) != 2, !is.numeric(des$nE),
+            des$nE%%1 != 0, des$nE < 1)) {
+      stop("For ", name, "$J = 2, ", name, "$nE must be a numeric vector of ", 
+           "length two, whose elements are integers in {1, 2, 3, ...}")
+    }
+  }
+  if (des$type == "barnard") {
+    if (des$J == 1) {
+      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1))) {
+        stop("For ", name, "$J = 1, ", name, "$e1 must be a single numeric")
+      } else if (is.infinite(des$e1)) {
+        warning("For ", name, "$J = 1, ", name, "$e1 should typically be ",
+                "finite")
+      }
+    } else {
+      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1),
+              des$e1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$e1 must be a single numeric not",
+             " equal to -Inf")
+      }
+      if (any(is.null(des$f1), length(des$f1) != 1, !is.numeric(des$f1),
+              des$f1 >= des$e1)) {
+        stop("For ", name, "$J = 2, ", name, "$f1 must be a single numeric ", 
+             "that is strictly less than ", name, "$e1")
+      }
+      if (any(is.null(des$e2), length(des$e2) != 1, !is.numeric(des$e2))) {
+        stop("For ", name, "$J = 2, ", name, "$e2 must be a single numeric")
+      } else if (is.infinite(des$e2)) {
+        warning("For ", name, "$J = 2, ", name, "$e2 should typically be ",
+                "finite")
+      }
+    }
+  } else if (des$type == "binomial") {
+    if (des$J == 1) {
+      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1))) {
+        stop("For ", name, "$J = 1, ", name, "$e1 must be a single numeric")
+      } else if (any(is.infinite(des$e1), des$e1%%1 != 0, des$e1 <= -des$nC,
+                     des$e1 > des$nE)) {
+        warning("For ", name, "$J = 1, ", name, "$e1 should typically be a ",
+                "single integer in (-", name, "$nC, ", name, "$nE]")
+      }
+    } else {
+      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1),
+              des$e1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$e1 must be a single numeric ",
+             "not equal to -Inf")
+      }
+      if (any(is.null(des$f1), length(des$f1) != 1, !is.numeric(des$f1),
+              des$f1 >= des$e1)) {
+        stop("For ", name, "$J = 2, ", name, "$f1 must be a single numeric ",
+             "that is strictly less than ", name, "$e1")
+      }
+      if (any(is.null(des$e2), length(des$e2) != 1, !is.numeric(des$e2))) {
+        stop("For ", name, "$J = 2, ", name, "$e2 must be a single numeric")
+      }
+      if (all(is.finite(des$e1), is.finite(des$f1))) {
+        if (any(des$e1%%1 != 0, des$e1 <= -des$nC[1] + 1, des$e1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$e1 and ", name, "$f1 ",
+                  "are finite, ", name, "$e1 should typically be a single ",
+                  "integer in (-", name, "$nC[1] + 1, ", name, "$nE[1]]")
+        }
+        if (any(des$f1%%1 != 0, des$f1 < -des$nC[1], des$f1 >= des$nE[1] - 1)) {
+          warning("For ", name, "$J = 2, when ", name, "$e1 and ", name, "$f1 ",
+                  "are finite, ", name, "$f1 should typically be a single ",
+                  "integer in [-", name, "$nC[1], ", name, "$nE[1] - 1)")
+        }
+        if (any(is.infinite(des$e2), des$e2%%1 != 0,
+                des$e2 < des$f1 + 2 - des$nC[2],
+                des$e2 > des$e1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$e1 and ", name, "$f1 ",
+                  "are finite, ", name, "$e2 should typically be a single ",
+                  "integer in [", name, "$f1 + 2 - ", name, "$nC[2], ", name,
+                  "$e1 - 1 + ", name, "$nE[2]]")
+        }
+      } else if (is.finite(des$e1)) {
+        if (any(des$e1%%1 != 0, des$e1 <= -des$nC[1], des$e1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$e1 is finite and ",
+                  name, "$f1 is not, ", name, "$e1 should typically be a ",
+                  "single integer in (-", name, "$nC[1], ", name, "$nE[1]]")
+        }
+        if (any(is.infinite(des$e2), des$e2%%1 != 0,
+                des$e2 <= -des$nC[1] - des$nC[2],
+                des$e2 > des$e1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$e1 is finite and ",
+                  name, "$f1 is not, ", name, "$e2 should typically be a ",
+                  "single integer in (-", name, "$nC[1] - ", name, "$nC[2], ",
+                  name, "$e1 - 1 + ", name, "$nE[2]]")
+        }
+      } else if (is.finite(des$f1)) {
+        if (any(des$f1%%1 != 0, des$f1 <= -des$nC[1], des$f1 >= des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$f1 is finite and ",
+                  name, "$e1 is not, ", name, "$f1 should typically be a ",
+                  "single integer in [-", name, "$nC[1], ", name, "$nE[1])")
+        }
+        if (any(is.infinite(des$e2), des$e2%%1 != 0,
+                des$e2 <= des$f1 + 2 - des$nC[2],
+                des$e2 > des$nE[1] + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$f1 is finite and ",
+                  name, "$e1 is not, ", name, "$e2 should typically be a ",
+                  "single integer in (", name, "$f1 + 2 - ", name, "$nC[2], ",
+                  name, "$nE[1] + ", name, "$nE[2])")
+        }
+      }
+    }
+  } else if (des$type == "fisher") {
+    if (des$J == 1) {
+      if (any(is.null(des$e1), length(des$e1) != des$nC + des$nE + 1,
+              !is.numeric(des$e1))) {
+        stop("For ", name, "$J = 1, ", name, "$e1 must be a numeric vector of ",
+             "length ", name, "$nC + ", name, "$nE + 1")
+      }
+    } else {
+      if (any(is.null(des$e1), length(des$e1) != des$nC[1] + des$nE[1] + 1,
+              !is.numeric(des$e1), des$e1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$e1 must be a numeric vector of ",
+             "length ", name, "$nC[1] + ", name, "$nE[1] + 1, with all ",
+             "elements strictly greater than -Inf")
+      }
+      if (any(is.null(des$f1), length(des$f1) != des$nC[1] + des$nE[1] + 1,
+              !is.numeric(des$f1), des$f1 >= des$e1)) {
+        stop("For ", name, "$J = 2, ", name, "$f1 must be a numeric vector of ",
+             "length ", name, "$nC[1] + ", name, "$nE[1] + 1, with ", name,
+             "$e1 >= ", name, "$f1 for all elements")
+      }
+      if (any(is.null(des$e2), nrow(des$e2) != des$nC[1] + des$nE[1] + 1,
+              ncol(des$e2) != des$nC[2] + des$nE[2] + 1, !is.matrix(des$e2),
+              !is.numeric(des$e2))) {
+        stop("For ", name, "$J = 2, ", name, "$e2 must be a numeric matrix ",
+             "with ", name, "$nC[1] + ", name, "$nE[1] + 1 rows and ", name,
+             "$nC[2] + ", name, "$nE[2] + 1 columns")
+      }
+    }
+  } else if (des$type == "single_double") {
+    if (des$J == 1) {
+      if (any(is.null(des$eS1), length(des$eS1) != 1, !is.numeric(des$eS1))) {
+        stop("For ", name, "$J = 1, ", name, "$eS1 must be a single numeric")
+      } else if (any(is.infinite(des$eS1), des$eS1 <= 0, des$eS1 > des$nE)) {
+        warning("For ", name, "$J = 1, ", name, "$eS1 should typically be a ",
+                "single integer in (0, ", name, "$nE]")
+      }
+      if (any(is.null(des$eT1), length(des$eT1) != 1, !is.numeric(des$eT1))) {
+        stop("For ", name, "$J = 1, ", name, "$eT1 must be a single numeric")
+      } else if (any(is.infinite(des$eT1), des$eT1%%1 != 0, des$eT1 <= -des$nC,
+                     des$eT1 > des$nE)) {
+        warning("For ", name, "$J = 1, ", name, "$eT1 should typically be a ",
+                "single integer in (-", name, "$nC, ", name, "$nE]")
+      }
+    } else {
+      if (any(is.null(des$eS1), length(des$eS1) != 1, !is.numeric(des$eS1),
+              des$eS1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$eS1 must be a single numeric ",
+             "not equal to -Inf")
+      }
+      if (any(is.null(des$fS1), length(des$fS1) != 1, !is.numeric(des$fS1),
+              des$fS1 >= des$eS1)) {
+        stop("For ", name, "$J = 2, ", name, "$fS1 must be a single numeric ",
+             "that is strictly less than ", name, "$eS1")
+      }
+      if (any(is.null(des$eT1), length(des$eT1) != 1, !is.numeric(des$eT1),
+              des$eT1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$eT1 must be a single numeric ",
+             "not equal to -Inf")
+      }
+      if (any(is.null(des$fT1), length(des$fT1) != 1, !is.numeric(des$fT1),
+              des$fT1 >= des$eT1)) {
+        stop("For ", name, "$J = 2, ", name, "$fT1 must be a single numeric ",
+             "that is strictly less than ", name, "$eT1")
+      }
+      if (any(is.null(des$eS2), length(des$eS2) != 1, !is.numeric(des$eS2))) {
+        stop("For ", name, "$J = 2, ", name, "$eS2 must be a single numeric")
+      }
+      if (any(is.null(des$eT2), length(des$eT2) != 1, !is.numeric(des$eT2))) {
+        stop("For ", name, "$J = 2, ", name, "$eT2 must be a single numeric")
+      }
+      if (all(is.finite(des$eS1), is.finite(des$fS1))) {
+        if (any(des$eS1%%1 != 0, des$eS1 <= 1, des$eS1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$eS1 and ", name,
+                  "$fS1 are finite, ", name, "$eS1 should typically be a ",
+                  "single integer in (1, ", name, "$nE[1]]")
+        }
+        if (any(des$fS1%%1 != 0, des$fS1 < 0, des$fS1 >= des$nE[1] - 1)) {
+          warning("For ", name, "$J = 2, when ", name, "$eS1 and ", name,
+                  "$fS1 are finite, ", name, "$fS1 should typically be a ",
+                  "single integer in [0, ", name, "$nE[1] - 1)")
+        }
+        if (any(is.infinite(des$eS2), des$eS2%%1 != 0, des$eS2 < des$fS1 + 2,
+                des$eS2 > des$eS1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$eS1 and ", name,
+                  "$fS1 are finite, ", name, "$eS2 should typically be a ",
+                  "single integer in [", name, "$fS1 + 2, ", name, "$eS1 - 1 +",
+                  " ", name, "$nE[2]]")
+        }
+      } else if (is.finite(des$eS1)) {
+        if (any(des$eS1%%1 != 0, des$eS1 <= 0, des$e1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$eS1 is finite and ",
+                  name, "$fS1 is not, ", name, "$eS1 should typically be a ",
+                  "single integer in (0, ", name, "$nE[1]]")
+        }
+        if (any(is.infinite(des$eS2), des$eS2%%1 != 0, des$eS2 <= 0,
+                des$eS2 > des$e1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$eS1 is finite and ",
+                  name, "$fS1 is not, ", name, "$eS2 should typically be a ",
+                  "single integer in (0, ", name, "$e1 - 1 + ", name, "$nE[2]]")
+        }
+      } else if (is.finite(des$fS1)) {
+        if (any(des$fS1%%1 != 0, des$fS1 < 0, des$fS1 >= des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$fS1 is finite and ",
+                  name, "$eS1 is not, ", name, "$fS1 should typically be a ",
+                  "single integer in [0, ", name, "$nE[1] - 1]")
+        }
+        if (any(is.infinite(des$eS2), des$eS2%%1 != 0, des$eS2 <= des$fS1 + 1,
+                des$eS2 > des$nE[1] + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$fS1 is finite and ",
+                  name, "$eS1 is not, ", name, "$eS2 should typically be a ",
+                  "single integer in (", name, "$fS1 + 1, ", name, "$nE[1] + ",
+                  name, "$nE[2]]")
+        }
+      }
+      if (all(is.finite(des$eT1), is.finite(des$fT1))) {
+        if (any(des$eT1%%1 != 0, des$eT1 <= -des$nC[1] + 1,
+                des$eT1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$eT1 and ", name,
+                  "$fT1 are finite, ", name, "$eT1 should typically be a ",
+                  "single integer in (-", name, "$nC[1] + 1, ", name, "$nE[1]]")
+        }
+        if (any(des$fT1%%1 != 0, des$fT1 < -des$nC[1],
+                des$fT1 >= des$nE[1] - 1)) {
+          warning("For ", name, "$J = 2, when ", name, "$eT1 and ", name,
+                  "$fT1 are finite, ", name, "$fT1 should typically be a ",
+                  "single integer in [-", name, "$nC[1], ", name, "$nE[1] - 1)")
+        }
+        if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
+                des$eT2 < des$fT1 + 2 - des$nC[2],
+                des$eT2 > des$eT1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$eT1 and ", name,
+                  "$fT1 are finite, ", name, "$eT2 should typically be a ",
+                  "single integer in [", name, "$fT1 + 2 - ", name, "$nC[2], ",
+                  name, "$eT1 - 1 + ", name, "$nE[2]]")
+        }
+      } else if (is.finite(des$eT1)) {
+        if (any(des$eT1%%1 != 0, des$eT1 <= -des$nC[1], des$eT1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$eT1 is finite and ",
+                  name, "$fT1 is not, ", name, "$eT1 should typically be a ",
+                  "single integer in (-", name, "$nC[1], ", name, "$nE[1]]")
+        }
+        if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
+                des$eT2 <= -des$nC[1] - des$nC[2],
+                des$eT2 > des$eT1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$eT1 is finite and ",
+                  name, "$fT1 is not, ", name, "$eT2 should typically be a ",
+                  "single integer in (-", name, "$nC[1] - ", name, "$nC[2], ",
+                  name, "$eT1 - 1 + ", name, "$nE[2]]")
+        }
+      } else if (is.finite(des$fT1)) {
+        if (any(des$fT1%%1 != 0, des$fT1 <= -des$nC[1], des$fT1 >= des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$fT1 is finite and ",
+                  name, "$eT1 is not, ", name, "$fT1 should typically be a ",
+                  "single integer in [-", name, "$nC[1], ", name, "$nE[1])")
+        }
+        if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
+                des$eT2 <= des$fT1 + 2 - des$nC[2],
+                des$eT2 > des$nE[1] + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$fT1 is finite and ",
+                  name, "$eT1 is not, ", name, "$eT2 should typically be a ",
+                  "single integer in (", name, "$fT1 + 2 - ", name, "$nC[2], ",
+                  name, "$nE[1] + ", name, "$nE[2])")
+        }
+      }
+    }
+  }
+}
+
+check_ph2rand_pmf            <- function(x) {
+  check_ph2rand_des(x$des, "any", "x$des")
+  if (!tibble::is_tibble(x$pmf)) {
+    stop("x$pmf must be a tibble")
+  }
+  if (x$des$type %in% c("barnard", "binomial")) {
+    if (ncol(x$pmf) != 10) {
+      stop("For x$des$type = ", x$des$type, ", x$pmf must be a tibble with 10 ",
+           "columns")
+    }
+    if (!all(colnames(x$pmf) == c("piC", "piE", "xC", "xE", "mC", "mE",
+                                  "statistic", "decision", "k", "f(x,m|pi)"))) {
+      stop("The column names of x$pmf are not as required when x$des$type = ",
+           x$des$type)
+    }
+  } else if (x$des$type == "single_double") {
+    if (ncol(x$pmf) != 11) {
+      stop("For x$des$type = \"single_double\", x$pmf must be a tibble with 11",
+           " columns")
+    }
+    if (!all(colnames(x$pmf) == c("piC", "piE", "xC", "xE", "mC", "mE",
+                                  "statisticS", "statisticD", "decision", "k",
+                                  "f(x,m|pi)"))) {
+      stop("The column names of x$pmf are not as required when x$des$type = ",
+           "\"single_double\"")
+    }
+  } else if (all(x$des$type == "fisher", x$des$J == 1)) {
+    if (ncol(x$pmf) != 11) {
+      stop("For x$des$type = \"fisher\", with x$des$J = 1, x$pmf must be a ",
+           "tibble with 11 columns")
+    }
+    if (!all(colnames(x$pmf) == c("piC", "piE", "xC", "xE", "mC", "mE", "z",
+                                  "statistic", "decision", "k", "f(x,m|pi)"))) {
+      stop("The column names of x$pmf are not as required when x$des$type = ",
+           "\"fisher\" and x$des$J = 1")
+    }
+  } else {
+    if (ncol(x$pmf) != 14) {
+      stop("For x$des$type = \"fisher\", with x$des$J = 2, x$pmf must be a ",
+           "tibble with 14 columns")
+    }
+    if (!all(colnames(x$pmf) == c("piC", "piE", "xC1", "xE1", "xC2", "xE2",
+                                  "mC", "mE", "z1", "z2", "statistic",
+                                  "decision", "k", "f(x,m|pi)"))) {
+      stop("The column names of x$pmf are not as required when x$des$type = ",
+           "\"fisher\" and x$des$J = 2")
+    }
+  }
+}
+
+check_ph2rand_terminal       <- function(x) {
+  check_ph2rand_des(x$des, "any", "x$des")
+  if (!tibble::is_tibble(x$terminal)) {
+    stop("x$terminal must be a tibble")
+  }
+  if (x$des$type %in% c("barnard", "binomial")) {
+    if (ncol(x$terminal) != 7) {
+      stop("For x$des$type = ", x$des$type, ", x$terminal must be a tibble ",
+           "with 7 columns")
+    }
+    if (!all(colnames(x$terminal) == c("xC", "xE", "mC", "mE", "statistic",
+                                       "decision", "k"))) {
+      stop("The column names of x$terminal are not as required when ",
+           "x$des$type = ", x$des$type)
+    }
+  } else if (x$des$type == "single_double") {
+    if (ncol(x$terminal) != 8) {
+      stop("For x$des$type = \"single_double\", x$terminal must be a tibble ",
+           "with 8 columns")
+    }
+    if (!all(colnames(x$terminal) == c("xC", "xE", "mC", "mE", "statisticS",
+                                       "statisticD", "decision", "k"))) {
+      stop("The column names of x$terminal are not as required when ",
+           "x$des$type = \"single_double\"")
+    }
+  } else if (all(x$des$type == "fisher", x$des$J == 1)) {
+    if (ncol(x$terminal) != 8) {
+      stop("For x$des$type = \"fisher\", with x$des$J = 1, x$terminal must be ",
+           "a tibble with 8 columns")
+    }
+    if (!all(colnames(x$terminal) == c("xC", "xE", "mC", "mE", "z", "statistic",
+                                       "decision", "k"))) {
+      stop("The column names of x$terminal are not as required when ",
+           "x$des$type = \"fisher\" and x$des$J = 1")
+    }
+  } else {
+    if (ncol(x$terminal) != 11) {
+      stop("For x$des$type = \"fisher\", with x$des$J = 2, x$terminal must be ",
+           "a tibble with 11 columns")
+    }
+    if (!all(colnames(x$terminal) == c("xC1", "xE1", "xC2", "xE2", "mC", "mE",
+                                       "z1", "z2", "statistic", "decision",
+                                       "k"))) {
+      stop("The column names of x$terminal are not as required when ",
+           "x$des$type = \"fisher\" and x$des$J = 2")
+    }
+  }
 }
 
 check_pi                     <- function(pi, des) {
