@@ -10,7 +10,7 @@ Authors@R: c(person(given = "Michael", family = "Grayling",
                     comment = c(ORCID = "0000-0002-0680-6668")))
 Description: Provides a suite of functions to assist in the design of randomized
     comparative phase II oncology trials with a binary primary outcome variable.
-    Specifically, support is provided to: (a) perform a sample size calculation
+    Specifically, support is provided to (a) perform a sample size calculation
     when using one of several published designs, (b) evaluate the operating
     characteristics of a given design, and (c) produce informative plots.
 License: MIT + file LICENSE

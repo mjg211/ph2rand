@@ -21,7 +21,7 @@ suppressPackageStartupMessages(library(ph2rand))
 ```
 
 __ph2rand__ provides a suite of functions to assist in the design of randomized comparative phase II oncology trials with a binary primary outcome variable.
-Specifically, support is provided to: (a) perform a sample size calculation when using one of several published designs, (b) evaluate the operating characteristics of a given design, and (c) produce informative plots.
+Specifically, support is provided to (a) perform a sample size calculation when using one of several published designs, (b) evaluate the operating characteristics of a given design, and (c) produce informative plots.
 
 This vignette will proceed by detailing the type of trial designs __ph2rand__ currently supports.
 Each of the available functions will then be described, before several examples and useful further information will be provided.
@@ -39,8 +39,8 @@ At present, the focus is on the most commonly used class of design: those for tw
 
 ## 2.1. Design setting
 
-At present, each of the designs supported by __ph2rand__ can be described within a single design framework.
-They all assume that a single experimental treatment regimen will be compared to a single concurrent control arm (which would typically be expected to be the current standard-of-care), through a trial with at most $J\in\mathbb{N}^+$ stages (i.e., in what follows we will simultaneously treat one-stage designs and designs that allow interim analyses).
+At present, all of the methods supported by __ph2rand__ can be described within a single design framework.
+Each assumes that a single experimental treatment regimen will be compared to a single concurrent control arm (which would typically be expected to be the current standard-of-care treatment option), through a trial with at most $J\in\mathbb{N}^+$ stages (i.e., in what follows we will simultaneously treat one-stage designs and designs that allow interim analyses).
 
 Furthermore, each supposes that the treatment's anti-tumour activity will be formally compared through a single binary primary outcome variable (e.g., tumour response or the disease control rate).
 Precisely, they assume that outcomes $Y_{ijk} \sim Bern(\pi_k)$ are accrued from patients $i\in\{1,\dots,n_{jk}\}$, in stage $j\in\{1,\dots,J\}$, in arm $k\in\{C,E\}$.
@@ -50,44 +50,45 @@ For brevity in what follows, we set $\boldsymbol{\pi}=(\pi_C,\pi_E)^\top\in[0,1]
 Similarly, we set $\boldsymbol{n}_k=(n_{1k},\dots,n_{Jk})$ for $k\in\{C,E\}$.
 Note that at this stage we explicitly allow for the range of $i$ to depend on both $j$ and $k$, which will be discussed again in Section 3.
 
-With the above, __ph2rand__ suppports null hypotheses of the following form:
+With the above, the designs supported by __ph2rand__ test the following null hypothesis:
 
-$$ H_0 : \pi_C = \pi_E \in \Pi_0 \subseteq [0,1]. $$
-Here, $\Pi_0$ can be anything from a single real (e.g., 0.1), which would then logically correspond to the anticipated response rate in the control arm, through to the entire set $[0,1]$.
-The implications of different choices for $\Pi_0$ are discussed in Section 3.
-
-Given a particular null hypothesis, and a trial design of any kind returned by __ph2rand__, which we denote in generality at this point by $\mathscr{D}$, we will signify the power function as follows:
+$$ H_0 : \pi_C \le \pi_E. $$
+Then, given a trial design of any kind returned by __ph2rand__, which we denote in generality at this point by $\mathscr{D}$, we will signify the power function as follows:
 
 $$ P(\boldsymbol{\pi}) = \mathbb{P}(\text{Reject }H_0 \mid \boldsymbol{\pi},\mathscr{D}). $$
-Using the above definition, each of the design functions in __ph2rand__ aims to return an optimised design (as defined below) that ensures that the type-I error-rate is controlled to a specified level $\alpha \in (0,1)$.
-That is, they look to identify a design with:
+Using the above definition, each of the design functions in __ph2rand__ aims to return an optimised design (as defined below) that ensures that the type-I error-rate is controlled to a specified level $\alpha \in (0,1)$ over a given set $\Pi_0\subseteq	[0,1]$.
+Formally, they look to identify a design with:
 
 $$ \max_{\pi_C=\pi_E\in\Pi_0} P(\boldsymbol{\pi}) \le \alpha. $$
+Thus, __ph2rand__ implicitly assumes a monotonicity property on the power functions such that the type-I error-rate would be maximised along the boundary of the null hypotheses where $\pi_C=\pi_E$.
+Note that $\Pi_0$ can be anything from a single point (e.g., $0.1$), which would logically correspond to the anticipated response rate in the control arm, through to the entire line $[0,1]$.
+The implications of different choices for $\Pi_0$ are discussed in Section 3.
+
 Furthermore, __ph2rand__ supports powering trials under the following flexible framework.
-First, a clinically relevant difference in response rates $\delta \in (0,1]$ is specified.
+First, a clinically relevant difference in response rates (or treatment effect) $\delta \in (0,1]$ is specified.
 Then, a set $\Pi_1 \subseteq [0,1-\delta]$ is nominated, such that design determination should ensure that:
 
-$$ \min_{\pi_C\in\Lambda_1,\ \pi_E=\pi_C+\delta} P(\boldsymbol{\pi}) \ge 1 - \beta, $$
-where $\beta\in(0,1)$ can be viewed as the type-II error-rate.
+$$ \min_{\pi_C\in\Pi_1,\ \pi_E=\pi_C+\delta} P(\boldsymbol{\pi}) \ge 1 - \beta, $$
+where $\beta\in(0,1)$ can be viewed as the type-II error-rate, and we refer to this later as the alternative hypothesis.
 
 The above outlines the hypotheses and error-rates each of the designs supported by __ph2rand__ aims to control.
 To appreciate the differences between the way the designs work later, it is useful now to consider a general framework for decision making.
 
 First, each design framework specifies a particular test statistic $T_j$ that would be computed after stage $j$.
-In all instances this will be dependent on (at most) the chosen design (e.g., factors such as the sample size in each arm in each stage), and the number of responses seen in each arm in each stage.
+In all instances this will be dependent on (at most) the chosen design (e.g., factors such as the sample size in each arm in each stage) and the number of responses seen in each arm in each stage.
 Furthermore, positive values of $T_j$ will always indicate increased patient benefit on the experimental arm.
 
 In addition, each of the design frameworks specifies particular rejection, non-rejection, and continuation regions.
-Each of these can be viewed as a set of values such that if the chosen test statistic belongs to a particular set, then an associated decision will be made.
+Each of these can be viewed as a set of values such that if the chosen test statistic belongs to that set, then an associated decision will be made.
 As above, these sets will only ever be dependent on the chosen design and the number of responses seen in each arm in each stage.
 We define them as $R_j$, $N_j$, and $C_j$.
 Here, $R$, $N$, and $C$ are chosen to indicate rejection, non-rejection, and continuation respectively.
-As will be seen later, this framework can readily handle any value of $J$ as we can always ensure a trial terminates after at most $J$ stages by setting $C_J = \emptyset$.
+As will be seen later, this framework can readily handle any value of $J$, as we can always ensure a trial terminates after at most $J$ stages by setting $C_J = \emptyset$.
 Ultimately, with the above, the following algorithm describes how each of the designs work:
 
 1. Set $j=1$.
 2. Recruit $n_{jk}$ patients to arms $k\in\{C,E\}$ and gather the associated outcomes $y_{ijk}$ for $i\in\{1,\dots,n_{jk}\}$.
-3. Compute $T_j$ and make the following decisions:
+3. Compute $T_j$ and use the following decision rules:
     - If $T_j \in C_j$, set $j=j+1$ and return to step 2.
     - If $T_j \in R_j$, terminate the trial and reject $H_0$.
     - If $T_j \in N_j$, terminate the trial and do not reject $H_0$.
@@ -104,8 +105,8 @@ Before we outline the optimality criteria supported by __ph2rand__, though, we d
 
 ## 2.2. Operating characteristics
 
-For one-stage designs, $P(\boldsymbol{\pi})$ will likely be the only quantity of interest.
-For designs with more than one stage, though, there are several additional variables that should be considered.
+For one-stage designs, $P(\boldsymbol{\pi})$ will likely be the only random quantity of interest.
+For designs with more than one stage, though, there are several additional random variables that should be considered.
 Firstly, it will generally be of both interest and great use to evaluate the probability that the trial stops at the end of each permitted stage, with sub-categorisation according to the decision on whether or not $H_0$ should be rejected.
 We define these quantities for $j\in\{1,\dots,J\}$ as follows:
 
@@ -128,7 +129,7 @@ We can also think about the above via the following equations:
 \end{align}
 
 Then, also of much interest will be the trials expected sample size under given response rates.
-To this end, denote by $N$ the random variable of the total sample size required by a trial.
+To this end, denote by $N$ the random variable giving the total sample size required by a trial.
 Then, we simultaneously define and compute the expected sample size as follows:
 
 $$ ESS(\boldsymbol{\pi}) = \mathbb{E}(N \mid \boldsymbol{\pi},\mathscr{D}) = \sum_{j=1}^J S_j(\boldsymbol{\pi})\left( \sum_{l=1}^{j}n_{lC} + n_{lE}\right). $$
@@ -169,12 +170,17 @@ However, in practice, this is almost certain to be the case. Additionally, note 
 Currently, __ph2rand__ supports the determination of four different types of randomised comparative design, all in one-stage and two-stage forms (i.e., they each support $J\in\{1,2\}$).
 Each is described in its own subsection below.
 
+Note that in all instances the values $n_{jk}$ are determined by searching over possible values for the $n_{jC}$, assuming that $n_{jE}=rn_{jC}$ for a specified allocation ratio $r$.
+
 ### 2.4.1. Jung (2008)
 
 Jung (2008), in combination with further details provided in Jung (2013), outlines a design framework based on exact binomial tests.
 Specifically, the following test statistic is used at the end of stage $j\in\{1,\dots, J\}$:
 
-$$ T_j = \sum_{l=1}^j \left( \sum_{i=1}^{n_{lE}} y_{ilE} - \sum_{i=1}^{n_{lC}} y_{ilC} \right). $$
+$$ T_j = x_{jE} - x_{jC}, $$
+where:
+$$ x_{jk} = \sum_{l=1}^j \sum_{i=1}^{n_{lk}} y_{ilk},\qquad k\in\{C,E\}. $$
+
 That is, the difference between the number of responses observed on the experimental and control arms is used.
 An important observation for efficient design determination is then that $T_j \subseteq [-n_{C1}-\cdots-n_{Cj},n_{E1}+\cdots+n_{Ej}]$.
 
@@ -209,7 +215,7 @@ Shan *et al* (2013) propose a framework similar to Jung (2008), but based on the
 $$ T_j = \frac{\frac{x_{jE}}{\tilde{n}_{jE}} - \frac{x_{jC}}{\tilde{n}_{jC}}}{\frac{x_{jC} + x_{jE}}{\tilde{n}_{jC} + \tilde{n}_{jE}}\left(1 - \frac{x_{jC} + x_{jE}}{\tilde{n}_{jC} + \tilde{n}_{jE}} \right)\left( \frac{1}{\tilde{n}_{jC}} + \frac{1}{\tilde{n}_{jE}}  \right)}, $$
 where:
 
-$$ x_{jk} = \sum_{l=1}^j \sum_{i=1}^{n_{lk}} y_{ilk},\ \ \tilde{n}_{jk} = \sum_{l=1}^j n_{lk},\qquad k\in\{C,E\}. $$
+$$ \tilde{n}_{jk} = \sum_{l=1}^j n_{lk},\qquad k\in\{C,E\}. $$
 
 The rejection, non-rejection, and continuation regions are as in Section 2.4.1.
 So to does the design search procedure remain qualitatively the same (i.e., exhaustive evaluation of potential designs is still carried out).
@@ -226,24 +232,25 @@ Specifically, whilst the test statistic used in Jung (2008) is retained, the fol
   C_j &= C_j(z,\mathscr{D}) = (f_{jz_1\dots z_j}, e_{jz_1\dots z_j}],
 \end{align}
 
-where $z=z_1+\dots+z_j$, with:
-
-$$z_j=\sum_{i=1}^{n_{jC}}y_{ijC} + \sum_{i=1}^{n_{jE}}y_{ijE}.$$
+where $z=z_1+\dots+z_j$, with $z_j=x_{jC} + x_{jE}$.
 Thus, the $R_j$, $N_j$, and $C_j$ are allowed to vary based upon the the number of responses seen across the two arms in each stage.
 
 Here, for brevity, we denote the $j \times (\sum_{l=1}^jn_{lC}+n_{lE})$ arrays of efficacy and futility stopping boundaries for use after stage $j$ by $\boldsymbol{e}_j$ and $\boldsymbol{f}_j$ respectively.
+Then, $\mathscr{D} = \{\boldsymbol{n}_C,\boldsymbol{n}_E,\boldsymbol{e}_1,\dots,\boldsymbol{e}_J,\boldsymbol{f}_1,\dots,\boldsymbol{f}_J\}$.
 
 Similarly to before, we can now prevent early stopping for efficacy or futility by prescribing that $e_{jz_1\dots z_j}=\infty$ and $f_{jz_1\dots z_j}=-\infty$ for $j\in\{1,\dots,J\}$ and $(z_1,\dots,z_j) \in \{0,\dots,n_{1C}+n_{1E}\}\times\dots\times\{0,\dots,\sum_{l=1}^jn_{lC}+n_{lE}\}$.
 
 Unlike before, though, the boundaries are now not identified using an exhaustive search.
 Firstly, this is because this search procedure would be too computationally intensive to be useful in practice.
-However, the principal reason they are not chosen via an exhaustive assessment is because the motivation for this design framework comes from Fisher's exact test.
+However, the principal reason they are not chosen via an exhaustive assessment is because the motivation for this design framework comes from Fisher's exact test and its approach to guaranteeing error control.
+See Jung and Sargent (2014) for further details.
 
 ### 2.4.4. Litwin *et al* (2017)
 
 Though we suggested earlier that each supported design uses only a single test statistic at each analysis $j$, this was actually a slight misnomer, with the design from Litwin *et al* (2017) taking a different approach to those above and using two test statistics to make a decision.
-These are:
+Specifically, it combines testing rules typically associated with single-arm and two-arm trial designs, using the following test statistics:
 
+$$ T_{Sj} = x_{jE},\ \ T_{Tj} = x_{jE} - x_{jC}. $$
 Then, the rejection, non-rejection, and continuation regions are:
 
 
@@ -264,21 +271,22 @@ Nonetheless, notes are given below on options that may substantially increase ru
 
 ## 3.1. `des_one_stage()`
 
-`des_one_stage()` determines one-stage two-arm randomised clinical trial designs, assuming the primary outcome variable is binary. More specifically, under the assumption that it is Bernoulli distributed. It supports a flexible framework for specifying which scenarios to control the type-I and type-II error-rates for, and allows for design determination assuming a variety of test statistics. In all instances, `des_one_stage()` computes the relevant required sample size in each arm, and returns information on key operating characteristics.
+`des_one_stage()` determines one-stage two-arm randomised clinical trial designs within the framework described above (i.e., in particular assuming the primary outcome variable is Bernoulli distributed). In all instances, `des_one_stage()` computes the relevant required sample size in each arm, provides the critical rejection boundaries, and returns information on key operating characteristics.
 
-- `type`: A `character` string indicating the chosen design framework/test statistic to assume. Must be one of `"barnard"`, `"binomial"`, `"fisher"`, or `"single_double"`. Defaults to `"binomial"`.
-- `alpha`: A `numeric` indicating the chosen value for $\alpha$, the significance level. Defaults to `0.1`.
-- `beta`: A `numeric` indicating the chosen value for $\beta$, used in the definition of the desired power. Defaults to `0.2`.
-- `delta`: A `numeric` indicating the chosen value for $\delta$, the desired treatment effect. Defaults to `0.2`.
-- `ratio`: A `numeric` indicating the chosen value for $r$, the allocation ratio to the experimental arm, relative to the control arm. Defaults to `1`.
-- `Pi0`: A `numeric` `vector` indicating the chosen values of the control arm response rate to allow for in the null hypothesis. Must either be of `length` one, indicating a point null, or of `length` two. In this case, the elements indicate the range of possible response rates to allow for. Defaults to `0.1`.
-- `Pi1` A `numeric` `vector` indicating th chosen values of the control arm response rate to allow for in the alternative hypothesis. Must either be of `length` one, indicating a point null, or of `length` two. Then, the elements indicate the range of possible response rates to allow for. Defaults to `Pi0[1]`.
-- `nCmax`: A `numeric` indicating the maximum value of the sample size in the control arm to consider. Defaults to `50L`.
-- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. Defaults to `F`.
+It allows each of the following inputs to be specified:
 
-Returns:
+- `type`: A `character` string indicating the chosen design framework to assume. It must be one of `"barnard"` (Shan *et al*, 2013), `"binomial"` (Jung, 2008), `"fisher"` (Jung and Sargent, 2014), or `"single_double"` (Litwin *et al*, 2017). It defaults to `"binomial"`.
+- `alpha`: A `numeric` indicating the chosen value for $\alpha$, the significance level. It defaults to `0.1`.
+- `beta`: A `numeric` indicating the chosen value for $\beta$, used in the definition of the desired power. It defaults to `0.2`.
+- `delta`: A `numeric` indicating the chosen value for $\delta$, the desired treatment effect. It defaults to `0.2`.
+- `ratio`: A `numeric` indicating the chosen value for $r$, the allocation ratio to the experimental arm, relative to the control arm in each stage. It defaults to `1`.
+- `Pi0`: A `numeric` `vector` indicating the chosen values of the control arm response rate to allow for in the null hypothesis. It must either be of `length` one, indicating a point null, or of `length` two. In this case, the elements indicate the range of possible response rates to allow for. It defaults to `0.1`.
+- `Pi1` A `numeric` `vector` indicating th chosen values of the control arm response rate to allow for in the alternative hypothesis. Must either be of `length` one, indicating a point null, or of `length` two. Then, the elements indicate the range of possible response rates to allow for. It defaults to `Pi0[1]`.
+- `nCmax`: A `numeric` indicating the maximum value of the sample size in the control arm ($n_{1C}$) to consider. It defaults to `50L`.
+- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. It defaults to `F`.
 
-An object of class `"ph2rand_des"`, containing each of the input parameters along with several additional variables, including:
+It will return an object of class `"ph2rand_des"`, which contains each of the input parameters along with several additional variables.
+These include:
 
 - A selection of elements that prescribe the rejection boundaries of the optimal design. The names of these elements depends on the value of `type`.
 - A `tibble` in the slot `$feasible` summarising the operating characteristics of the feasible designs.
@@ -288,122 +296,140 @@ An object of class `"ph2rand_des"`, containing each of the input parameters alon
 
 ## 3.2. `des_two_stage()`
 
-`des_two_stage()` determines one-stage two-arm randomised clinical trial designs, assuming the primary outcome variable is binary. More specifically, under the assumption that it is Bernoulli distributed. It supports a flexible framework for specifying which scenarios to control the type-I and type-II error-rates for, and allows for design determination assuming a variety of test statistics. In all instances, `des_two_stage()` computes the relevant required sample size in each arm, and returns information on key operating characteristics.
+`des_one_stage()` determines one-stage two-arm randomised clinical trial designs within the framework described above (i.e., in particular assuming the primary outcome variable is Bernoulli distributed). In all instances, `des_one_stage()` computes the relevant required sample size in each arm, provides the critical rejection boundaries, and returns information on key operating characteristics.
 
-- `type`: A `character` string indicating the chosen design framework/test statistic to assume. Must be one of `"barnard"`, `"binomial"`, `"fisher"`, or `"single_double"`. Defaults to `"binomial"`.
-- `alpha`: A `numeric` indicating the chosen value for $\alpha$, the significance level. Defaults to `0.1`.
-- `beta`: A `numeric` indicating the chosen value for $\beta$, used in the definition of the desired power. Defaults to `0.2`.
-- `delta`: A `numeric` indicating the chosen value for $\delta$, the desired treatment effect. Defaults to `0.2`.
-- `ratio`: A `numeric` indicating the chosen value for $r$, the allocation ratio to the experimental arm, relative to the control arm. Defaults to `1`.
-- `Pi0`: A `numeric` `vector` indicating the chosen values of the control arm response rate to allow for in the null hypothesis. Must either be of `length` one, indicating a point null, or of `length` two. In this case, the elements indicate the range of possible response rates to allow for. Defaults to `0.1`.
-- `Pi1` A `numeric` `vector` indicating th chosen values of the control arm response rate to allow for in the alternative hypothesis. Must either be of `length` one, indicating a point null, or of `length` two. Then, the elements indicate the range of possible response rates to allow for. Defaults to `Pi0[1]`.
-- `nCmax`: A `numeric` indicating the maximum value of the sample size in the control arm to consider. Defaults to `50L`.
-- `equal` A \code{\link{logical}} variable indicating whether the sample size for a given arm should be equal in the two stages. Defaults to `T`.
-- `w`: A \code{\link{numeric}} \code{\link{vector}} indicating the weights to use in the optimality criteria. Must be of `length` five, with all elements greater than or equal to zero, and at least one of the first four elements strictly positive. Defaults to `c(1, 0, 0, 0, 0)`.
-- `piO`: A `numeric` indicating the value of the control arm response rate to assume in the optimality criteria. Defaults to `Pi0[1]`.
-- `efficacy`: Only used if `type` is one of `"barnard"`, `"binomial"`, or `"single_double"`. Then, it is a `logical` variable indicating whether to include early stopping for efficacy in the design. Defaults to `F`.
-- `futility`: Only used if `type` is one of `"barnard"`, `"binomial"`, or `"single_double"`. Then, it is a `logical` variable indicating whether to include early stopping for futility in the design. Defaults to `F`.
-- `efficacy_type`: Only used if `type` is `"fisher"`. Then, it is `numeric` indicating whether, and which type of, early stopping for efficacy to include in the design. See the vignette for details. Defaults to `0L`.
-- `efficacy_param`: Only used if `type` is `"fisher"` and `efficacy_type` is not equal to `0L`. Then, it is a `numeric` that influences the precise way in which an efficacy boundary is specified. See the vignette for details. Defaults to `NULL`.
-- `futility_type`: Only used if `type` is `"fisher"`. Then, it is `numeric` indicating whether, and which type of, early stopping for futility to include in the design. See the vignette for details. Defaults to `1L`.
-- `futility_param`: Only used if `type` is `"fisher"` and `futility_type` is not equal to `0L`. Then, it is a `numeric` that influences the precise way in which a futility boundary is specified. See the vignette for details. Defaults to `1L`.
-- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. Defaults to `F`.
+It allows each of the following inputs to be specified:
 
-Returns:
+- `type`: A `character` string indicating the chosen design framework to assume. It must be one of `"barnard"` (Shan *et al*, 2013), `"binomial"` (Jung, 2008), `"fisher"` (Jung and Sargent, 2014), or `"single_double"` (Litwin *et al*, 2017). It defaults to `"binomial"`.
+- `alpha`: A `numeric` indicating the chosen value for $\alpha$, the significance level. It defaults to `0.1`.
+- `beta`: A `numeric` indicating the chosen value for $\beta$, used in the definition of the desired power. It defaults to `0.2`.
+- `delta`: A `numeric` indicating the chosen value for $\delta$, the desired treatment effect. It defaults to `0.2`.
+- `ratio`: A `numeric` indicating the chosen value for $r$, the allocation ratio to the experimental arm, relative to the control arm in each stage. It defaults to `1`.
+- `Pi0`: A `numeric` `vector` indicating the chosen values of the control arm response rate to allow for in the null hypothesis. It must either be of `length` one, indicating a point null, or of `length` two. In this case, the elements indicate the range of possible response rates to allow for. It defaults to `0.1`.
+- `Pi1` A `numeric` `vector` indicating th chosen values of the control arm response rate to allow for in the alternative hypothesis. Must either be of `length` one, indicating a point null, or of `length` two. Then, the elements indicate the range of possible response rates to allow for. It defaults to `Pi0[1]`.
+- `nCmax`: A `numeric` indicating the maximum value of the total possible required sample size in the control arm ($n_{1C} + n_{2C}$) to consider. It defaults to `50L`.
+- `equal`: A `logical` variable indicating whether the sample sizes for a given arm should be equal in the two stages (i.e., whether it should be required that $n_{1C}=n_{2C}$). It defaults to `T`.
+- `w`: A `numeric` `vector` indicating the weights to use in the optimality criteria. It must be of `length` five, with all elements greater than or equal to zero, and at least one of the first four elements strictly positive. It defaults to `c(1, 0, 0, 0, 0)`.
+- `piO`: A `numeric` indicating the value of the control arm response rate to assume in the optimality criteria. It defaults to `Pi0[1]`.
+- `efficacy`: Only used if `type` is one of `"barnard"`, `"binomial"`, or `"single_double"`. Then, it is a `logical` variable indicating whether to include early stopping for efficacy in the design. It defaults to `F`.
+- `futility`: Only used if `type` is one of `"barnard"`, `"binomial"`, or `"single_double"`. Then, it is a `logical` variable indicating whether to include early stopping for futility in the design. It defaults to `F`.
+- `efficacy_type`: Only used if `type` is `"fisher"`. Then, it is `numeric` indicating whether, and which type of, early stopping for efficacy to include in the design. It defaults to `0L`.
+- `efficacy_param`: Only used if `type` is `"fisher"` and `efficacy_type` is not equal to `0L`. Then, it is a `numeric` that influences the precise way in which an efficacy boundary is specified. It defaults to `NULL`.
+- `futility_type`: Only used if `type` is `"fisher"`. Then, it is `numeric` indicating whether, and which type of, early stopping for futility to include in the design. It defaults to `1L`.
+- `futility_param`: Only used if `type` is `"fisher"` and `futility_type` is not equal to `0L`. Then, it is a `numeric` that influences the precise way in which a futility boundary is specified. It defaults to `1L`.
+- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. It defaults to `F`.
 
-An object of class `"ph2rand_des"`, containing each of the input parameters along with several additional variables, including:
+It will return an object of class `"ph2rand_des"`, which contains each of the input parameters along with several additional variables.
+These include:
 
 - A selection of elements that prescribe the rejection boundaries of the optimal design. The names of these elements depends on the value of `type`.
 - A `tibble` in the slot `$feasible` summarising the operating characteristics of the feasible designs.
-- A `numeric` `vector` in the slot `$nC` giving the sample sizes in the control arm in each stage for the optimal design.
-- A `numeric` `vector` in the slot `$nE` giving the sample sizes in the experimental arm in each stage for the optimal design.
+- A `numeric` in the slot `$nC` giving the sample sizes in the control arm in each stage for the optimal design.
+- A `numeric` in the slot `$nE` giving the sample sizes in the experimental arm in each stage for the optimal design.
 - A `tibble` in the slot `$opchar` summarising the operating characteristics of the optimal design.
 
 ## 3.3. `terminal()`
 
-`terminal()` determines terminal points of a design returned by `des_one_stage()` or `des_two_stage()`.
+`terminal()` determines the terminal points of a design returned by `des_one_stage()` or `des_two_stage()`, along with their associated decisions.
+That is, it returns all possible values of the number of responses that could be observed in the arms (stratified by stage where relevant), gives details on what the associated test statistic(s) would be, and provides information on what the decision would be in regards to $H_0$.
+For two-stage designs it also provides details on the scenarios that would lead to continuation to stage two at the interim analysis.
 
-- `des`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`.
-- `k`: A `numeric` `vector` indicating which stages to consider in determining the terminal points. Defaults internally to all stages of the given design.
-- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. Defaults to `F`.
+It allows each of the following options to be specified:
 
-Returns:
+- `des`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`. It defaults to `des_one_stage()`.
+- `k`: A `numeric` `vector` indicating which stages to consider in determining the terminal points. It defaults internally to all stages of the design given through `des`.
+- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. It defaults to `F`.
 
-An object of class `"ph2rand_terminal"`, containing each of the input parameters along with a tibble in the slot `$terminal`, which gives the determined terminal points.
+It will return an object of class `"ph2rand_terminal"`, which contains each of the input parameters along with a tibble in the slot `$terminal`, giving the determined terminal points.
 
 ## 3.4. `pmf()`
 
 `pmf()` determines probability mass functions of a design returned by `des_one_stage()` or `des_two_stage()`, under given response rate scenarios (see `pi`).
 
-- `des`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`.
-- `pi`: A `matrix` with two columns, giving the response rate scenarios to consider. The first column should correspond to the control arm and the second column to the experimental arm. Defaults internally to the values in `des$pi`.
-- `k`: A `numeric` `vector` indicating which stages to consider in determining the probability mass functions. That is, it will condition the calculations on the trial ending in the stages given in `k`. Defaults internally to all stages of the given design.
-- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. Defaults to `F`.
+It allows each of the following options to be specified:
 
-Returns:
+- `des`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`. It defaults to `des_one_stage()`.
+- `pi`: A `matrix` with two columns, giving the response rate scenarios to consider. The first column should correspond to the control arm (i.e., $\pi_C$) and the second column to the experimental arm (i.e., $\pi_E$). It defaults internally to the values in `des$opchar`.
+- `k`: A `numeric` `vector` indicating which stages to consider in determining the probability mass functions. That is, it will condition the calculations on the trial ending in the stages given in `k`. It defaults internally to all stages of the design given through `des`.
+- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. It defaults to `F`.
 
-An object of class `"ph2rand_pmf"`, containing each of the input parameters along with a tibble in the slot `$pmf`, which gives the determined probability mass functions.
+It will return an object of class `"ph2rand_pmf"`, which contains each of the input parameters along with a tibble in the slot `$pmf`, giving the determined probability mass functions.
 
 ## 3.5. `opchar()`
 
-`opchar()` determines operating characteristics of a design returned by `des_one_stage()` or `des_two_stage()`, under given response rate scenarios (see `pi`).
+`opchar()` determines the operating characteristics of a design returned by `des_one_stage()` or `des_two_stage()`, under given response rate scenarios (see `pi`).
 
-- `des`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`.
-- `pi`: A `matrix` with two columns, giving the response rate scenarios to consider. The first column should correspond to the control arm and the second column to the experimental arm. Defaults internally to the values in `des$pi`.
-- `k`: A `numeric` `vector` indicating which stages to consider in determining the probability mass function. That is, it will condition the calculations on the trial ending in the stages given in `k`. Defaults internally to all stages of the given design.
-- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. Defaults to `F`.
+It allows each of the following options to be specified:
 
-Returns:
+- `des`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`. It defaults to `des_one_stage()`.
+- `pi`: A `matrix` with two columns, giving the response rate scenarios to consider. The first column should correspond to the control arm (i.e., $\pi_C$) and the second column to the experimental arm (i.e., $\pi_E$). It defaults internally to the values in `des$opchar`.
+- `k`: A `numeric` `vector` indicating which stages to consider in determining the probability mass functions. That is, it will condition the calculations on the trial ending in the stages given in `k`. It defaults internally to all stages of the design given through `des`.
+- `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console. It defaults to `F`.
 
-An object of class `"ph2rand_opchar"`, containing each of the input parameters along with a tibble in the slot `$opchar`, which gives the determined operating characteristics.
+It will return an object of class `"ph2rand_opchar"`, which contains each of the input parameters along with a tibble in the slot `$opchar`, giving the determined operating characteristics.
 
-## 3.6. `plot.ph2rand_des_()`
+## 3.6. `plot.ph2rand_des()`
 
-`plot.ph2rand_des()` plots key operating characteristics of a design returned by `des_one_stage()` or `des_two_stage()`, under a range of response rate scenarios.
+`plot.ph2rand_des()` plots the key operating characteristics of a design returned by `des_one_stage()` or `des_two_stage()`, under a range of response rate scenarios.
+
+It allows each of the following options to be specified:
 
 - `x`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`.
-- `k`: A `numeric` `vector` indicating which stages to consider in determining the probability mass function. That is, it will condition the calculations on the trial ending in the stages given in `k`. Defaults internally to all stages of the given design.
-- `output`: A `logical` variable indicating whether outputs should be returned by the function.
+- `k`: A `numeric` `vector` indicating which stages to consider in determining the probability mass functions. That is, it will condition the calculations on the trial ending in the stages given in `k`. It defaults internally to all stages of the design given through `x`.
+- `output`: A `logical` variable indicating whether outputs should be returned by the function. It defaults to `F`.
 
-Returns:
-
-If `output = T`, a `list` containing each of the input parameters along with a `list` in the slot `$plots`, which gives all of the available produced plots.
+If `output = T`, it will return a `list` containing each of the input parameters along with a `list` in the slot `$plots`, which gives all of the available produced plots.
 
 ## 3.7. `summary.ph2rand_des()`
 
 `summary.ph2rand_des()` prints a summary of a design returned by `des_one_stage()` or `des_two_stage()`.
 
+It allows the following option to be specified:
+
 - `x`: An object of class `"ph2rand_des"`, as returned by `des_one_stage()` or `des_two_stage()`.
 
 ## 3.8. `plot.ph2rand_terminal()`
 
-`plot.ph2rand_terminal()` plots the terminal points of a design returned by `terminal()`.
+`plot.ph2rand_terminal()` plots the terminal points of a design, as returned by `terminal()`.
+
+It allows each of the following options to be specified:
 
 - `x`: An object of class `"ph2rand_terminal"`, as returned by `terminal()`.
-- `output`: A `logical` variable indicating whether outputs should be returned by the function.
+- `output`: A `logical` variable indicating whether outputs should be returned by the function. It defaults to `F`.
 
-Returns:
-
-If `output = T`, a `list` containing each of the input parameters along with a plot in the slot `$plot`, which gives the produced plot of the terminal points.
+If `output = T`, it will return a `list` containing each of the input parameters along with a plot in the slot `$plot`, giving the produced plot of the terminal points.
 
 ## 3.9. `plot.ph2rand_pmf()`
 
-`plot.ph2rand_pmf()` plots the terminal points of a design returned by `pmf()`.
+`plot.ph2rand_pmf()` plots the probability mass functions of a design, as returned by `pmf()`.
+
+It allows each of the following options to be specified:
 
 - `x`: An object of class `"ph2rand_pmf"`, as returned by `pmf()`.
-- `output`: A `logical` variable indicating whether outputs should be returned by the function.
+- `output`: A `logical` variable indicating whether outputs should be returned by the function. It defaults to `F`.
 
-Returns:
-
-If `output = T`, a `list` containing each of the input parameters along with a plot in the slot `$plot`, which gives the produced plot of the terminal points.
+If `output = T`, it will return a `list` containing each of the input parameters along with a `list` in the slot `$plots`, giving the produced plots of the probability mass functions.
 
 # 4. Examples
 
-## 4.1. Single-stage design using Jung (2008)
+## 4.1. One-stage design using Jung (2008)
 
+First, lets consider a simple scenario where we specify that $\Pi_0=\Pi_1=0.1$, $\delta=0.2$, $\alpha=\beta=0.1$, and $r=1$, in our one-stage design of the type from Jung (2008).
+We can find this design as follows:
 
+```{r}
+des <- des_one_stage(type    = "binomial",
+                     alpha   = 0.1,
+                     beta    = 0.1,
+                     delta   = 0.2,
+                     ratio   = 1,
+                     Pi0     = 0.1,
+                     Pi1     = 0.1,
+                     nCmax   = 50L,
+                     summary = T)
+```
 
-## 4.2. Comparing single-stage designs across design frameworks
+## 4.2. Comparing one-stage designs across design frameworks
 
 
 
@@ -424,7 +450,7 @@ If `output = T`, a `list` containing each of the input parameters along with a p
 ## 5.1. Contact
 
 The first-line response to a possible bug should be to submit it as a *New issue* [here](https://github.com/mjg211/ph2rand/issues).
-If the issue is more complex, or a patch is not provided in reasonable time, please contact Michael Grayling at michael.grayling@newcastle.ac.uk.
+If the issue is more complex, or a patch is not provided in reasonable time, please email michael.grayling@newcastle.ac.uk.
 Similarly, please feel free to contact with suggestions for new features (see Section 5.3 for a list of current plans for new features), or for further support with using the package.
 
 ## 5.2. Citing __ph2rand__
@@ -439,7 +465,7 @@ citation("ph2rand")
 
 Plans are currently in place to support the following randomized comparative designs:
 
-- Carsten and Chen P (2016).
+- Carsten and Chen (2016).
 - Cellamare and Sambucini (2015).
 - Chen *et al* (2018).
 - Roychoudhury *et al* (2018).
@@ -458,11 +484,11 @@ Chen CM, Chi Y, Chang HM (2018) Curtailed two-stage design for comparing two arm
 
 Grayling MJ, Dimairo M, Mander AP, Jaki TF (2019) A review of perspectives on the use of randomization in phase II oncology trials. *JNCI: J Natl Cancer I* djz126. DOI: [10.1093/jnci/djz126](https://doi.org/10.1093/jnci/djz126). PMID: [31218346](https://www.ncbi.nlm.nih.gov/pubmed/31218346).
 
-Jennison C, Turnbull B (2000) Group sequential methods with applications to clinical trials. Chapman & Hall/CRC: Boca Raton, FL.
+Jennison C, Turnbull B (2000) *Group sequential methods with applications to clinical trials*. Chapman & Hall/CRC: Boca Raton, FL.
 
 Jung SH (2008) Randomized phase II trials with a prospective control. *Stat Med* 27(4):568--83. DOI: [10.1002/sim.2961](https://doi.org/10.1002/sim.2961). PMID: [17573688](https://www.ncbi.nlm.nih.gov/pubmed/17573688).
 
-Jung SH (2013) Randomized phase II cancer clinical trials. Chapman & Hall/CRC: Boca Raton, FL.
+Jung SH (2013) *Randomized phase II cancer clinical trials*. Chapman & Hall/CRC: Boca Raton, FL.
 
 Jung SH, Lee T, Kim K, George SL (2004) Admissible two-stage designs for phase II cancer clinical trials. *Stat Med* 23(4):561--9. DOI: [10.1002/sim.1600](https://doi.org/10.1002/sim.1600). PMID: [14755389](https://www.ncbi.nlm.nih.gov/pubmed/14755389).
 
@@ -474,7 +500,7 @@ Litwin S, Basickes S, Ross EA (2017) Two-sample binary phase 2 trials with low t
 
 Mander AP, Wason JM, Sweeting MJ, Thompson SG (2012) Admissible two-stage designs for phase II cancer clinical trials that incorporate the expected sample size under the alternative hypothesis. *Pharm Stat* 11(2):91--6. DOI: [10.1002/pst.501](https://doi.org/10.1002/pst.501). PMID: [22232071](https://www.ncbi.nlm.nih.gov/pubmed/22232071).
 
-Roychoudhury S, Scheuer N, Neuenschwander B (2018) Beyond p-values: A phase II dual-criterion design with statistical significance and clinical relevance. *Stat Meth Med Res*. DOI: [10.1177/1740774518770661](https://doi.org/10.1177/1740774518770661).
+Roychoudhury S, Scheuer N, Neuenschwander B (2018) Beyond p-values: A phase II dual-criterion design with statistical significance and clinical relevance. *Clin Trials* 15(5):452–-61. DOI: [10.1177/1740774518770661](https://doi.org/10.1177/1740774518770661).
 
 Shan G, Ma C, Hutson AD, Wilding GE (2013) Randomized two-stage phase II clinical trial designs based on Barnard's exact test. *J Biopharm Stat* 23(5):1081--90. DOI: [10.1080/10543406.2013.813525](https://doi.org/10.1080/10543406.2013.813525). PMID: [23957517](https://www.ncbi.nlm.nih.gov/pubmed/23957517).
 

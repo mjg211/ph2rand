@@ -8,9 +8,8 @@ barnard_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
                               (length(Pi1) == 1), Pi1, summary)
   if (feasible[1, 1] > 0) {
     if (summary) {
-      message(uc("two_elip"), "feasible designs identified in the range of ",
-              "considered sample sizes.\n  Identifying the optimal design",
-              uc("two_elip"))
+      message("..feasible designs identified in the range of ",
+              "considered sample sizes.\n  Identifying the optimal design...")
     }
     nrow_feasible      <- nrow(feasible)
     if (nrow_feasible == 1) {
@@ -38,9 +37,9 @@ barnard_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
   } else {
     e1                 <- feasible <- nC <- nE <- opchar <- NULL
     if (summary) {
-      message(uc("two_elip"), "no feasible designs identified in range of ",
+      message("..no feasible designs identified in range of ",
               "considered maximal allowed sample size.\n  Consider increasing ",
-              "nCmax", uc("two_elip"))
+              "nCmax...")
     }
   }
   output               <-
@@ -62,9 +61,8 @@ barnard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
                               futility, piO, summary)
   if (feasible[1, 1] > 0) {
     if (summary) {
-      message(uc("two_elip"), "feasible designs identified in the range of ",
-              "considered sample sizes.\n  Identifying the optimal design",
-              uc("two_elip"))
+      message("..feasible designs identified in the range of ",
+              "considered sample sizes.\n  Identifying the optimal design...")
     }
     nrow_feasible      <- nrow(feasible)
     if (nrow_feasible == 1) {
@@ -138,9 +136,9 @@ barnard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
   } else {
     e1                 <- e2 <- f1 <- feasible <- nC <- nE <- opchar <- NULL
     if (summary) {
-      message(uc("two_elip"), "no feasible designs identified in range of ",
+      message("..no feasible designs identified in range of ",
               "considered maximal allowed sample size.\n  Consider increasing ",
-              "nCmax", uc("two_elip"))
+              "nCmax...")
     }
   }
   output               <-

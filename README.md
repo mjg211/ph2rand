@@ -10,7 +10,7 @@ Primary Outcome*
 
 **ph2rand** provides a suite of functions to assist in the design of
 randomized comparative phase II oncology trials with a binary primary
-outcome variable. Specifically, support is provided to: (a) perform a
+outcome variable. Specifically, support is provided to (a) perform a
 sample size calculation when using one of several published designs
 (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017,
 Shan *et al*, 2013), (b) evaluate the operating characteristics of a
@@ -32,8 +32,8 @@ Michael Grayling at <michael.grayling@newcastle.ac.uk>.
 ## Example: Two-stage designs
 
 We demonstrate functionality for two-stage designs, with the approach
-for single-stage designs being equivalent. First, find a two-stage
-design from Jung (2008) for the default parameters
+for single-stage designs being similar. First, find a two-stage design
+from Jung (2008) for the default parameters
 
 ``` r
 des_jung <- des_two_stage()
@@ -53,12 +53,12 @@ Next, look at its key operating characteristics
 ``` r
 des_jung$opchar
 #> # A tibble: 2 x 13
-#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)`
-#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0702      47.0       16.5        34        0   0.0702
-#> 2   0.1   0.3  0.813       64.7       10.1        68        0   0.813 
-#> # … with 5 more variables: `F1(pi)` <dbl>, `F2(pi)` <dbl>, `S1(pi)` <dbl>,
-#> #   `S2(pi)` <dbl>, `max N` <int>
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1  0.0702      47.0       16.5        34        0   0.0702   0.617 
+#> 2   0.1   0.3  0.813       64.7       10.1        68        0   0.813    0.0972
+#> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
+#> #   N` <int>
 ```
 
 Compare this to the equivalent design from Litwin *et al* (2017)
@@ -72,12 +72,12 @@ des_litwin_et_al$nE
 #> [1] 10 10
 des_litwin_et_al$opchar
 #> # A tibble: 2 x 13
-#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)`
-#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.1000      25.2       8.79        20        0   0.1000
-#> 2   0.1   0.3  0.804       36.9       7.20        40        0   0.804 
-#> # … with 5 more variables: `F1(pi)` <dbl>, `F2(pi)` <dbl>, `S1(pi)` <dbl>,
-#> #   `S2(pi)` <dbl>, `max N` <int>
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1   0.100      25.2       8.79        20        0    0.100    0.739
+#> 2   0.1   0.3   0.804      36.9       7.20        40        0    0.804    0.153
+#> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
+#> #   N` <int>
 ```
 
 Now to that from Shan (2013)
@@ -91,12 +91,12 @@ des_shan_et_al$nE
 #> [1] 17 17
 des_shan_et_al$opchar
 #> # A tibble: 2 x 13
-#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)`
-#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0968      47.0       16.5        34        0   0.0968
-#> 2   0.1   0.3  0.800       64.7       10.1        68        0   0.800 
-#> # … with 5 more variables: `F1(pi)` <dbl>, `F2(pi)` <dbl>, `S1(pi)` <dbl>,
-#> #   `S2(pi)` <dbl>, `max N` <int>
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1  0.0968      47.0       16.5        34        0   0.0968   0.617 
+#> 2   0.1   0.3  0.800       64.7       10.1        68        0   0.800    0.0977
+#> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
+#> #   N` <int>
 ```
 
 And finally that from Jung and Sargent (2014)
@@ -109,12 +109,12 @@ des_jung_sargent$nE
 #> [1] 22 22
 des_jung_sargent$opchar
 #> # A tibble: 2 x 13
-#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)`
-#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0530      61.5       21.5        44        0   0.0530
-#> 2   0.1   0.3  0.808       85.2       10.7        88        0   0.808 
-#> # … with 5 more variables: `F1(pi)` <dbl>, `F2(pi)` <dbl>, `S1(pi)` <dbl>,
-#> #   `S2(pi)` <dbl>, `max N` <int>
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1  0.0530      61.5       21.5        44        0   0.0530   0.602 
+#> 2   0.1   0.3  0.808       85.2       10.7        88        0   0.808    0.0627
+#> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
+#> #   N` <int>
 ```
 
 We can then readily find the terminal points of any of these designs,
@@ -150,28 +150,28 @@ terminal_jung$terminal
 pmf_jung      <- pmf(des_jung, pi)
 pmf_jung$pmf
 #> # A tibble: 2,382 x 10
-#>      piC   piE    xC    xE    mC    mE statistic decision k     `f(x,m|pi)`
-#>    <dbl> <dbl> <int> <int> <int> <int>     <int> <fct>    <fct>       <dbl>
-#>  1   0.1   0.1     0     0    17    17         0 Do not … 1          0.0278
-#>  2   0.1   0.1     1     0    17    17        -1 Do not … 1          0.0525
-#>  3   0.1   0.1     1     1    17    17         0 Do not … 1          0.0992
-#>  4   0.1   0.1     2     0    17    17        -2 Do not … 1          0.0467
-#>  5   0.1   0.1     2     1    17    17        -1 Do not … 1          0.0882
-#>  6   0.1   0.1     2     2    17    17         0 Do not … 1          0.0784
-#>  7   0.1   0.1     3     0    17    17        -3 Do not … 1          0.0259
-#>  8   0.1   0.1     3     1    17    17        -2 Do not … 1          0.0490
-#>  9   0.1   0.1     3     2    17    17        -1 Do not … 1          0.0436
-#> 10   0.1   0.1     3     3    17    17         0 Do not … 1          0.0242
+#>      piC   piE    xC    xE    mC    mE statistic decision      k     `f(x,m|pi)`
+#>    <dbl> <dbl> <int> <int> <int> <int>     <int> <fct>         <fct>       <dbl>
+#>  1   0.1   0.1     0     0    17    17         0 Do not reject 1          0.0278
+#>  2   0.1   0.1     1     0    17    17        -1 Do not reject 1          0.0525
+#>  3   0.1   0.1     1     1    17    17         0 Do not reject 1          0.0992
+#>  4   0.1   0.1     2     0    17    17        -2 Do not reject 1          0.0467
+#>  5   0.1   0.1     2     1    17    17        -1 Do not reject 1          0.0882
+#>  6   0.1   0.1     2     2    17    17         0 Do not reject 1          0.0784
+#>  7   0.1   0.1     3     0    17    17        -3 Do not reject 1          0.0259
+#>  8   0.1   0.1     3     1    17    17        -2 Do not reject 1          0.0490
+#>  9   0.1   0.1     3     2    17    17        -1 Do not reject 1          0.0436
+#> 10   0.1   0.1     3     3    17    17         0 Do not reject 1          0.0242
 #> # … with 2,372 more rows
 opchar_jung   <- opchar(des_jung, pi)
 opchar_jung$opchar
 #> # A tibble: 2 x 13
-#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)`
-#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0702      47.0       16.5        34        0   0.0702
-#> 2   0.1   0.3  0.813       64.7       10.1        68        0   0.813 
-#> # … with 5 more variables: `F1(pi)` <dbl>, `F2(pi)` <dbl>, `S1(pi)` <dbl>,
-#> #   `S2(pi)` <dbl>, `max N` <int>
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1  0.0702      47.0       16.5        34        0   0.0702   0.617 
+#> 2   0.1   0.3  0.813       64.7       10.1        68        0   0.813    0.0972
+#> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
+#> #   N` <int>
 ```
 
 Finally, we can plot various factors relating to the designs. For

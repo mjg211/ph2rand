@@ -23,7 +23,7 @@ suppressPackageStartupMessages(library(ph2rand))
 
 ## Description
 
-__ph2rand__ provides a suite of functions to assist in the design of randomized comparative phase II oncology trials with a binary primary outcome variable. Specifically, support is provided to: (a) perform a sample size calculation when using one of several published designs (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017, Shan *et al*, 2013), (b) evaluate the operating characteristics of a given design, and (c) produce informative plots.
+__ph2rand__ provides a suite of functions to assist in the design of randomized comparative phase II oncology trials with a binary primary outcome variable. Specifically, support is provided to (a) perform a sample size calculation when using one of several published designs (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017, Shan *et al*, 2013), (b) evaluate the operating characteristics of a given design, and (c) produce informative plots.
 
 ## Getting started
 
@@ -38,7 +38,7 @@ For further help, please contact Michael Grayling at michael.grayling@newcastle.
 
 ## Example: Two-stage designs
 
-We demonstrate functionality for two-stage designs, with the approach for single-stage designs being equivalent.
+We demonstrate functionality for two-stage designs, with the approach for single-stage designs being similar.
 First, find a two-stage design from Jung (2008) for the default parameters
 
 ```{r}

@@ -3,14 +3,14 @@
 #'
 #' \strong{ph2rand} provides a suite of functions to assist in the design of
 #' randomized comparative phase II oncology trials with a binary primary outcome
-#' variable. Specifically, support is provided to: (a) perform a sample size
+#' variable. Specifically, support is provided to (a) perform a sample size
 #' calculation when using one of several published designs, (b) evaluate the
 #' operating characteristics of a given design, and (c) produce informative
 #' plots.
 #'
 #' @section Getting started:
 #'
-#' You can install the latest development version of ph2rand from
+#' You can install the latest development version of \strong{ph2rand} from
 #' \href{https://github.com/}{Github} with:
 #'
 #' \code{devtools::install_github("mjg211/ph2rand")}
