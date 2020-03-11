@@ -3,13 +3,13 @@
 
 # ph2rand <img src='man/figures/ph2rand.png' align="right" height="139" />
 
-*Design of Randomized Comparative Phase II Oncology Trials with a Binary
-Primary Outcome*
+*Design of randomized comparative phase II oncology trials with a
+Bernoulli primary outcome*
 
 ## Description
 
-**ph2rand** provides a suite of functions to assist in the design of
-randomized comparative phase II oncology trials with a binary primary
+**ph2rand** provides a suite of functions to assist with the design of
+randomized comparative phase II oncology trials with a Bernoulli primary
 outcome variable. Specifically, support is provided to (a) perform a
 sample size calculation when using one of several published designs
 (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017,
@@ -26,8 +26,8 @@ devtools::install_github("mjg211/ph2rand")
 ```
 
 An introductory example of how to make use of the package’s core
-functionality can be found below. For further help, please contact
-Michael Grayling at <michael.grayling@newcastle.ac.uk>.
+functionality can be found below. For further help, please email
+<michael.grayling@newcastle.ac.uk>.
 
 ## Example: Two-stage designs
 
@@ -64,7 +64,7 @@ des_jung$opchar
 Compare this to the equivalent design from Litwin *et al* (2017)
 
 ``` r
-des_litwin_et_al <- des_two_stage(type  = "single_double",
+des_litwin_et_al <- des_two_stage(type  = "sat",
                                   nCmax = 20L)
 des_litwin_et_al$nC
 #> [1] 10 10
@@ -186,7 +186,7 @@ effect
 plot(des_jung)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-11-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-11-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-11-2.png" width="100%" />
 
 See the package vignette for further details.
 
