@@ -114,59 +114,59 @@ NumericMatrix dbinom_des_one_stage(double pi_typeI, double pi_power,
 
 // [[Rcpp::export]]
 NumericMatrix dbinom_des_two_stage(NumericMatrix dbinom1, double pi_typeI,
-                                   double pi_power, double delta, int nC1,
-                                   int nC2, int nE1, int nE2) {
-  NumericMatrix dbinom2(4, max(nC2, nE2) + 1);
-  if (nC1 == nC2) {
+                                   double pi_power, double delta, int n1C,
+                                   int n2C, int n1E, int n2E) {
+  NumericMatrix dbinom2(4, max(n2C, n2E) + 1);
+  if (n1C == n2C) {
     dbinom2(0, _)     = dbinom1(0, _);
   }
-  else if (nE1 == nC2) {
+  else if (n1E == n2C) {
     dbinom2(0, _)     = dbinom1(2, _);
   }
   else {
-    for (int xC2 = 0; xC2 <= nC2; xC2++) {
-      dbinom2(0, xC2) = R::dbinom(xC2, nC2, pi_typeI, 0);
+    for (int xC2 = 0; xC2 <= n2C; xC2++) {
+      dbinom2(0, xC2) = R::dbinom(xC2, n2C, pi_typeI, 0);
     }
   }
-  if (nC1 == nC2) {
+  if (n1C == n2C) {
     dbinom2(1, _)     = dbinom1(1, _);
   }
   else if (pi_typeI == pi_power) {
     dbinom2(1, _)     = dbinom2(0, _);
   }
   else {
-    for (int xC2 = 0; xC2 <= nC2; xC2++) {
-      dbinom2(1, xC2) = R::dbinom(xC2, nC2, pi_power, 0);
+    for (int xC2 = 0; xC2 <= n2C; xC2++) {
+      dbinom2(1, xC2) = R::dbinom(xC2, n2C, pi_power, 0);
     }
   }
-  if (nE2 == nE1) {
+  if (n2E == n1E) {
     dbinom2(2, _)     = dbinom1(2, _);
   }
-  else if (nE2 == nC1) {
+  else if (n2E == n1C) {
     dbinom2(2, _)     = dbinom1(0, _);
   }
-  else if (nE2 == nC2) {
+  else if (n2E == n2C) {
     dbinom2(2, _)     = dbinom2(0, _);
   }
   else {
-    for (int xE2 = 0; xE2 <= nE2; xE2++) {
-      dbinom2(2, xE2) = R::dbinom(xE2, nE2, pi_typeI, 0);
+    for (int xE2 = 0; xE2 <= n2E; xE2++) {
+      dbinom2(2, xE2) = R::dbinom(xE2, n2E, pi_typeI, 0);
     }
   }
-  if (nE2 == nE1) {
+  if (n2E == n1E) {
     dbinom2(3, _)     = dbinom1(3, _);
   }
   else if (pi_typeI == pi_power + delta) {
-    if (nC1 == nE2) {
+    if (n1C == n2E) {
       dbinom2(3, _) = dbinom1(0, _);
     }
-    else if (nC2 == nE2) {
+    else if (n2C == n2E) {
       dbinom2(3, _) = dbinom2(0, _);
     }
   }
   else {
-    for (int xE2 = 0; xE2 <= nE2; xE2++) {
-      dbinom2(3, xE2) = R::dbinom(xE2, nE2, pi_power + delta, 0);
+    for (int xE2 = 0; xE2 <= n2E; xE2++) {
+      dbinom2(3, xE2) = R::dbinom(xE2, n2E, pi_power + delta, 0);
     }
   }
   return dbinom2;

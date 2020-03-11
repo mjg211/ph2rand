@@ -1,5 +1,5 @@
-#' Summarise a two-arm randomised clinical trial design for a binary primary
-#' outcome variable
+#' Summarise a two-arm randomised clinical trial design the assumes a Bernoulli
+#' primary outcome variable
 #'
 #' \code{summary.ph2rand_des} prints a summary of a design returned by
 #' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.

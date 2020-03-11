@@ -775,10 +775,10 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                 m_minus2,
                 m_plus1,
                 m_plus2,
-                nC1,
-                nC2,
-                nE1,
-                nE2,
+                n1C,
+                n2C,
+                n1E,
+                n2E,
                 rows,
                 counter     = 0,
                 interrupt   = 0,
@@ -821,48 +821,48 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
   int           check;
   for (int n1 = 0; n1 <= poss_nC.length() - 1; n1++) {
     check                   = 0;
-    nC1                     = poss_nC[n1];
-    nE1                     = poss_nE[n1];
-    if (((equal != 1) && (nC1 < nCmax)) ||
-          ((equal == 1) && (nC1 <= 0.5*nCmax))) {
-      NumericVector poss_y1 = poss_y[nC1 + nCmax*(nE1 - 1) - 1],
-                    poss_z1 = poss_z[nC1 + nCmax*(nE1 - 1) - 1];
-      NumericMatrix poss_x1 = poss_x[nC1 + nCmax*(nE1 - 1) - 1];
-      if ((summary == 1) && (nC1%10 == 0)) {
-        string str = std::to_string(nC1);
-        message_cpp("currently analysing designs with nC1 = ", str);
+    n1C                     = poss_nC[n1];
+    n1E                     = poss_nE[n1];
+    if (((equal != 1) && (n1C < nCmax)) ||
+          ((equal == 1) && (n1C <= 0.5*nCmax))) {
+      NumericVector poss_y1 = poss_y[n1C + nCmax*(n1E - 1) - 1],
+                    poss_z1 = poss_z[n1C + nCmax*(n1E - 1) - 1];
+      NumericMatrix poss_x1 = poss_x[n1C + nCmax*(n1E - 1) - 1];
+      if ((summary == 1) && (n1C%10 == 0)) {
+        string str = std::to_string(n1C);
+        message_cpp("currently analysing designs with n1C = ", str);
       }
       NumericVector e_z1(nCmax + nEmax + 1),
-                    ess0_z1(nC1 + nE1 + 1),
-                    ess1_z1(nC1 + nE1 + 1),
+                    ess0_z1(n1C + n1E + 1),
+                    ess1_z1(n1C + n1E + 1),
                     f_z1(nCmax + nEmax + 1),
-                    g_ess01(nC1 + nE1 + 1),
-                    g_ess11(nC1 + nE1 + 1),
-                    g_power1(nC1 + nE1 + 1),
-                    g_typeI1(nC1 + nE1 + 1),
-                    len_x1(nC1 + nE1 + 1),
-                    power_z1(nC1 + nE1 + 1),
-                    typeI_z1(nC1 + nE1 + 1);
-      NumericMatrix B1(nC1 + nE1 + 1, nC1 + nE1 + 1),
-                    h_typeI_z1(nC1 + nE1 + 1, nC1 + nE1 + 1),
-                    h_power_z1(nC1 + nE1 + 1, nC1 + nE1 + 1),
-                    h_ess1_z1(nC1 + nE1 + 1, nC1 + nE1 + 1);
+                    g_ess01(n1C + n1E + 1),
+                    g_ess11(n1C + n1E + 1),
+                    g_power1(n1C + n1E + 1),
+                    g_typeI1(n1C + n1E + 1),
+                    len_x1(n1C + n1E + 1),
+                    power_z1(n1C + n1E + 1),
+                    typeI_z1(n1C + n1E + 1);
+      NumericMatrix B1(n1C + n1E + 1, n1C + n1E + 1),
+                    h_typeI_z1(n1C + n1E + 1, n1C + n1E + 1),
+                    h_power_z1(n1C + n1E + 1, n1C + n1E + 1),
+                    h_ess1_z1(n1C + n1E + 1, n1C + n1E + 1);
       dbinom1               = dbinom_des_one_stage(pi_typeI, pi_power, delta,
-                                                   nC1, nE1),
+                                                   n1C, n1E),
       dbinom_ess            = dbinom_des_ess(dbinom1, pi_typeI, pi_power, delta,
-                                             pi_ess, nC1, nE1);
-      for (int z1 = 0; z1 <= nC1 + nE1; z1++) {
+                                             pi_ess, n1C, n1E);
+      for (int z1 = 0; z1 <= n1C + n1E; z1++) {
         interrupt++;
         if (interrupt % 1000 == 0) {
           Rcpp::checkUserInterrupt();
         }
-        m_minus1                          = max(0, z1 - nC1);
-        m_plus1                           = min(z1, nE1);
+        m_minus1                          = max(0, z1 - n1C);
+        m_plus1                           = min(z1, n1E);
         len_x1[z1]                        = m_plus1 - m_minus1 + 1;
         xE1                               = seq(m_minus1, m_plus1);
         xC1                               = z1 - xE1;
-        if (len_x1[z1] < nC1 + nE1 + 1) {
-          NumericVector B1_z1(nC1 + nE1 + 1);
+        if (len_x1[z1] < n1C + n1E + 1) {
+          NumericVector B1_z1(n1C + n1E + 1);
           B1_z1[Range(0, len_x1[z1] - 1)] = xE1 - xC1;
           B1(z1, _)                       = B1_z1;
         }
@@ -870,8 +870,8 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
           B1(z1, _)                       = xE1 - xC1;
         }
         for (int i = 0; i <= len_x1[z1] - 1; i++) {
-          h_typeI_z1(z1, i)               = choose_mat(nC1 - 1, xC1[i])*
-                                              choose_mat(nE1 - 1, xE1[i]);
+          h_typeI_z1(z1, i)               = choose_mat(n1C - 1, xC1[i])*
+                                              choose_mat(n1E - 1, xE1[i]);
           h_power_z1(z1, i)               = h_typeI_z1(z1, i)*
                                               pow(theta_power, xE1[i]);
           h_ess1_z1(z1, i)                = h_typeI_z1(z1, i)*
@@ -897,7 +897,7 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
         }
         else if (efficacy_type == 1) {
           if (efficacy_param == -0.5) {
-            e_z1[z1]                      = round(0.5*(nC1 + nE1)*delta) + 1;
+            e_z1[z1]                      = round(0.5*(n1C + n1E)*delta) + 1;
           }
           else {
             e_z1[z1]                      = efficacy_param;
@@ -956,7 +956,7 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
           typeII1                         = h_power_z1(z1, counter2);
           if (typeII1 > futility_param) {
             typeII1                       = 0;
-            f_z1[z1]                      = -nC1 - 1;
+            f_z1[z1]                      = -n1C - 1;
           }
           else {
             ess0_z1[z1]                   += h_typeI_z1(z1, counter2);
@@ -984,20 +984,20 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
         typeI1                            = sum(g_typeI1*typeI_z1);
         for (int n2 = (equal == 1 ? n1 : 0);
              n2 <= (equal == 1 ? n1 : poss_nC.length() - 1); n2++) {
-          nC2                             = poss_nC[n2];
-          if (nC1 + nC2 <= nCmax) {
-            nE2                           = poss_nE[n2];
-            NumericVector poss_y2         = poss_y[nC2 + nCmax*(nE2 - 1) - 1],
-                          poss_z2         = poss_z[nC2 + nCmax*(nE2 - 1) - 1];
-            NumericMatrix poss_x2         = poss_x[nC2 + nCmax*(nE2 - 1) - 1];
+          n2C                             = poss_nC[n2];
+          if (n1C + n2C <= nCmax) {
+            n2E                           = poss_nE[n2];
+            NumericVector poss_y2         = poss_y[n2C + nCmax*(n2E - 1) - 1],
+                          poss_z2         = poss_z[n2C + nCmax*(n2E - 1) - 1];
+            NumericMatrix poss_x2         = poss_x[n2C + nCmax*(n2E - 1) - 1];
             dbinom2                       =
-              dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta, nC1, nC2,
-                                   nE1, nE2);
-            NumericVector g_power2(nC2 + nE2 + 1),
-                          g_typeI2(nC2 + nE2 + 1);
+              dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta, n1C, n2C,
+                                   n1E, n2E);
+            NumericVector g_power2(n2C + n2E + 1),
+                          g_typeI2(n2C + n2E + 1);
             NumericMatrix e_z(nCmax + nEmax + 1, 2*(nCmax + nEmax) + 1),
-                          power_z(nC1 + nE1 + 1, nC2 + nE2 + 1),
-                          typeI_z(nC1 + nE1 + 1, nC2 + nE2 + 1);
+                          power_z(n1C + n1E + 1, n2C + n2E + 1),
+                          typeI_z(n1C + n1E + 1, n2C + n2E + 1);
             for (int z1 = 0; z1 <= nCmax + nEmax; z1++) {
               for (int z2 = 0; z2 <= 2*(nCmax + nEmax); z2++) {
                 e_z(z1, z2)               = -0.5;
@@ -1005,9 +1005,9 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
             }
             typeI2                        = 0;
             power2                        = 0;
-            for (int z2 = 0; z2 <= nC2 + nE2; z2++) {
-              m_minus2                    = max(0, z2 - nC2);
-              m_plus2                     = min(z2, nE2);
+            for (int z2 = 0; z2 <= n2C + n2E; z2++) {
+              m_minus2                    = max(0, z2 - n2C);
+              m_plus2                     = min(z2, n2E);
               len_x2                      = m_plus2 - m_minus2 + 1;
               xE2                         = seq(m_minus2, m_plus2);
               xC2                         = z2 - xE2;
@@ -1015,8 +1015,8 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
               NumericVector h_typeI_z2(len_x2),
                             h_power_z2(len_x2);
               for (int i = 0; i <= len_x2 - 1; i++) {
-                h_typeI_z2[i]             = choose_mat(nC2 - 1, xC2[i])*
-                                              choose_mat(nE2 - 1, xE2[i]);
+                h_typeI_z2[i]             = choose_mat(n2C - 1, xC2[i])*
+                                              choose_mat(n2E - 1, xE2[i]);
                 h_power_z2[i]             = h_typeI_z2[i]*
                                               pow(theta_power, xE2[i]);
                 g_power2[z2]             += dbinom2(1, xC2[i])*
@@ -1026,20 +1026,20 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
               }
               h_typeI_z2                  = h_typeI_z2/sum(h_typeI_z2);
               h_power_z2                  = h_power_z2/sum(h_power_z2);
-              for (int z1 = 0; z1 <= nC1 + nE1; z1++) {
-                NumericVector h_typeI(nC1 + nC2 + nE1 + nE2 + 1),
-                              h_power(nC1 + nC2 + nE1 + nE2 + 1);
+              for (int z1 = 0; z1 <= n1C + n1E; z1++) {
+                NumericVector h_typeI(n1C + n2C + n1E + n2E + 1),
+                              h_power(n1C + n2C + n1E + n2E + 1);
                 for (int B1i = 0; B1i < len_x1[z1]; B1i++) {
                   if (B1(z1, B1i) > f_z1[z1] && B1(z1, B1i) < e_z1[z1]) {
                     for (int B2i = 0; B2i < len_x2; B2i++) {
-                      h_typeI[B1(z1, B1i) + B2[B2i] + nC1 + nC2] +=
+                      h_typeI[B1(z1, B1i) + B2[B2i] + n1C + n2C] +=
                         h_typeI_z1(z1, B1i)*h_typeI_z2[B2i];
-                      h_power[B1(z1, B1i) + B2[B2i] + nC1 + nC2] +=
+                      h_power[B1(z1, B1i) + B2[B2i] + n1C + n2C] +=
                         h_power_z1(z1, B1i)*h_power_z2[B2i];
                     }
                   }
                 }
-                counter2                  = nC1 + nC2 + nE1 + nE2;
+                counter2                  = n1C + n2C + n1E + n2E;
                 if (h_typeI[counter2] > alpha - typeI_z1[z1]) {
                   e_z(z1, z2)             = z1 + z2 + 1;
                 }
@@ -1054,7 +1054,7 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                   }
                   typeI_z(z1, z2)        -= h_typeI[counter2];
                   power_z(z1, z2)        -= h_power[counter2];
-                  e_z(z1, z2)             = counter2 + 1 - nC1 - nC2;
+                  e_z(z1, z2)             = counter2 + 1 - n1C - n2C;
                 }
                 typeI2                   += g_typeI1[z1]*g_typeI2[z2]*
                                               typeI_z(z1, z2);
@@ -1068,11 +1068,11 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                 typeI                     = typeI1 + typeI2;
                 if (point_alt == 1) {
                   feasible_designs_info(counter, _) =
-                    NumericVector::create(nC1, nC2, pi_typeI, typeI, pi_power,
-                                          power, nC1 + nE1 +
-                                                   (1 - S1_ess0)*(nC2 + nE2),
-                                          nC1 + nE1 +
-                                            (1 - S1_ess1)*(nC2 + nE2));
+                    NumericVector::create(n1C, n2C, pi_typeI, typeI, pi_power,
+                                          power, n1C + n1E +
+                                                   (1 - S1_ess0)*(n2C + n2E),
+                                          n1C + n1E +
+                                            (1 - S1_ess1)*(n2C + n2E));
                   feasible_designs_e_z1(counter, _) = e_z1;
                   feasible_designs_f_z1(counter, _) = f_z1;
                   NumericVector e_z_vec((nCmax + nEmax + 1)*
@@ -1090,19 +1090,19 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                 else {
                   NumericVector min_power             =
                     fisher_min_power(2, beta, delta,
-                                     NumericVector::create(nC1, nC2),
-                                     NumericVector::create(nE1, nE2), e_z1,
+                                     NumericVector::create(n1C, n2C),
+                                     NumericVector::create(n1E, n2E), e_z1,
                                      f_z1, e_z, List::create(poss_x1, poss_x2),
                                      List::create(poss_y1, poss_y2),
                                      List::create(poss_z1, poss_z2), pi_alt, 1);
                   if (min_power[1] >= 1 - beta) {
                     feasible_designs_info(counter, _) =
-                      NumericVector::create(nC1, nC2, pi_typeI, typeI,
+                      NumericVector::create(n1C, n2C, pi_typeI, typeI,
                                             min_power[0], min_power[1],
-                                            nC1 + nE1 +
-                                              (1 - S1_ess0)*(nC2 + nE2),
-                                            nC1 + nE1 +
-                                              (1 - S1_ess1)*(nC2 + nE2));
+                                            n1C + n1E +
+                                              (1 - S1_ess0)*(n2C + n2E),
+                                            n1C + n1E +
+                                              (1 - S1_ess1)*(n2C + n2E));
                     feasible_designs_e_z1(counter, _) = e_z1;
                     feasible_designs_f_z1(counter, _) = f_z1;
                     NumericVector e_z_vec((nCmax + nEmax + 1)*
@@ -1121,29 +1121,29 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
               }
               else {
                 NumericVector max_typeI               =
-                  fisher_max_typeI(2, alpha, NumericVector::create(nC1, nC2),
-                                   NumericVector::create(nE1, nE2), e_z1, f_z1,
+                  fisher_max_typeI(2, alpha, NumericVector::create(n1C, n2C),
+                                   NumericVector::create(n1E, n2E), e_z1, f_z1,
                                    e_z,
-                                 List::create(poss_x[nC1 +
-                                                         nCmax*(nE1 - 1) - 1],
-                                                poss_x[nC2 +
-                                                         nCmax*(nE2 - 1) - 1]),
-                                   List::create(poss_y[nC1 +
-                                                         nCmax*(nE1 - 1) - 1],
-                                                poss_y[nC2 +
-                                                         nCmax*(nE2 - 1) - 1]),
-                                   List::create(poss_z[nC1 + 
-                                                         nCmax*(nE1 - 1) - 1],
-                                                poss_z[nC2 +
-                                                         nCmax*(nE2 - 1) - 1]),
+                                 List::create(poss_x[n1C +
+                                                         nCmax*(n1E - 1) - 1],
+                                                poss_x[n2C +
+                                                         nCmax*(n2E - 1) - 1]),
+                                   List::create(poss_y[n1C +
+                                                         nCmax*(n1E - 1) - 1],
+                                                poss_y[n2C +
+                                                         nCmax*(n2E - 1) - 1]),
+                                   List::create(poss_z[n1C + 
+                                                         nCmax*(n1E - 1) - 1],
+                                                poss_z[n2C +
+                                                         nCmax*(n2E - 1) - 1]),
                                    pi_null, 1);
                 if (point_alt == 1) {
                   feasible_designs_info(counter, _)   =
-                    NumericVector::create(nC1, nC2, max_typeI[0], max_typeI[1],
+                    NumericVector::create(n1C, n2C, max_typeI[0], max_typeI[1],
                                           pi_power, power,
-                                          nC1 + nE1 + (1 - S1_ess0)*(nC2 + nE2),
-                                          nC1 + nE1 +
-                                            (1 - S1_ess1)*(nC2 + nE2));
+                                          n1C + n1E + (1 - S1_ess0)*(n2C + n2E),
+                                          n1C + n1E +
+                                            (1 - S1_ess1)*(n2C + n2E));
                   feasible_designs_e_z1(counter, _)   = e_z1;
                   feasible_designs_f_z1(counter, _)   = f_z1;
                   NumericVector e_z_vec((nCmax + nEmax + 1)*
@@ -1161,30 +1161,30 @@ List fisher_des_two_stage_cpp(double alpha, double beta, double delta,
                 else {
                   NumericVector min_power             =
                     fisher_min_power(2, beta, delta,
-                                     NumericVector::create(nC1, nC2),
-                                     NumericVector::create(nE1, nE2), e_z1,
+                                     NumericVector::create(n1C, n2C),
+                                     NumericVector::create(n1E, n2E), e_z1,
                                      f_z1, e_z,
-                                     List::create(poss_x[nC1 +
-                                                           nCmax*(nE1 - 1) - 1],
-                                                  poss_x[nC2 + nCmax*(nE2 - 1) -
+                                     List::create(poss_x[n1C +
+                                                           nCmax*(n1E - 1) - 1],
+                                                  poss_x[n2C + nCmax*(n2E - 1) -
                                                            1]),
-                                     List::create(poss_y[nC1 +
-                                                           nCmax*(nE1 - 1) - 1],
-                                                  poss_y[nC2 + nCmax*(nE2 - 1) -
+                                     List::create(poss_y[n1C +
+                                                           nCmax*(n1E - 1) - 1],
+                                                  poss_y[n2C + nCmax*(n2E - 1) -
                                                            1]),
-                                     List::create(poss_z[nC1 +
-                                                           nCmax*(nE1 - 1) - 1],
-                                                  poss_z[nC2 + nCmax*(nE2 - 1) -
+                                     List::create(poss_z[n1C +
+                                                           nCmax*(n1E - 1) - 1],
+                                                  poss_z[n2C + nCmax*(n2E - 1) -
                                                            1]), pi_alt, 1);
                   if (min_power[1] >= 1 - beta) {
                     feasible_designs_info(counter, _) =
-                      NumericVector::create(nC1, nC2, max_typeI[0],
+                      NumericVector::create(n1C, n2C, max_typeI[0],
                                             max_typeI[1], min_power[0],
                                             min_power[1],
-                                            nC1 + nE1 +
-                                              (1 - S1_ess0)*(nC2 + nE2),
-                                            nC1 + nE1 +
-                                              (1 - S1_ess1)*(nC2 + nE2));
+                                            n1C + n1E +
+                                              (1 - S1_ess0)*(n2C + n2E),
+                                            n1C + n1E +
+                                              (1 - S1_ess1)*(n2C + n2E));
                     feasible_designs_e_z1(counter, _) = e_z1;
                     feasible_designs_f_z1(counter, _) = f_z1;
                     NumericVector e_z_vec((nCmax + nEmax + 1)*

@@ -804,10 +804,10 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                                         double pi_ess, int summary) {
   int           len_B1,
                 len_B2,
-                nC1,
-                nE1,
-                nC2,
-                nE2,
+                n1C,
+                n1E,
+                n2C,
+                n2E,
                 counter                 = 0,
                 interrupt               = 0,
                 nCmax                   = max(poss_nC);
@@ -830,28 +830,28 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                 dbinom2,
                 feasible_designs(10000000, 11);
   for (int n1 = 0; n1 <= poss_nC.length() - 1; n1++) {
-    nC1                                 = poss_nC[n1];
-    nE1                                 = poss_nE[n1];
-    if (((equal != 1) && (nC1 < nCmax)) ||
-          ((equal == 1) && (nC1 <= 0.5*nCmax))) {
-      if ((summary == 1) && (nC1%10 == 0)) {
-        string str = std::to_string(nC1);
-        message_cpp("currently analysing designs with nC1 = ", str);
+    n1C                                 = poss_nC[n1];
+    n1E                                 = poss_nE[n1];
+    if (((equal != 1) && (n1C < nCmax)) ||
+          ((equal == 1) && (n1C <= 0.5*nCmax))) {
+      if ((summary == 1) && (n1C%10 == 0)) {
+        string str = std::to_string(n1C);
+        message_cpp("currently analysing designs with n1C = ", str);
       }
-      NumericVector unique_B1           = unique_B[nC1 + nCmax*(nE1 - 1) - 1];
+      NumericVector unique_B1           = unique_B[n1C + nCmax*(n1E - 1) - 1];
       len_B1                            = unique_B1.length();
-      NumericMatrix prob_x1_ess0(nC1 + 1, nE1 + 1),
-                    prob_x1_ess1(nC1 + 1, nE1 + 1),
-                    prob_x1_power(nC1 + 1, nE1 + 1),
-                    prob_x1_typeI(nC1 + 1, nE1 + 1),
-                    poss_B1             = poss_B[nC1 + nCmax*(nE1 - 1) - 1],
-                    poss_x1             = poss_x[nC1 + nCmax*(nE1 - 1) - 1],
+      NumericMatrix prob_x1_ess0(n1C + 1, n1E + 1),
+                    prob_x1_ess1(n1C + 1, n1E + 1),
+                    prob_x1_power(n1C + 1, n1E + 1),
+                    prob_x1_typeI(n1C + 1, n1E + 1),
+                    poss_B1             = poss_B[n1C + nCmax*(n1E - 1) - 1],
+                    poss_x1             = poss_x[n1C + nCmax*(n1E - 1) - 1],
                     dbinom1             =
-                      dbinom_des_one_stage(pi_typeI, pi_power, delta, nC1, nE1),
+                      dbinom_des_one_stage(pi_typeI, pi_power, delta, n1C, n1E),
                     dbinom_ess          =
                       dbinom_des_ess(dbinom1, pi_typeI, pi_power, delta, pi_ess,
-                                     nC1, nE1);
-      for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+                                     n1C, n1E);
+      for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
         prob_x1_ess0(poss_x1(o1, 0), poss_x1(o1, 1))  =
           dbinom_ess(0, poss_x1(o1, 0))*dbinom_ess(1, poss_x1(o1, 1));
         prob_x1_ess1(poss_x1(o1, 0), poss_x1(o1, 1))  =
@@ -866,7 +866,7 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                      (efficacy == 1 ? len_B1 - 4 : len_B1 - 3) : 0); fi1++) {
         f1                              = unique_B1[fi1];
         typeII1                         = 0;
-        for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+        for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
           if (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) <= f1) {
             typeII1                    += prob_x1_power(poss_x1(o1, 0),
                                                         poss_x1(o1, 1));
@@ -880,7 +880,7 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
           e1                            = unique_B1[ei1];
           power1                        = 0;
           typeI1                        = 0;
-          for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+          for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
             if (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) >= e1) {
               power1                   += prob_x1_power(poss_x1(o1, 0),
                                                         poss_x1(o1, 1));
@@ -891,7 +891,7 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
           if (typeI1 < alpha) {
             S1_ess0                     = 0;
             S1_ess1                     = 0;
-            for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+            for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
               if ((poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) >= e1) ||
                     (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) <= f1)) {
                 S1_ess0                += prob_x1_ess0(poss_x1(o1, 0),
@@ -902,24 +902,24 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
             }
             for (int n2 = (equal == 1 ? n1 : 0);
                  n2 <= (equal == 1 ? n1 : poss_nC.length() - 1); n2++) {
-              nC2                       = poss_nC[n2];
-              if (nC1 + nC2 <= nCmax) {
-                nE2                     = poss_nE[n2];
-                NumericVector unique_B2 = unique_B[nC1 + nC2 +
-                  nCmax*(nE1 + nE2 - 1) - 1];
+              n2C                       = poss_nC[n2];
+              if (n1C + n2C <= nCmax) {
+                n2E                     = poss_nE[n2];
+                NumericVector unique_B2 = unique_B[n1C + n2C +
+                  nCmax*(n1E + n2E - 1) - 1];
                 len_B2                  = unique_B2.length();
-                NumericMatrix prob_x_power(nC1 + nC2 + 1, nE1 + nE2 + 1),
-                              prob_x_typeI(nC1 + nC2 + 1, nE1 + nE2 + 1),
-                              poss_B2   = poss_B[nC1 + nC2 +
-                                                   nCmax*(nE1 + nE2 - 1) - 1],
-                              poss_x2   = poss_x[nC2 + nCmax*(nE2 - 1) - 1];
+                NumericMatrix prob_x_power(n1C + n2C + 1, n1E + n2E + 1),
+                              prob_x_typeI(n1C + n2C + 1, n1E + n2E + 1),
+                              poss_B2   = poss_B[n1C + n2C +
+                                                   nCmax*(n1E + n2E - 1) - 1],
+                              poss_x2   = poss_x[n2C + nCmax*(n2E - 1) - 1];
                 dbinom2                 =
-                  dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta, nC1,
-                                      nC2, nE1, nE2);
-                for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+                  dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta, n1C,
+                                      n2C, n1E, n2E);
+                for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
                   if ((poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) > f1) &&
                       (poss_B1(poss_x1(o1, 0), poss_x1(o1, 1)) < e1)) {
-                    for (int o2 = 0; o2 <= (nC2 + 1)*(nE2 + 1) - 1; o2++) {
+                    for (int o2 = 0; o2 <= (n2C + 1)*(n2E + 1) - 1; o2++) {
                       prob_x_power(poss_x1(o1, 0) + poss_x2(o2, 0),
                                    poss_x1(o1, 1) + poss_x2(o2, 1)) +=
                         prob_x1_power(poss_x1(o1, 0), poss_x1(o1, 1))*
@@ -940,8 +940,8 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                   f2                    = e2;
                   power2                = 0;
                   typeI2                = 0;
-                  for (int xC = 0; xC <= nC1 + nC2; xC++) {
-                    for (int xE = nE1 + nE2; xE >= 0; xE--) {
+                  for (int xC = 0; xC <= n1C + n2C; xC++) {
+                    for (int xE = n1E + n2E; xE >= 0; xE--) {
                       if (poss_B2(xC, xE) >= e2) {
                         power2         += prob_x_power(xC, xE);
                         typeI2         += prob_x_typeI(xC, xE);
@@ -958,20 +958,20 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                     if (point_null == 1) {
                       if (point_alt == 1) {
                         feasible_designs(counter, _)   =
-                          NumericVector::create(nC1, nC2, e1, e2, f1, pi_typeI,
+                          NumericVector::create(n1C, n2C, e1, e2, f1, pi_typeI,
                                                   typeI1 + typeI2, pi_power,
                                                   power1 + power2,
-                                                  nC1 + nE1 +
-                                                    (1 - S1_ess0)*(nC2 + nE2),
-                                                  nC1 + nE1 +
-                                                      (1 - S1_ess1)*(nC2 + nE2));
+                                                  n1C + n1E +
+                                                    (1 - S1_ess0)*(n2C + n2E),
+                                                  n1C + n1E +
+                                                      (1 - S1_ess1)*(n2C + n2E));
                         counter++;
                       }
                       else {
                         NumericVector min_power        =
                           barnard_min_power(2, beta, delta,
-                                            NumericVector::create(nC1, nC2),
-                                            NumericVector::create(nE1, nE2),
+                                            NumericVector::create(n1C, n2C),
+                                            NumericVector::create(n1E, n2E),
                                             NumericVector::create(e1, e2),
                                             NumericVector::create(f1, f2),
                                             List::create(poss_x1, poss_x2),
@@ -981,21 +981,21 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                           break;
                         }
                         feasible_designs(counter, _)   =
-                          NumericVector::create(nC1, nC2, e1, e2, f1, pi_typeI,
+                          NumericVector::create(n1C, n2C, e1, e2, f1, pi_typeI,
                                                 typeI1 + typeI2, min_power[0],
                                                 min_power[1],
-                                                nC1 + nE1 +
-                                                  (1 - S1_ess0)*(nC2 + nE2),
-                                                nC1 + nE1 +
-                                                  (1 - S1_ess1)*(nC2 + nE2));
+                                                n1C + n1E +
+                                                  (1 - S1_ess0)*(n2C + n2E),
+                                                n1C + n1E +
+                                                  (1 - S1_ess1)*(n2C + n2E));
                         counter++;
                       }
                     }
                     else {
                       NumericVector max_typeI          =
                         barnard_max_typeI(2, alpha,
-                                          NumericVector::create(nC1, nC2),
-                                          NumericVector::create(nE1, nE2),
+                                          NumericVector::create(n1C, n2C),
+                                          NumericVector::create(n1E, n2E),
                                           NumericVector::create(e1, e2),
                                           NumericVector::create(f1, f2),
                                           List::create(poss_x1, poss_x2),
@@ -1004,20 +1004,20 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                       if (max_typeI[1] <= alpha) {
                         if (point_alt == 1) {
                           feasible_designs(counter, _) =
-                            NumericVector::create(nC1, nC2, e1, e2, f1,
+                            NumericVector::create(n1C, n2C, e1, e2, f1,
                                                   max_typeI[0], max_typeI[1],
                                                   pi_power, power1 + power2,
-                                                  nC1 + nE1 +
-                                                    (1 - S1_ess0)*(nC2 + nE2),
-                                                  nC1 + nE1 +
-                                                    (1 - S1_ess1)*(nC2 + nE2));
+                                                  n1C + n1E +
+                                                    (1 - S1_ess0)*(n2C + n2E),
+                                                  n1C + n1E +
+                                                    (1 - S1_ess1)*(n2C + n2E));
                           counter++;
                         }
                         else {
                           NumericVector min_power      =
                             barnard_min_power(2, beta, delta,
-                                              NumericVector::create(nC1, nC2),
-                                              NumericVector::create(nE1, nE2),
+                                              NumericVector::create(n1C, n2C),
+                                              NumericVector::create(n1E, n2E),
                                               NumericVector::create(e1, e2),
                                               NumericVector::create(f1, f2),
                                               List::create(poss_x1, poss_x2),
@@ -1027,13 +1027,13 @@ NumericMatrix barnard_des_two_stage_cpp(double alpha, double beta, double delta,
                             break;
                           }
                           feasible_designs(counter, _) =
-                            NumericVector::create(nC1, nC2, e1, e2, f1,
+                            NumericVector::create(n1C, n2C, e1, e2, f1,
                                                   max_typeI[0], max_typeI[1],
                                                   min_power[0], min_power[1],
-                                                  nC1 + nE1 +
-                                                    (1 - S1_ess0)*(nC2 + nE2),
-                                                  nC1 + nE1 +
-                                                    (1 - S1_ess1)*(nC2 + nE2));
+                                                  n1C + n1E +
+                                                    (1 - S1_ess0)*(n2C + n2E),
+                                                  n1C + n1E +
+                                                    (1 - S1_ess1)*(n2C + n2E));
                           counter++;
                         }
                       }

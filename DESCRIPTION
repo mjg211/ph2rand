@@ -1,18 +1,19 @@
 Package: ph2rand
 Type: Package
-Title: Design of Randomized Comparative Phase II Oncology Trials with a Binary
-    Primary Outcome
+Title: Design of Randomized Comparative Phase II Oncology Trials with a
+    Bernoulli Primary Outcome
 Version: 0.1
-Date: 2019-10-24
+Date: 2020-03-05
 Authors@R: c(person(given = "Michael", family = "Grayling",
                     email = "michael.grayling@newcastle.ac.uk",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-0680-6668")))
-Description: Provides a suite of functions to assist in the design of randomized
-    comparative phase II oncology trials with a binary primary outcome variable.
-    Specifically, support is provided to (a) perform a sample size calculation
-    when using one of several published designs, (b) evaluate the operating
-    characteristics of a given design, and (c) produce informative plots.
+Description: Provides a suite of functions to assist with the design of
+    randomized comparative phase II oncology trials with a Bernoulli primary
+    outcome variable. Specifically, support is provided to (a) perform a sample
+    size calculation when using one of several published designs, (b) evaluate
+    the operating characteristics of a given design, and (c) produce informative
+    plots.
 License: MIT + file LICENSE
 Imports:
     dplyr,

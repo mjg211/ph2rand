@@ -72,22 +72,8 @@ check_integer_range          <- function(value, name, range, len) {
 }
 
 check_k                      <- function(k, des) {
-  if (missing(k)) {
-    if (des$J == 1) {
-      return(1)
-    } else {
-      return(1:2)
-    }
-  } else {
-    if (des$J == 1) {
-      allowed <- 1
-    } else {
-      allowed <- 1:2
-    }
-    if (any(!(k %in% allowed))) {
-      stop("k must contain values in {", paste(allowed, sep = ", "), "}")
-    }
-    k
+  if (any(!(k %in% 1:des$J))) {
+    stop("k must contain values in {", paste(1:des$J, sep = ", "), "}")
   }
 }
 
@@ -151,19 +137,19 @@ check_ph2rand_des            <- function(des, type, name = "des") {
     stop(name, " must be of class ph2rand_des")
   }
   if (all(type == "any", !(des$type %in% c("barnard", "binomial", "fisher",
-                                           "single_double")))) {
+                                           "sat")))) {
     stop(name, "$type must be one of \"barnard\", \"binomial\", \"fisher\", or",
-         " \"single_double\"")
+         " \"sat\"")
   } else if (all(type == "barnard", des$type != "barnard")) {
     stop(name, "$type must be equal to \"barnard\"")
   } else if (all(type == "binomial", des$type != "binomial")) {
     stop(name, "$type must be equal to \"binomial\"")
   } else if (all(type == "fisher", des$type != "fisher")) {
     stop(name, "$type must be equal to \"fisher\"")
-  } else if (all(type == "single_double", des$type != "single_double")) {
-    stop(name, "$type must be equal to \"single_double\"")
+  } else if (all(type == "sat", des$type != "sat")) {
+    stop(name, "$type must be equal to \"sat\"")
   }
-  if (any(is.null(des$J), !(des$J %in% c(1, 2)))) {
+  if (any(is.null(des$J), !(des$J %in% 1:2))) {
     stop(name, "$J must be equal to 1 or 2")
   } else if (des$J == 1) {
     if (any(is.null(des$nC), length(des$nC) != 1, !is.numeric(des$nC),
@@ -190,263 +176,330 @@ check_ph2rand_des            <- function(des, type, name = "des") {
   }
   if (des$type == "barnard") {
     if (des$J == 1) {
-      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1))) {
-        stop("For ", name, "$J = 1, ", name, "$e1 must be a single numeric")
-      } else if (is.infinite(des$e1)) {
-        warning("For ", name, "$J = 1, ", name, "$e1 should typically be ",
-                "finite")
+      if (any(is.null(des$boundaries$e1), length(des$boundaries$e1) != 1,
+              !is.numeric(des$boundaries$e1))) {
+        stop("For ", name, "$J = 1, ", name, "$boundaries$e1 must be a single ",
+             "numeric")
+      } else if (is.infinite(des$boundaries$e1)) {
+        warning("For ", name, "$J = 1, ", name, "$boundaries$e1 should ",
+                "typically be finite")
       }
     } else {
-      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1),
-              des$e1 == -Inf)) {
-        stop("For ", name, "$J = 2, ", name, "$e1 must be a single numeric not",
-             " equal to -Inf")
+      if (any(is.null(des$boundaries$e1), length(des$boundaries$e1) != 1,
+              !is.numeric(des$boundaries$e1), des$boundaries$e1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$e1 must be a single ",
+             "numeric not equal to -Inf")
       }
-      if (any(is.null(des$f1), length(des$f1) != 1, !is.numeric(des$f1),
-              des$f1 >= des$e1)) {
-        stop("For ", name, "$J = 2, ", name, "$f1 must be a single numeric ", 
-             "that is strictly less than ", name, "$e1")
+      if (any(is.null(des$boundaries$f1), length(des$boundaries$f1) != 1,
+              !is.numeric(des$boundaries$f1),
+              des$boundaries$f1 >= des$boundaries$e1)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$f1 must be a single ",
+             "numeric that is strictly less than ", name, "$boundaries$e1")
       }
-      if (any(is.null(des$e2), length(des$e2) != 1, !is.numeric(des$e2))) {
-        stop("For ", name, "$J = 2, ", name, "$e2 must be a single numeric")
-      } else if (is.infinite(des$e2)) {
-        warning("For ", name, "$J = 2, ", name, "$e2 should typically be ",
-                "finite")
+      if (any(is.null(des$boundaries$e2), length(des$boundaries$e2) != 1,
+              !is.numeric(des$boundaries$e2))) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$e2 must be a single ",
+             "numeric")
+      } else if (is.infinite(des$boundaries$e2)) {
+        warning("For ", name, "$J = 2, ", name, "$boundaries$e2 should ",
+                "typically be finite")
       }
     }
   } else if (des$type == "binomial") {
     if (des$J == 1) {
-      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1))) {
-        stop("For ", name, "$J = 1, ", name, "$e1 must be a single numeric")
-      } else if (any(is.infinite(des$e1), des$e1%%1 != 0, des$e1 <= -des$nC,
-                     des$e1 > des$nE)) {
-        warning("For ", name, "$J = 1, ", name, "$e1 should typically be a ",
-                "single integer in (-", name, "$nC, ", name, "$nE]")
+      if (any(is.null(des$boundaries$e1), length(des$boundaries$e1) != 1,
+              !is.numeric(des$boundaries$e1))) {
+        stop("For ", name, "$J = 1, ", name, "$boundaries$e1 must be a single ",
+             "numeric")
+      } else if (any(is.infinite(des$boundaries$e1), des$boundaries$e1%%1 != 0,
+                     des$boundaries$e1 <= -des$nC,
+                     des$boundaries$e1 > des$nE)) {
+        warning("For ", name, "$J = 1, ", name, "$boundaries$e1 should ",
+                "typically be a single integer in (-", name, "$nC, ", name,
+                "$nE]")
       }
     } else {
-      if (any(is.null(des$e1), length(des$e1) != 1, !is.numeric(des$e1),
-              des$e1 == -Inf)) {
-        stop("For ", name, "$J = 2, ", name, "$e1 must be a single numeric ",
-             "not equal to -Inf")
+      if (any(is.null(des$boundaries$e1), length(des$boundaries$e1) != 1,
+              !is.numeric(des$boundaries$e1), des$boundaries$e1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$e1 must be a single ",
+             "numeric not equal to -Inf")
       }
-      if (any(is.null(des$f1), length(des$f1) != 1, !is.numeric(des$f1),
-              des$f1 >= des$e1)) {
-        stop("For ", name, "$J = 2, ", name, "$f1 must be a single numeric ",
-             "that is strictly less than ", name, "$e1")
+      if (any(is.null(des$boundaries$f1), length(des$boundaries$f1) != 1,
+              !is.numeric(des$boundaries$f1),
+              des$boundaries$f1 >= des$boundaries$e1)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$f1 must be a single ",
+             "numeric that is strictly less than ", name, "$boundaries$e1")
       }
-      if (any(is.null(des$e2), length(des$e2) != 1, !is.numeric(des$e2))) {
-        stop("For ", name, "$J = 2, ", name, "$e2 must be a single numeric")
+      if (any(is.null(des$boundaries$e2), length(des$boundaries$e2) != 1,
+              !is.numeric(des$boundaries$e2))) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$e2 must be a single ",
+             "numeric")
       }
-      if (all(is.finite(des$e1), is.finite(des$f1))) {
-        if (any(des$e1%%1 != 0, des$e1 <= -des$nC[1] + 1, des$e1 > des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$e1 and ", name, "$f1 ",
-                  "are finite, ", name, "$e1 should typically be a single ",
-                  "integer in (-", name, "$nC[1] + 1, ", name, "$nE[1]]")
+      if (all(is.finite(des$boundaries$e1), is.finite(des$boundaries$f1))) {
+        if (any(des$boundaries$e1%%1 != 0, des$boundaries$e1 <= -des$nC[1] + 1,
+                des$boundaries$e1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$e1 and ",
+                  name, "$boundaries$f1 are finite, ", name, "$boundaries$e1 ",
+                  "should typically be a single integer in (-", name,
+                  "$nC[1] + 1, ", name, "$nE[1]]")
         }
-        if (any(des$f1%%1 != 0, des$f1 < -des$nC[1], des$f1 >= des$nE[1] - 1)) {
-          warning("For ", name, "$J = 2, when ", name, "$e1 and ", name, "$f1 ",
-                  "are finite, ", name, "$f1 should typically be a single ",
-                  "integer in [-", name, "$nC[1], ", name, "$nE[1] - 1)")
+        if (any(des$boundaries$f1%%1 != 0, des$boundaries$f1 < -des$nC[1],
+                des$boundaries$f1 >= des$nE[1] - 1)) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$e1 and ",
+                  name, "$boundaries$f1 are finite, ", name, "$boundaries$f1 ",
+                  "should typically be a single integer in [-", name,
+                  "$nC[1], ", name, "$nE[1] - 1)")
         }
-        if (any(is.infinite(des$e2), des$e2%%1 != 0,
-                des$e2 < des$f1 + 2 - des$nC[2],
-                des$e2 > des$e1 - 1 + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$e1 and ", name, "$f1 ",
-                  "are finite, ", name, "$e2 should typically be a single ",
-                  "integer in [", name, "$f1 + 2 - ", name, "$nC[2], ", name,
-                  "$e1 - 1 + ", name, "$nE[2]]")
+        if (any(is.infinite(des$boundaries$e2), des$boundaries$e2%%1 != 0,
+                des$boundaries$e2 < des$boundaries$f1 + 2 - des$nC[2],
+                des$boundaries$e2 > des$boundaries$e1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$e1 and ",
+                  name, "$boundaries$f1 are finite, ", name, "$boundaries$e2 ",
+                  "should typically be a single integer in [", name,
+                  "$boundaries$f1 + 2 - ", name, "$nC[2], ", name,
+                  "$boundaries$e1 - 1 + ", name, "$nE[2]]")
         }
-      } else if (is.finite(des$e1)) {
-        if (any(des$e1%%1 != 0, des$e1 <= -des$nC[1], des$e1 > des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$e1 is finite and ",
-                  name, "$f1 is not, ", name, "$e1 should typically be a ",
-                  "single integer in (-", name, "$nC[1], ", name, "$nE[1]]")
+      } else if (is.finite(des$boundaries$e1)) {
+        if (any(des$boundaries$e1%%1 != 0, des$boundaries$e1 <= -des$nC[1],
+                des$boundaries$e1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$e1 is ",
+                  "finite and ", name, "$boundaries$f1 is not, ", name,
+                  "$boundaries$e1 should typically be a single integer in (-",
+                  name, "$nC[1], ", name, "$nE[1]]")
         }
-        if (any(is.infinite(des$e2), des$e2%%1 != 0,
-                des$e2 <= -des$nC[1] - des$nC[2],
-                des$e2 > des$e1 - 1 + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$e1 is finite and ",
-                  name, "$f1 is not, ", name, "$e2 should typically be a ",
-                  "single integer in (-", name, "$nC[1] - ", name, "$nC[2], ",
-                  name, "$e1 - 1 + ", name, "$nE[2]]")
+        if (any(is.infinite(des$boundaries$e2), des$boundaries$e2%%1 != 0,
+                des$boundaries$e2 <= -des$nC[1] - des$nC[2],
+                des$boundaries$e2 > des$boundaries$e1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$e1 is ",
+                  "finite and ", name, "$boundaries$f1 is not, ", name,
+                  "$boundaries$e2 should typically be a single integer in (-",
+                  name, "$nC[1] - ", name, "$nC[2], ",
+                  name, "$boundaries$e1 - 1 + ", name, "$nE[2]]")
         }
-      } else if (is.finite(des$f1)) {
-        if (any(des$f1%%1 != 0, des$f1 <= -des$nC[1], des$f1 >= des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$f1 is finite and ",
-                  name, "$e1 is not, ", name, "$f1 should typically be a ",
-                  "single integer in [-", name, "$nC[1], ", name, "$nE[1])")
+      } else if (is.finite(des$boundaries$f1)) {
+        if (any(des$boundaries$f1%%1 != 0, des$boundaries$f1 <= -des$nC[1],
+                des$boundaries$f1 >= des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$f1 is ",
+                  "finite and ", name, "$boundaries$e1 is not, ", name,
+                  "$boundaries$f1 should typically be a single integer in [-",
+                  name, "$nC[1], ", name, "$nE[1])")
         }
-        if (any(is.infinite(des$e2), des$e2%%1 != 0,
-                des$e2 <= des$f1 + 2 - des$nC[2],
-                des$e2 > des$nE[1] + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$f1 is finite and ",
-                  name, "$e1 is not, ", name, "$e2 should typically be a ",
-                  "single integer in (", name, "$f1 + 2 - ", name, "$nC[2], ",
-                  name, "$nE[1] + ", name, "$nE[2])")
+        if (any(is.infinite(des$boundaries$e2), des$boundaries$e2%%1 != 0,
+                des$boundaries$e2 <= des$boundaries$f1 + 2 - des$nC[2],
+                des$boundaries$e2 > des$nE[1] + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$f1 is ",
+                  "finite and ", name, "$boundaries$e1 is not, ", name,
+                  "$boundaries$e2 should typically be a single integer in (",
+                  name, "$boundaries$f1 + 2 - ", name, "$nC[2], ", name,
+                  "$nE[1] + ", name, "$nE[2])")
         }
       }
     }
   } else if (des$type == "fisher") {
     if (des$J == 1) {
-      if (any(is.null(des$e1), length(des$e1) != des$nC + des$nE + 1,
-              !is.numeric(des$e1))) {
-        stop("For ", name, "$J = 1, ", name, "$e1 must be a numeric vector of ",
-             "length ", name, "$nC + ", name, "$nE + 1")
+      if (any(is.null(des$boundaries$e1),
+              length(des$boundaries$e1) != des$nC + des$nE + 1,
+              !is.numeric(des$boundaries$e1))) {
+        stop("For ", name, "$J = 1, ", name, "$boundaries$e1 must be a numeric",
+             "vector of length ", name, "$boundaries$nC + ", name,
+             "$boundaries$nE + 1")
       }
     } else {
-      if (any(is.null(des$e1), length(des$e1) != des$nC[1] + des$nE[1] + 1,
-              !is.numeric(des$e1), des$e1 == -Inf)) {
-        stop("For ", name, "$J = 2, ", name, "$e1 must be a numeric vector of ",
-             "length ", name, "$nC[1] + ", name, "$nE[1] + 1, with all ",
-             "elements strictly greater than -Inf")
+      if (any(is.null(des$boundaries$e1),
+              length(des$boundaries$e1) != des$nC[1] + des$nE[1] + 1,
+              !is.numeric(des$boundaries$e1), des$boundaries$e1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$e1 must be a numeric",
+             " vector of length ", name, "$nC[1] + ", name, "$nE[1] + 1, with ",
+             "all elements strictly greater than -Inf")
       }
-      if (any(is.null(des$f1), length(des$f1) != des$nC[1] + des$nE[1] + 1,
-              !is.numeric(des$f1), des$f1 >= des$e1)) {
-        stop("For ", name, "$J = 2, ", name, "$f1 must be a numeric vector of ",
-             "length ", name, "$nC[1] + ", name, "$nE[1] + 1, with ", name,
-             "$e1 >= ", name, "$f1 for all elements")
+      if (any(is.null(des$boundaries$f1),
+              length(des$boundaries$f1) != des$nC[1] + des$nE[1] + 1,
+              !is.numeric(des$boundaries$f1),
+              des$boundaries$f1 >= des$boundaries$e1)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$f1 must be a numeric",
+             "vector of length ", name, "$nC[1] + ", name, "$nE[1] + 1, with ",
+             name, "$boundaries$e1 >= ", name, "$boundaries$f1 for all ",
+             "elements")
       }
-      if (any(is.null(des$e2), nrow(des$e2) != des$nC[1] + des$nE[1] + 1,
-              ncol(des$e2) != des$nC[2] + des$nE[2] + 1, !is.matrix(des$e2),
-              !is.numeric(des$e2))) {
-        stop("For ", name, "$J = 2, ", name, "$e2 must be a numeric matrix ",
-             "with ", name, "$nC[1] + ", name, "$nE[1] + 1 rows and ", name,
-             "$nC[2] + ", name, "$nE[2] + 1 columns")
+      if (any(is.null(des$boundaries$e2),
+              nrow(des$boundaries$e2) != des$nC[1] + des$nE[1] + 1,
+              ncol(des$boundaries$e2) != des$nC[2] + des$nE[2] + 1,
+              !is.matrix(des$boundaries$e2), !is.numeric(des$boundaries$e2))) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$e2 must be a numeric",
+             " matrix with ", name, "$nC[1] + ", name, "$nE[1] + 1 rows and ",
+             name, "$nC[2] + ", name, "$nE[2] + 1 columns")
       }
     }
-  } else if (des$type == "single_double") {
+  } else if (des$type == "sat") {
     if (des$J == 1) {
-      if (any(is.null(des$eS1), length(des$eS1) != 1, !is.numeric(des$eS1))) {
-        stop("For ", name, "$J = 1, ", name, "$eS1 must be a single numeric")
-      } else if (any(is.infinite(des$eS1), des$eS1 <= 0, des$eS1 > des$nE)) {
-        warning("For ", name, "$J = 1, ", name, "$eS1 should typically be a ",
-                "single integer in (0, ", name, "$nE]")
+      if (any(is.null(des$boundaries$eS1), length(des$boundaries$eS1) != 1,
+              !is.numeric(des$boundaries$eS1))) {
+        stop("For ", name, "$J = 1, ", name, "$boundaries$eS1 must be a single",
+             "numeric")
+      } else if (any(is.infinite(des$boundaries$eS1), des$boundaries$eS1 <= 0,
+                     des$boundaries$eS1 > des$nE)) {
+        warning("For ", name, "$J = 1, ", name, "$boundaries$eS1 should ",
+                "typically be a single integer in (0, ", name, "$nE]")
       }
-      if (any(is.null(des$eT1), length(des$eT1) != 1, !is.numeric(des$eT1))) {
-        stop("For ", name, "$J = 1, ", name, "$eT1 must be a single numeric")
-      } else if (any(is.infinite(des$eT1), des$eT1%%1 != 0, des$eT1 <= -des$nC,
-                     des$eT1 > des$nE)) {
-        warning("For ", name, "$J = 1, ", name, "$eT1 should typically be a ",
-                "single integer in (-", name, "$nC, ", name, "$nE]")
+      if (any(is.null(des$boundaries$eT1), length(des$boundaries$eT1) != 1,
+              !is.numeric(des$boundaries$eT1))) {
+        stop("For ", name, "$J = 1, ", name, "$boundaries$eT1 must be a single",
+             " numeric")
+      } else if (any(is.infinite(des$boundaries$eT1),
+                     des$boundaries$eT1%%1 != 0, des$boundaries$eT1 <= -des$nC,
+                     des$boundaries$eT1 > des$nE)) {
+        warning("For ", name, "$J = 1, ", name, "$boundaries$eT1 should ",
+                "typically be a single integer in (-", name, "$nC, ", name,
+                "$nE]")
       }
     } else {
-      if (any(is.null(des$eS1), length(des$eS1) != 1, !is.numeric(des$eS1),
-              des$eS1 == -Inf)) {
-        stop("For ", name, "$J = 2, ", name, "$eS1 must be a single numeric ",
-             "not equal to -Inf")
+      if (any(is.null(des$boundaries$eS1), length(des$boundaries$eS1) != 1,
+              !is.numeric(des$boundaries$eS1), des$boundaries$eS1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$eS1 must be a single",
+             " numeric not equal to -Inf")
       }
-      if (any(is.null(des$fS1), length(des$fS1) != 1, !is.numeric(des$fS1),
-              des$fS1 >= des$eS1)) {
-        stop("For ", name, "$J = 2, ", name, "$fS1 must be a single numeric ",
-             "that is strictly less than ", name, "$eS1")
+      if (any(is.null(des$boundaries$fS1), length(des$boundaries$fS1) != 1,
+              !is.numeric(des$boundaries$fS1),
+              des$boundaries$fS1 >= des$boundaries$eS1)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$fS1 must be a single",
+             " numeric that is strictly less than ", name, "$boundaries$eS1")
       }
-      if (any(is.null(des$eT1), length(des$eT1) != 1, !is.numeric(des$eT1),
-              des$eT1 == -Inf)) {
-        stop("For ", name, "$J = 2, ", name, "$eT1 must be a single numeric ",
-             "not equal to -Inf")
+      if (any(is.null(des$boundaries$eT1), length(des$boundaries$eT1) != 1,
+              !is.numeric(des$boundaries$eT1), des$boundaries$eT1 == -Inf)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$eT1 must be a single",
+             " numeric not equal to -Inf")
       }
-      if (any(is.null(des$fT1), length(des$fT1) != 1, !is.numeric(des$fT1),
-              des$fT1 >= des$eT1)) {
-        stop("For ", name, "$J = 2, ", name, "$fT1 must be a single numeric ",
-             "that is strictly less than ", name, "$eT1")
+      if (any(is.null(des$boundaries$fT1), length(des$boundaries$fT1) != 1,
+              !is.numeric(des$boundaries$fT1),
+              des$boundaries$fT1 >= des$boundaries$eT1)) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$fT1 must be a single",
+             " numeric that is strictly less than ", name, "$boundaries$eT1")
       }
-      if (any(is.null(des$eS2), length(des$eS2) != 1, !is.numeric(des$eS2))) {
-        stop("For ", name, "$J = 2, ", name, "$eS2 must be a single numeric")
+      if (any(is.null(des$boundaries$eS2), length(des$boundaries$eS2) != 1,
+              !is.numeric(des$boundaries$eS2))) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$eS2 must be a single",
+             " numeric")
       }
-      if (any(is.null(des$eT2), length(des$eT2) != 1, !is.numeric(des$eT2))) {
-        stop("For ", name, "$J = 2, ", name, "$eT2 must be a single numeric")
+      if (any(is.null(des$boundaries$eT2), length(des$boundaries$eT2) != 1,
+              !is.numeric(des$boundaries$eT2))) {
+        stop("For ", name, "$J = 2, ", name, "$boundaries$eT2 must be a single",
+             " numeric")
       }
-      if (all(is.finite(des$eS1), is.finite(des$fS1))) {
-        if (any(des$eS1%%1 != 0, des$eS1 <= 1, des$eS1 > des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$eS1 and ", name,
-                  "$fS1 are finite, ", name, "$eS1 should typically be a ",
-                  "single integer in (1, ", name, "$nE[1]]")
+      if (all(is.finite(des$boundaries$eS1), is.finite(des$boundaries$fS1))) {
+        if (any(des$boundaries$eS1%%1 != 0, des$boundaries$eS1 <= 1,
+                des$boundaries$eS1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eS1 and ",
+                  name, "$boundaries$fS1 are finite, ", name, "$boundaries$eS1",
+                  " should typically be a single integer in (1, ", name,
+                  "$nE[1]]")
         }
-        if (any(des$fS1%%1 != 0, des$fS1 < 0, des$fS1 >= des$nE[1] - 1)) {
-          warning("For ", name, "$J = 2, when ", name, "$eS1 and ", name,
-                  "$fS1 are finite, ", name, "$fS1 should typically be a ",
-                  "single integer in [0, ", name, "$nE[1] - 1)")
+        if (any(des$boundaries$fS1%%1 != 0, des$boundaries$fS1 < 0,
+                des$boundaries$fS1 >= des$nE[1] - 1)) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eS1 and ",
+                  name, "$boundaries$fS1 are finite, ", name, "$boundaries$fS1",
+                  " should typically be a single integer in [0, ", name,
+                  "$nE[1] - 1)")
         }
-        if (any(is.infinite(des$eS2), des$eS2%%1 != 0, des$eS2 < des$fS1 + 2,
-                des$eS2 > des$eS1 - 1 + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$eS1 and ", name,
-                  "$fS1 are finite, ", name, "$eS2 should typically be a ",
-                  "single integer in [", name, "$fS1 + 2, ", name, "$eS1 - 1 +",
-                  " ", name, "$nE[2]]")
+        if (any(is.infinite(des$boundaries$eS2), des$boundaries$eS2%%1 != 0,
+                des$boundaries$eS2 < des$boundaries$fS1 + 2,
+                des$boundaries$eS2 > des$boundaries$eS1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eS1 and ",
+                  name, "$boundaries$fS1 are finite, ", name, "$boundaries$eS2",
+                  " should typically be a single integer in [", name,
+                  "$boundaries$fS1 + 2, ", name, "$boundaries$eS1 - 1 + ", name,
+                  "$nE[2]]")
         }
-      } else if (is.finite(des$eS1)) {
-        if (any(des$eS1%%1 != 0, des$eS1 <= 0, des$e1 > des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$eS1 is finite and ",
-                  name, "$fS1 is not, ", name, "$eS1 should typically be a ",
-                  "single integer in (0, ", name, "$nE[1]]")
+      } else if (is.finite(des$boundaries$eS1)) {
+        if (any(des$boundaries$eS1%%1 != 0, des$boundaries$eS1 <= 0,
+                des$boundaries$eS1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eS1 is ",
+                  "finite and ", name, "$boundaries$fS1 is not, ", name,
+                  "$boundaries$eS1 should typically be a single integer in ",
+                  "(0, ", name, "$nE[1]]")
         }
-        if (any(is.infinite(des$eS2), des$eS2%%1 != 0, des$eS2 <= 0,
-                des$eS2 > des$e1 - 1 + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$eS1 is finite and ",
-                  name, "$fS1 is not, ", name, "$eS2 should typically be a ",
-                  "single integer in (0, ", name, "$e1 - 1 + ", name, "$nE[2]]")
+        if (any(is.infinite(des$boundaries$eS2), des$boundaries$eS2%%1 != 0,
+                des$boundaries$eS2 <= 0,
+                des$boundaries$eS2 > des$boundaries$eS1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eS1 is ",
+                  "finite and ", name, "$boundaries$fS1 is not, ", name,
+                  "$boundaries$eS2 should typically be a single integer in ",
+                  "(0, ", name, "$boundaries$eS1 - 1 + ", name, "$nE[2]]")
         }
-      } else if (is.finite(des$fS1)) {
-        if (any(des$fS1%%1 != 0, des$fS1 < 0, des$fS1 >= des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$fS1 is finite and ",
-                  name, "$eS1 is not, ", name, "$fS1 should typically be a ",
-                  "single integer in [0, ", name, "$nE[1] - 1]")
+      } else if (is.finite(des$boundaries$fS1)) {
+        if (any(des$boundaries$fS1%%1 != 0, des$boundaries$fS1 < 0,
+                des$boundaries$fS1 >= des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$fS1 is ",
+                  "finite and ", name, "$boundaries$eS1 is not, ", name,
+                  "$boundaries$fS1 should typically be a single integer in ",
+                  "[0, ", name, "$nE[1] - 1]")
         }
-        if (any(is.infinite(des$eS2), des$eS2%%1 != 0, des$eS2 <= des$fS1 + 1,
-                des$eS2 > des$nE[1] + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$fS1 is finite and ",
-                  name, "$eS1 is not, ", name, "$eS2 should typically be a ",
-                  "single integer in (", name, "$fS1 + 1, ", name, "$nE[1] + ",
-                  name, "$nE[2]]")
+        if (any(is.infinite(des$boundaries$eS2), des$boundaries$eS2%%1 != 0,
+                des$boundaries$eS2 <= des$boundaries$fS1 + 1,
+                des$boundaries$eS2 > des$nE[1] + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$fS1 is ",
+                  "finite and ", name, "$boundaries$eS1 is not, ", name,
+                  "$boundaries$eS2 should typically be a single integer in (",
+                  name, "$boundaries$fS1 + 1, ", name, "$nE[1] + ", name,
+                  "$nE[2]]")
         }
       }
-      if (all(is.finite(des$eT1), is.finite(des$fT1))) {
-        if (any(des$eT1%%1 != 0, des$eT1 <= -des$nC[1] + 1,
-                des$eT1 > des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$eT1 and ", name,
-                  "$fT1 are finite, ", name, "$eT1 should typically be a ",
-                  "single integer in (-", name, "$nC[1] + 1, ", name, "$nE[1]]")
+      if (all(is.finite(des$boundaries$eT1), is.finite(des$boundaries$fT1))) {
+        if (any(des$boundaries$eT1%%1 != 0,
+                des$boundaries$eT1 <= -des$nC[1] + 1,
+                des$boundaries$eT1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eT1 and ",
+                  name, "$boundaries$fT1 are finite, ", name, "$boundaries$eT1",
+                  " should typically be a single integer in (-", name,
+                  "$nC[1] + 1, ", name, "$nE[1]]")
         }
-        if (any(des$fT1%%1 != 0, des$fT1 < -des$nC[1],
-                des$fT1 >= des$nE[1] - 1)) {
-          warning("For ", name, "$J = 2, when ", name, "$eT1 and ", name,
-                  "$fT1 are finite, ", name, "$fT1 should typically be a ",
-                  "single integer in [-", name, "$nC[1], ", name, "$nE[1] - 1)")
+        if (any(des$boundaries$fT1%%1 != 0, des$boundaries$fT1 < -des$nC[1],
+                des$boundaries$fT1 >= des$nE[1] - 1)) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eT1 and ",
+                  name, "$boundaries$fT1 are finite, ", name, "$boundaries$fT1",
+                  " should typically be a single integer in [-", name,
+                  "$nC[1], ", name, "$nE[1] - 1)")
         }
-        if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
-                des$eT2 < des$fT1 + 2 - des$nC[2],
-                des$eT2 > des$eT1 - 1 + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$eT1 and ", name,
-                  "$fT1 are finite, ", name, "$eT2 should typically be a ",
-                  "single integer in [", name, "$fT1 + 2 - ", name, "$nC[2], ",
-                  name, "$eT1 - 1 + ", name, "$nE[2]]")
+        if (any(is.infinite(des$boundaries$eT2), des$boundaries$eT2%%1 != 0,
+                des$boundaries$eT2 < des$boundaries$fT1 + 2 - des$nC[2],
+                des$boundaries$eT2 > des$boundaries$eT1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eT1 and ",
+                  name, "$boundaries$fT1 are finite, ", name, "$boundaries$eT2",
+                  " should typically be a single integer in [", name,
+                  "$boundaries$fT1 + 2 - ", name, "$nC[2], ", name,
+                  "$boundaries$eT1 - 1 + ", name, "$nE[2]]")
         }
-      } else if (is.finite(des$eT1)) {
-        if (any(des$eT1%%1 != 0, des$eT1 <= -des$nC[1], des$eT1 > des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$eT1 is finite and ",
-                  name, "$fT1 is not, ", name, "$eT1 should typically be a ",
-                  "single integer in (-", name, "$nC[1], ", name, "$nE[1]]")
+      } else if (is.finite(des$boundaries$eT1)) {
+        if (any(des$boundaries$eT1%%1 != 0, des$boundaries$eT1 <= -des$nC[1],
+                des$boundaries$eT1 > des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eT1 is ",
+                  "finite and ", name, "$boundaries$fT1 is not, ", name,
+                  "$boundaries$eT1 should typically be a single integer in (-",
+                  name, "$nC[1], ", name, "$nE[1]]")
         }
-        if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
-                des$eT2 <= -des$nC[1] - des$nC[2],
-                des$eT2 > des$eT1 - 1 + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$eT1 is finite and ",
-                  name, "$fT1 is not, ", name, "$eT2 should typically be a ",
-                  "single integer in (-", name, "$nC[1] - ", name, "$nC[2], ",
-                  name, "$eT1 - 1 + ", name, "$nE[2]]")
+        if (any(is.infinite(des$boundaries$eT2), des$boundaries$eT2%%1 != 0,
+                des$boundaries$eT2 <= -des$nC[1] - des$nC[2],
+                des$boundaries$eT2 > des$boundaries$eT1 - 1 + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$eT1 is ",
+                  "finite and ", name, "$boundaries$fT1 is not, ", name,
+                  "$boundaries$eT2 should typically be a single integer in (-",
+                  name, "$nC[1] - ", name, "$nC[2], ", name,
+                  "$boundaries$eT1 - 1 + ", name, "$nE[2]]")
         }
-      } else if (is.finite(des$fT1)) {
-        if (any(des$fT1%%1 != 0, des$fT1 <= -des$nC[1], des$fT1 >= des$nE[1])) {
-          warning("For ", name, "$J = 2, when ", name, "$fT1 is finite and ",
-                  name, "$eT1 is not, ", name, "$fT1 should typically be a ",
+      } else if (is.finite(des$boundaries$fT1)) {
+        if (any(des$boundaries$fT1%%1 != 0, des$boundaries$fT1 <= -des$nC[1],
+                des$boundaries$fT1 >= des$nE[1])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$fT1 is ",
+                  "finite and ", name, "$boundaries$eT1 is not, ", name,
+                  "$boundaries$fT1 should typically be a ",
                   "single integer in [-", name, "$nC[1], ", name, "$nE[1])")
         }
-        if (any(is.infinite(des$eT2), des$eT2%%1 != 0,
-                des$eT2 <= des$fT1 + 2 - des$nC[2],
-                des$eT2 > des$nE[1] + des$nE[2])) {
-          warning("For ", name, "$J = 2, when ", name, "$fT1 is finite and ",
-                  name, "$eT1 is not, ", name, "$eT2 should typically be a ",
-                  "single integer in (", name, "$fT1 + 2 - ", name, "$nC[2], ",
+        if (any(is.infinite(des$boundaries$eT2), des$boundaries$eT2%%1 != 0,
+                des$boundaries$eT2 <= des$boundaries$fT1 + 2 - des$nC[2],
+                des$boundaries$eT2 > des$nE[1] + des$nE[2])) {
+          warning("For ", name, "$J = 2, when ", name, "$boundaries$fT1 is ",
+                  "finite and ", name, "$boundaries$eT1 is not, ", name,
+                  "$boundaries$eT2 should typically be a single integer in (",
+                  name, "$boundaries$fT1 + 2 - ", name, "$nC[2], ",
                   name, "$nE[1] + ", name, "$nE[2])")
         }
       }
@@ -469,16 +522,16 @@ check_ph2rand_pmf            <- function(x) {
       stop("The column names of x$pmf are not as required when x$des$type = ",
            x$des$type)
     }
-  } else if (x$des$type == "single_double") {
+  } else if (x$des$type == "sat") {
     if (ncol(x$pmf) != 11) {
-      stop("For x$des$type = \"single_double\", x$pmf must be a tibble with 11",
+      stop("For x$des$type = \"sat\", x$pmf must be a tibble with 11",
            " columns")
     }
     if (!all(colnames(x$pmf) == c("piC", "piE", "xC", "xE", "mC", "mE",
                                   "statisticS", "statisticD", "decision", "k",
                                   "f(x,m|pi)"))) {
       stop("The column names of x$pmf are not as required when x$des$type = ",
-           "\"single_double\"")
+           "\"sat\"")
     }
   } else if (all(x$des$type == "fisher", x$des$J == 1)) {
     if (ncol(x$pmf) != 11) {
@@ -519,15 +572,15 @@ check_ph2rand_terminal       <- function(x) {
       stop("The column names of x$terminal are not as required when ",
            "x$des$type = ", x$des$type)
     }
-  } else if (x$des$type == "single_double") {
+  } else if (x$des$type == "sat") {
     if (ncol(x$terminal) != 8) {
-      stop("For x$des$type = \"single_double\", x$terminal must be a tibble ",
+      stop("For x$des$type = \"sat\", x$terminal must be a tibble ",
            "with 8 columns")
     }
     if (!all(colnames(x$terminal) == c("xC", "xE", "mC", "mE", "statisticS",
-                                       "statisticD", "decision", "k"))) {
+                                       "statisticT", "decision", "k"))) {
       stop("The column names of x$terminal are not as required when ",
-           "x$des$type = \"single_double\"")
+           "x$des$type = \"sat\"")
     }
   } else if (all(x$des$type == "fisher", x$des$J == 1)) {
     if (ncol(x$terminal) != 8) {
@@ -554,31 +607,29 @@ check_ph2rand_terminal       <- function(x) {
 }
 
 check_pi                     <- function(pi, des) {
-  if (missing(pi)) {
-    pi           <- as.matrix(des$opchar[, 1:2])
-    colnames(pi) <- NULL
+  if (all(!is.numeric(pi), !is.data.frame(pi))) {
+    stop("pi must be either a numeric vector of length two, or a numeric ",
+         "matrix/data frame with two columns. In either case all elements must",
+         " take values in [0, 1]")
   } else {
-    if (!is.numeric(pi)) {
-      stop("pi must be either a numeric vector of length two, or a numeric ",
-           "matrix with two columns. In either case all elements must take ",
-           "values in [0, 1]")
+    if (any(is.matrix(pi), is.data.frame(pi))) {
+      if (any(ncol(pi) != 2, pi < 0, pi > 1)) {
+        stop("pi must be either a numeric vector of length two, or a numeric ",
+             "matrix/data frame with two columns. In either case all elements ",
+             "must take values in [0, 1]")
+      } else if (sum(duplicated(pi)) > 0) {
+        warning("pi contains duplicated rows")
+      }
+      if (is.data.frame(pi)) {
+        pi <- as.matrix(pi)
+      }
     } else {
-      if (is.matrix(pi)) {
-        if (any(ncol(pi) != 2, pi < 0, pi > 1)) {
-          stop("pi must be either a numeric vector of length two, or a numeric",
-               " matrix with two columns. In either case all elements must ",
-               "take values in [0, 1]")
-        } else if (sum(duplicated(pi)) > 0) {
-          warning("pi contains duplicated rows")
-        }
+      if (any(length(pi) != 2, pi < 0, pi > 1)) {
+        stop("pi must be either a numeric vector of length two, or a numeric ",
+             "matrix/data frame with two columns. In either case all elements ",
+             "must take values in [0, 1]")
       } else {
-        if (any(length(pi) != 2, pi < 0, pi > 1)) {
-          stop("pi must be either a numeric vector of length two, or a numeric",
-               " matrix with two columns. In either case all elements must ",
-               "take values in [0, 1]")
-        } else {
-          pi     <- matrix(pi, 1)
-        }
+        pi <- matrix(pi, 1)
       }
     }
   }

@@ -1,53 +1,57 @@
-#' Design a one-stage two-arm randomised clinical trial for a binary primary
-#' outcome variable
+#' Design a one-stage two-arm randomised clinical trial assuming a Bernoulli
+#' primary outcome variable
 #'
 #' \code{des_one_stage} determines one-stage two-arm randomised clinical trial
-#' designs, assuming the primary outcome variable is binary. More specifically,
-#' under the assumption that it is Bernoulli distributed. It supports a flexible
-#' framework for specifying which scenarios to control the type-I and type-II
-#' error-rates for, and allows for design determination assuming a variety of
-#' test statistics. In all instances, \code{des_one_stage} computes the relevant
-#' required sample size in each arm, and returns information on key operating
+#' designs, assuming the primary outcome variable is Bernoulli distributed. It
+#' supports a flexible framework for specifying which scenarios to control the
+#' type-I and type-II error-rates for, and allows for design determination
+#' assuming a variety of test statistics. In all instances, \code{des_one_stage}
+#' computes the optimal required sample size in each arm, the associated optimal
+#' stopping boundaries, and returns information on key operating
 #' characteristics.
 #'
 #' @param type A \code{\link{character}} string indicating the chosen design
 #' framework/test statistic to assume. Must be one of \code{"barnard"},
-#' \code{"binomial"}, \code{"fisher"}, or \code{"single_double"}. Defaults to
+#' \code{"binomial"}, \code{"fisher"}, or \code{"sat"}. Defaults to
 #' \code{"binomial"}.
 #' @param alpha A \code{\link{numeric}} indicating the chosen value for
-#' \ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}}, the significance level.
-#' Defaults to \code{0.1}.
+#' \ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}}, the significance level
+#' (i.e., the type-I error-rate). Defaults to \code{0.1}.
 #' @param beta A \code{\link{numeric}} indicating the chosen value for
 #' \ifelse{html}{\out{<i>&beta;</i>}}{\eqn{\beta}}, used in the definition of
-#' the desired power. Defaults to \code{0.2}.
+#' the desired power (i.e., the type-II error-rate). Defaults to \code{0.2}.
 #' @param delta A \code{\link{numeric}} indicating the chosen value for
-#' \ifelse{html}{\out{<i>&delta;</i>}}{\eqn{\delta}}, the desired treatment
-#' effect. Defaults to \code{0.2}.
+#' \ifelse{html}{\out{<i>&delta;</i>}}{\eqn{\delta}}, the treatment effect
+#' assumed in the power calculation. Defaults to \code{0.2}.
 #' @param ratio A \code{\link{numeric}} indicating the chosen value for
-#' \ifelse{html}{\out{<b><i>r</i></b>}}{\eqn{\bold{r}}}, the allocation ratio to
+#' \ifelse{html}{\out{<i>r</i>}}{\eqn{r}}, the allocation ratio to
 #' the experimental arm, relative to the control arm. Defaults to \code{1}.
 #' @param Pi0 A \code{\link{numeric}} \code{\link{vector}} indicating the
-#' chosen values of the control arm response rate to allow for in the null
-#' hypothesis. Must either be of \code{\link{length}} one, indicating a point
-#' null, or of \code{\link{length}} two. In this case, the elements indicate the
+#' chosen value for \ifelse{html}{\out{<i>&Pi;</i><sub>0</sub>}}{\eqn{\Pi_0}},
+#' the control arm response rates to control the type-I error-rate to level
+#' \ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}} for. Must either be of
+#' \code{\link{length}} one, indicating a single point, or of
+#' \code{\link{length}} two. In this case, the elements indicate the
 #' range of possible response rates to allow for. Defaults to \code{0.1}.
 #' @param Pi1 A \code{\link{numeric}} \code{\link{vector}} indicating the
-#' chosen values of the control arm response rate to allow for in the
-#' alternative hypothesis. Must either be of \code{\link{length}} one,
-#' indicating a point null, or of \code{\link{length}} two. Then, the elements
-#' indicate the range of possible response rates to allow for. Defaults to
-#' \code{Pi0[1]}.
+#' chosen value for \ifelse{html}{\out{<i>&Pi;</i><sub>1</sub>}}{\eqn{\Pi_1}},
+#' the control arm response rates to allow for in the power calculations. Must
+#' either be of \code{\link{length}} one, indicating a single point, or of
+#' \code{\link{length}} two. In this case, the elements indicate the range of
+#' possible response rates to allow for. Defaults to \code{Pi0[1]}.
 #' @param nCmax A \code{\link{numeric}} indicating the maximum value of the
-#' sample size in the control arm to consider. Defaults to \code{50L}.
+#' sample size in the control arm to consider in the search procedure. Defaults
+#' to \code{50L}.
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
 #' \code{F}.
-#' @return An object of class \code{"ph2rand_des"}, containing each of the input
-#' parameters along with several additional variables, including:
+#' @return A \code{\link{list}} with additional class \code{"ph2rand_des"},
+#' containing each of the input parameters along with several additional
+#' variables, including
 #' \itemize{
-#' \item A selection of elements that prescribe the rejection boundaries of the
-#' optimal design. The names of these elements depends on the value of
-#' \code{type}.
+#' \item A \code{\link{list}} in the slot \code{$boundaries} giving the
+#' rejection boundary/boundaries of the optimal design. The names of these
+#' elements depends on the value of \code{type}.
 #' \item A \code{\link{tibble}} in the slot \code{$feasible} summarising the
 #' operating characteristics of the feasible designs.
 #' \item A \code{\link{numeric}} in the slot \code{$nC} giving the sample size
@@ -75,7 +79,7 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
   ##### Check inputs ###########################################################
 
   check_belong(type, "type", c("barnard", "binomial", "fisher",
-                               "single_double"), 1)
+                               "sat"), 1)
   check_real_range_strict(alpha, "alpha", c(0, 1),   1)
   check_real_range_strict(beta,  "beta",  c(0, 1),   1)
   check_real_range_strict(delta, "delta", c(0, 1),   1)
@@ -97,7 +101,7 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
     message("\n  ------------")
     message("  Computations")
     message("  ------------")
-    message("  Identifying feasible designs...")
+    message("  Identifying feasible designs..")
   }
   output <- switch(type,
                    barnard       =
@@ -109,8 +113,8 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
                    fisher        =
                      fisher_des_one_stage(alpha, beta, delta, ratio, Pi0, Pi1,
                                           nCmax, summary),
-                   single_double =
-                     single_double_des_one_stage(alpha, beta, delta, ratio, Pi0,
+                   sat =
+                     sat_des_one_stage(alpha, beta, delta, ratio, Pi0,
                                                  Pi1, nCmax, summary))
   if (summary) {
     message("..outputting")

@@ -2,8 +2,8 @@
 % Please edit documentation in R/des_one_stage.R
 \name{des_one_stage}
 \alias{des_one_stage}
-\title{Design a one-stage two-arm randomised clinical trial for a binary primary
-outcome variable}
+\title{Design a one-stage two-arm randomised clinical trial assuming a Bernoulli
+primary outcome variable}
 \usage{
 des_one_stage(type = "binomial", alpha = 0.1, beta = 0.2,
   delta = 0.2, ratio = 1, Pi0 = 0.1, Pi1 = Pi0[1], nCmax = 50L,
@@ -16,48 +16,51 @@ framework/test statistic to assume. Must be one of \code{"barnard"},
 \code{"binomial"}.}
 
 \item{alpha}{A \code{\link{numeric}} indicating the chosen value for
-\ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}}, the significance level.
-Defaults to \code{0.1}.}
+\ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}}, the significance level
+(i.e., the type-I error-rate). Defaults to \code{0.1}.}
 
 \item{beta}{A \code{\link{numeric}} indicating the chosen value for
 \ifelse{html}{\out{<i>&beta;</i>}}{\eqn{\beta}}, used in the definition of
-the desired power. Defaults to \code{0.2}.}
+the desired power (i.e., the typeiII error-rate). Defaults to \code{0.2}.}
 
 \item{delta}{A \code{\link{numeric}} indicating the chosen value for
-\ifelse{html}{\out{<i>&delta;</i>}}{\eqn{\delta}}, the desired treatment
-effect. Defaults to \code{0.2}.}
+\ifelse{html}{\out{<i>&delta;</i>}}{\eqn{\delta}}, the treatment effect
+assumed in the power calculation. Defaults to \code{0.2}.}
 
 \item{ratio}{A \code{\link{numeric}} indicating the chosen value for
 \ifelse{html}{\out{<b><i>r</i></b>}}{\eqn{\bold{r}}}, the allocation ratio to
 the experimental arm, relative to the control arm. Defaults to \code{1}.}
 
 \item{Pi0}{A \code{\link{numeric}} \code{\link{vector}} indicating the
-chosen values of the control arm response rate to allow for in the null
-hypothesis. Must either be of \code{\link{length}} one, indicating a point
-null, or of \code{\link{length}} two. In this case, the elements indicate the
+chosen values of the control arm response rate to control the type-I
+error-rate to level \ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}} for.
+Must either be of \code{\link{length}} one, indicating a single point, or of
+\code{\link{length}} two. In this case, the elements indicate the
 range of possible response rates to allow for. Defaults to \code{0.1}.}
 
 \item{Pi1}{A \code{\link{numeric}} \code{\link{vector}} indicating the
-chosen values of the control arm response rate to allow for in the
-alternative hypothesis. Must either be of \code{\link{length}} one,
-indicating a point null, or of \code{\link{length}} two. Then, the elements
-indicate the range of possible response rates to allow for. Defaults to
-\code{Pi0[1]}.}
+chosen values of the control arm response rate to allow for in the power
+calculations. Must either be of \code{\link{length}} one,
+indicating a single point, or of \code{\link{length}} two. In this case, the
+elements indicate the range of possible response rates to allow for. Defaults
+to \code{Pi0[1]}.}
 
 \item{nCmax}{A \code{\link{numeric}} indicating the maximum value of the
-sample size in the control arm to consider. Defaults to \code{50L}.}
+sample size in the control arm to consider in the search procedure. Defaults
+to \code{50L}.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
 \code{F}.}
 }
 \value{
-An object of class \code{"ph2rand_des"}, containing each of the input
-parameters along with several additional variables, including:
+A \code{\link{list}} with additional class \code{"ph2rand_des"},
+containing each of the input parameters along with several additional
+variables, including
 \itemize{
-\item A selection of elements that prescribe the rejection boundaries of the
-optimal design. The names of these elements depends on the value of
-\code{type}.
+\item A \code{\link{list}} in the slot \code{$boundaries} giving the
+rejection boundary/boundaries of the optimal design. The names of these
+elements depends on the value of \code{type}.
 \item A \code{\link{tibble}} in the slot \code{$feasible} summarising the
 operating characteristics of the feasible designs.
 \item A \code{\link{numeric}} in the slot \code{$nC} giving the sample size
@@ -70,13 +73,12 @@ operating characteristics of the optimal design.
 }
 \description{
 \code{des_one_stage} determines one-stage two-arm randomised clinical trial
-designs, assuming the primary outcome variable is binary. More specifically,
-under the assumption that it is Bernoulli distributed. It supports a flexible
-framework for specifying which scenarios to control the type-I and type-II
-error-rates for, and allows for design determination assuming a variety of
-test statistics. In all instances, \code{des_one_stage} computes the relevant
-required sample size in each arm, and returns information on key operating
-characteristics.
+designs, assuming the primary outcome variable is Bernoulli distributed. It
+supports a flexible framework for specifying which scenarios to control the
+type-I and type-II error-rates for, and allows for design determination
+assuming a variety of test statistics. In all instances, \code{des_one_stage}
+computes the relevant required sample size in each arm, and returns
+information on key operating characteristics.
 }
 \examples{
 # The design for the default parameters

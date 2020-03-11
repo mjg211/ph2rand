@@ -177,48 +177,48 @@ fisher_des_two_stage_cpp <- function(alpha, beta, delta, poss_nC, poss_nE, poss_
     .Call('_ph2rand_fisher_des_two_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, poss_z, choose_mat, point_null, pi_null, point_alt, pi_alt, equal, efficacy_type, efficacy_param, futility_type, futility_param, pi_ess, summary)
 }
 
-single_double_pmf_two_stage_cpp <- function(pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k) {
-    .Call('_ph2rand_single_double_pmf_two_stage_cpp', PACKAGE = 'ph2rand', pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k)
+sat_pmf_two_stage_cpp <- function(pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k) {
+    .Call('_ph2rand_sat_pmf_two_stage_cpp', PACKAGE = 'ph2rand', pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k)
 }
 
-single_double_power_one_stage <- function(pi, nC, nE, eS, eT, poss_x, poss_y) {
-    .Call('_ph2rand_single_double_power_one_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS, eT, poss_x, poss_y)
+sat_power_one_stage <- function(pi, nC, nE, eS, eT, poss_x, poss_y) {
+    .Call('_ph2rand_sat_power_one_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS, eT, poss_x, poss_y)
 }
 
-single_double_power_two_stage <- function(pi, nC, nE, eS, eT, fS, fT, poss_x, poss_y) {
-    .Call('_ph2rand_single_double_power_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS, eT, fS, fT, poss_x, poss_y)
+sat_power_two_stage <- function(pi, nC, nE, eS, eT, fS, fT, poss_x, poss_y) {
+    .Call('_ph2rand_sat_power_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS, eT, fS, fT, poss_x, poss_y)
 }
 
-single_double_terminal_two_stage_cpp <- function(nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k) {
-    .Call('_ph2rand_single_double_terminal_two_stage_cpp', PACKAGE = 'ph2rand', nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k)
+sat_terminal_two_stage_cpp <- function(nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k) {
+    .Call('_ph2rand_sat_terminal_two_stage_cpp', PACKAGE = 'ph2rand', nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k)
 }
 
-single_double_max_typeI <- function(J, alpha, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_null, check) {
-    .Call('_ph2rand_single_double_max_typeI', PACKAGE = 'ph2rand', J, alpha, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_null, check)
+sat_max_typeI <- function(J, alpha, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_null, check) {
+    .Call('_ph2rand_sat_max_typeI', PACKAGE = 'ph2rand', J, alpha, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_null, check)
 }
 
-single_double_min_power <- function(J, beta, delta, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_alt, check) {
-    .Call('_ph2rand_single_double_min_power', PACKAGE = 'ph2rand', J, beta, delta, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_alt, check)
+sat_min_power <- function(J, beta, delta, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_alt, check) {
+    .Call('_ph2rand_sat_min_power', PACKAGE = 'ph2rand', J, beta, delta, nC, nE, eS, eT, fS, fT, poss_x, poss_y, pi_alt, check)
 }
 
-single_double_ess_two_stage <- function(pi, nC, nE, eS1, eT1, fS1, fT1) {
-    .Call('_ph2rand_single_double_ess_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS1, eT1, fS1, fT1)
+sat_ess_two_stage <- function(pi, nC, nE, eS1, eT1, fS1, fT1) {
+    .Call('_ph2rand_sat_ess_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS1, eT1, fS1, fT1)
 }
 
-single_double_des_ess_two_stage <- function(pi, nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1) {
-    .Call('_ph2rand_single_double_des_ess_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1)
+sat_des_ess_two_stage <- function(pi, nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1) {
+    .Call('_ph2rand_sat_des_ess_two_stage', PACKAGE = 'ph2rand', pi, nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1)
 }
 
-single_double_max_ess_1d_two_stage <- function(nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1) {
-    .Call('_ph2rand_single_double_max_ess_1d_two_stage', PACKAGE = 'ph2rand', nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1)
+sat_max_ess_1d_two_stage <- function(nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1) {
+    .Call('_ph2rand_sat_max_ess_1d_two_stage', PACKAGE = 'ph2rand', nC, nE, eS1, eT1, fS1, fT1, poss_x1, poss_y1)
 }
 
-single_double_des_one_stage_cpp <- function(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, summary) {
-    .Call('_ph2rand_single_double_des_one_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, summary)
+sat_des_one_stage_cpp <- function(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, summary) {
+    .Call('_ph2rand_sat_des_one_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, summary)
 }
 
-single_double_des_two_stage_cpp <- function(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, equal, efficacy, futility, pi_ess, summary) {
-    .Call('_ph2rand_single_double_des_two_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, equal, efficacy, futility, pi_ess, summary)
+sat_des_two_stage_cpp <- function(alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, equal, efficacy, futility, pi_ess, summary) {
+    .Call('_ph2rand_sat_des_two_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_y, point_null, pi_null, point_alt, pi_alt, equal, efficacy, futility, pi_ess, summary)
 }
 
 dbinom_des_ess <- function(dbinom1, pi_typeI, pi_power, delta, pi_ess, nC, nE) {
@@ -229,8 +229,8 @@ dbinom_des_one_stage <- function(pi_typeI, pi_power, delta, nC, nE) {
     .Call('_ph2rand_dbinom_des_one_stage', PACKAGE = 'ph2rand', pi_typeI, pi_power, delta, nC, nE)
 }
 
-dbinom_des_two_stage <- function(dbinom1, pi_typeI, pi_power, delta, nC1, nC2, nE1, nE2) {
-    .Call('_ph2rand_dbinom_des_two_stage', PACKAGE = 'ph2rand', dbinom1, pi_typeI, pi_power, delta, nC1, nC2, nE1, nE2)
+dbinom_des_two_stage <- function(dbinom1, pi_typeI, pi_power, delta, n1C, n2C, n1E, n2E) {
+    .Call('_ph2rand_dbinom_des_two_stage', PACKAGE = 'ph2rand', dbinom1, pi_typeI, pi_power, delta, n1C, n2C, n1E, n2E)
 }
 
 dbinom_one_stage <- function(pi, nC, nE) {

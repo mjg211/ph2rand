@@ -1,5 +1,5 @@
-#' Plot the terminal points of a two-arm randomised clinical trial design for a
-#' binary primary outcome variable
+#' Plot the terminal points of a two-arm randomised clinical trial design that
+#' assumes a Bernoulli primary outcome variable
 #'
 #' \code{plot.ph2rand_terminal} plots the terminal points of a design returned
 #' by \code{\link{terminal}}.
@@ -82,8 +82,10 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
     }
     x_internal$terminal$state          <- factor(x_internal$terminal$state,
                                                  levels = levels_state)
-    plot                               <-
-      ggplot2::ggplot(x_internal$terminal,
+    plot                               <- list()
+    plot$stage_1                       <-
+      ggplot2::ggplot(dplyr::filter(x_internal$terminal,
+                                    state == "k = 1"),
                       ggplot2::aes(x      = .data$xC,
                                    y      = .data$xE,
                                    colour = .data$decision,
@@ -96,14 +98,34 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
       ggplot2::scale_shape_manual(values = c(16, 4, 3)[levels_decision]) +
       ggplot2::coord_fixed(ratio = 1) +
       theme_ph2rand() +
-      ggplot2::labs(title = '{current_frame}') +
-      gganimate::transition_manual(.data$state) +
-      gganimate::ease_aes('linear')
-    plot                               <-
-      gganimate::animate(plot, fps = 2,
-                         renderer = gganimate::gifski_renderer(loop = T))
+      ggplot2::labs(title = "k = 1")
+    plot$stage_2                       <- list()
+    for (z1 in sort(unique(x_internal$terminal$z1[which_2]))) {
+      plot$stage_2[[z1 + 1]]           <-
+        ggplot2::ggplot(dplyr::filter(x_internal$terminal,
+                                      state == paste0("k = 2: z1 = ", z1)),
+                        ggplot2::aes(x      = .data$xC,
+                                     y      = .data$xE,
+                                     colour = .data$decision,
+                                     shape  = .data$decision)) +
+        ggplot2::geom_point(size = 0.75) +
+        ggplot2::xlab(expression(italic(x[C]))) +
+        ggplot2::ylab(expression(italic(x[E]))) +
+        ggplot2::scale_colour_manual(values = c("gray55", "firebrick2",
+                                                "forestgreen")[levels_decision]) +
+        ggplot2::scale_shape_manual(values = c(16, 4, 3)[levels_decision]) +
+        ggplot2::coord_fixed(ratio = 1) +
+        ph2rand:::theme_ph2rand() +
+        ggplot2::labs(title = paste0("k = 2: z1 = ", z1))
+    }
   }
-  print(plot)
+  if (!output) {
+    if (is.list(plot)) {
+      print(plot$stage_1)
+    } else {
+      print(plot)
+    }
+  }
 
   ##### Outputting #############################################################
 

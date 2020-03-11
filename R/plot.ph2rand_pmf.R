@@ -1,5 +1,5 @@
 #' Plot probability mass functions of a two-arm randomised clinical trial design
-#' for a binary primary outcome variable
+#' that assumes a Bernoulli primary outcome variable
 #'
 #' \code{plot.ph2rand_pmf} plots the terminal points of a design returned by
 #' \code{\link{pmf}}.
@@ -50,47 +50,49 @@ plot.ph2rand_pmf <- function(x, output = F, ...) {
   plots                        <- list()
   counter                      <- 1L
   unique_piC                   <- unique(x_internal$pmf$piC)
-  for (i in length(unique_piC)) {
+  for (i in 1:length(unique_piC)) {
     pmf_i                      <- dplyr::filter(x_internal$pmf,
                                                 piC == unique_piC[i])
     unique_piE                 <- unique(pmf_i$piE)
     for (j in 1:length(unique_piE)) {
       pmf_ij                   <- dplyr::filter(pmf_i, piE == unique_piE[j])
-      pmf_ij                   <-
-        dplyr::summarise(dplyr::group_by(pmf_ij, xC, xE, mC, mE),
-                         f = sum(`f(x,m|pi)`),
-                         k = sum(k)/dplyr::n())
-      pmf_ij$k                 <- factor(pmf_ij$k,
-                                         labels = paste("italic(k) ==",
-                                                        x_internal$k))
-      if (sum(pmf_ij$f) != 1) {
-        warning("PMF for piC = ", unique_piC[i], " and piE = ", unique_piE[j],
-                " does not sum to 1")
+      if (nrow(pmf_ij) != 0) {
+        pmf_ij                   <-
+          dplyr::summarise(dplyr::group_by(pmf_ij, xC, xE, mC, mE),
+                           f = sum(`f(x,m|pi)`),
+                           k = sum(k)/dplyr::n())
+        pmf_ij$k                 <- factor(pmf_ij$k,
+                                           labels = paste("italic(k) ==",
+                                                          x_internal$k))
+        if (abs(sum(pmf_ij$f) - 1) > 1e-14) {
+          warning("PMF for piC = ", unique_piC[i], " and piE = ", unique_piE[j],
+                  " does not sum to 1")
+        }
+        plots[[counter]]         <-
+          ggplot2::ggplot(pmf_ij,
+                          ggplot2::aes(x    = xC,
+                                       y    = xE,
+                                       fill = f)) +
+          ggplot2::facet_grid(.~k,
+                              labeller = ggplot2::label_parsed) +
+          ggplot2::xlab(expression(italic(x[C]))) +
+          ggplot2::ylab(expression(italic(x[E]))) +
+          ggplot2::coord_fixed(ratio = 1) +
+          ggplot2::geom_raster() +
+          theme_ph2rand() +
+          ggplot2::labs(fill  = expression(paste(italic(f), "(", italic(x), ",",
+                                                 italic(m), "|", pi, ")",
+                                                 sep = "")),
+                        title =
+                          bquote(paste(pi[italic(C)], " = ", .(unique_piC[i]),
+                                       ", ", pi[italic(E)], " = ",
+                                       .(unique_piE[j]), sep = ""))) +
+          ggplot2::theme(legend.position = "right",
+                         legend.title    = ggplot2::element_text(),
+                         plot.title      = ggplot2::element_text(hjust = 0.5)) +
+          ggplot2::scale_fill_viridis_c()
+        counter                  <- counter + 1L
       }
-      plots[[counter]]         <-
-        ggplot2::ggplot(pmf_ij,
-                        ggplot2::aes(x    = xC,
-                                     y    = xE,
-                                     fill = f)) +
-        ggplot2::facet_grid(.~k,
-                            labeller = ggplot2::label_parsed) +
-        ggplot2::xlab(expression(italic(x[C]))) +
-        ggplot2::ylab(expression(italic(x[E]))) +
-        ggplot2::coord_fixed(ratio = 1) +
-        ggplot2::geom_raster() +
-        theme_ph2rand() +
-        ggplot2::labs(fill  = expression(paste(italic(f), "(", italic(x), ",",
-                                               italic(m), "|", pi, ")",
-                                               sep = "")),
-                      title =
-                        bquote(paste(pi[italic(C)], " = ", .(unique_piC[i]),
-                                     ", ", pi[italic(E)], " = ",
-                                     .(unique_piE[j]), sep = ""))) +
-        ggplot2::theme(legend.position = "right",
-                       legend.title    = ggplot2::element_text(),
-                       plot.title      = ggplot2::element_text(hjust = 0.5)) +
-        ggplot2::scale_fill_viridis_c()
-      counter                  <- counter + 1L
     }
   }
   print(plots[[1]])

@@ -11,7 +11,7 @@ using namespace Rcpp;
 using namespace std;
 
 // [[Rcpp::export]]
-NumericMatrix single_double_pmf_two_stage_cpp(NumericVector pi,
+NumericMatrix sat_pmf_two_stage_cpp(NumericVector pi,
                                               NumericVector nC,
                                               NumericVector nE, double eS1,
                                               double eT1, double fS1,
@@ -67,7 +67,7 @@ NumericMatrix single_double_pmf_two_stage_cpp(NumericVector pi,
 }
 
 // [[Rcpp::export]]
-double single_double_power_one_stage(NumericVector pi, int nC, int nE, int eS,
+double sat_power_one_stage(NumericVector pi, int nC, int nE, int eS,
                                      int eT, NumericMatrix poss_x,
                                      NumericVector poss_y) {
   double        power  = 0;
@@ -81,7 +81,7 @@ double single_double_power_one_stage(NumericVector pi, int nC, int nE, int eS,
 }
 
 // [[Rcpp::export]]
-double single_double_power_two_stage(NumericVector pi, NumericVector nC,
+double sat_power_two_stage(NumericVector pi, NumericVector nC,
                                      NumericVector nE, NumericVector eS,
                                      NumericVector eT, NumericVector fS,
                                      NumericVector fT, List poss_x,
@@ -112,7 +112,7 @@ double single_double_power_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericMatrix single_double_terminal_two_stage_cpp(NumericVector nC,
+NumericMatrix sat_terminal_two_stage_cpp(NumericVector nC,
                                                    NumericVector nE, double eS1,
                                                    double eT1, double fS1,
                                                    double fT1, double eS2,
@@ -168,7 +168,7 @@ NumericMatrix single_double_terminal_two_stage_cpp(NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericVector single_double_max_typeI(int J, double alpha, NumericVector nC,
+NumericVector sat_max_typeI(int J, double alpha, NumericVector nC,
                                       NumericVector nE, NumericVector eS,
                                       NumericVector eT, NumericVector fS,
                                       NumericVector fT, List poss_x,
@@ -182,12 +182,12 @@ NumericVector single_double_max_typeI(int J, double alpha, NumericVector nC,
                 v       = x_left + golden*(x_right - x_left);
   if (J == 1) {
     f_v                 =
-      -single_double_power_one_stage(NumericVector::create(v, v), nC[0], nE[0],
+      -sat_power_one_stage(NumericVector::create(v, v), nC[0], nE[0],
                                      eS[0], eT[0], poss_x[0], poss_y[0]);
   }
   else {
     f_v                 =
-      -single_double_power_two_stage(NumericVector::create(v, v), nC, nE, eS,
+      -sat_power_two_stage(NumericVector::create(v, v), nC, nE, eS,
                                      eT, fS, fT, poss_x, poss_y);
   }
   NumericVector output(4);
@@ -199,12 +199,12 @@ NumericVector single_double_max_typeI(int J, double alpha, NumericVector nC,
          z              = pi_typeI_finder(0, pi_null);
   if (J == 1) {
     f_z                 =
-      -single_double_power_one_stage(NumericVector::create(z, z), nC[0], nE[0],
+      -sat_power_one_stage(NumericVector::create(z, z), nC[0], nE[0],
                                      eS[0], eT[0], poss_x[0], poss_y[0]);
   }
   else {
     f_z                 =
-      -single_double_power_two_stage(NumericVector::create(z, z), nC, nE, eS,
+      -sat_power_two_stage(NumericVector::create(z, z), nC, nE, eS,
                                      eT, fS, fT, poss_x, poss_y);
   }
   if ((-f_z > alpha) && (check == 1)) {
@@ -264,13 +264,13 @@ NumericVector single_double_max_typeI(int J, double alpha, NumericVector nC,
     }
     if (J == 1) {
       f_u               =
-        -single_double_power_one_stage(NumericVector::create(u, u), nC[0],
+        -sat_power_one_stage(NumericVector::create(u, u), nC[0],
                                        nE[0], eS[0], eT[0], poss_x[0],
                                        poss_y[0]);
     }
     else {
       f_u               =
-        -single_double_power_two_stage(NumericVector::create(u, u), nC, nE, eS,
+        -sat_power_two_stage(NumericVector::create(u, u), nC, nE, eS,
                                        eT, fS, fT, poss_x, poss_y);
     }
     if ((-f_u > alpha) && (check == 1)) {
@@ -318,7 +318,7 @@ NumericVector single_double_max_typeI(int J, double alpha, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericVector single_double_min_power(int J, double beta, double delta,
+NumericVector sat_min_power(int J, double beta, double delta,
                                       NumericVector nC, NumericVector nE,
                                       NumericVector eS, NumericVector eT,
                                       NumericVector fS, NumericVector fT,
@@ -332,12 +332,12 @@ NumericVector single_double_min_power(int J, double beta, double delta,
                 v       = x_left + golden*(x_right - x_left);
   if (J == 1) {
     f_v                 =
-      single_double_power_one_stage(NumericVector::create(v, v + delta), nC[0],
+      sat_power_one_stage(NumericVector::create(v, v + delta), nC[0],
                                     nE[0], eS[0], eT[0], poss_x[0], poss_y[0]);
   }
   else {
     f_v                 =
-      single_double_power_two_stage(NumericVector::create(v, v + delta), nC, nE,
+      sat_power_two_stage(NumericVector::create(v, v + delta), nC, nE,
                                     eS, eT, fS, fT, poss_x, poss_y);
   }
   NumericVector output(4);
@@ -349,12 +349,12 @@ NumericVector single_double_min_power(int J, double beta, double delta,
          z              = pi_power_finder(0, pi_alt, delta);
   if (J == 1) {
     f_z                 =
-      single_double_power_one_stage(NumericVector::create(z, z + delta), nC[0],
+      sat_power_one_stage(NumericVector::create(z, z + delta), nC[0],
                                     nE[0], eS[0], eT[0], poss_x[0], poss_y[0]);
   }
   else {
     f_z                 =
-      single_double_power_two_stage(NumericVector::create(z, z + delta), nC, nE,
+      sat_power_two_stage(NumericVector::create(z, z + delta), nC, nE,
                                     eS, eT, fS, fT, poss_x, poss_y);
   }
   if ((f_z < 1 - beta) && (check == 1)) {
@@ -414,13 +414,13 @@ NumericVector single_double_min_power(int J, double beta, double delta,
     }
     if (J == 1) {
       f_u               =
-        single_double_power_one_stage(NumericVector::create(u, u + delta),
+        sat_power_one_stage(NumericVector::create(u, u + delta),
                                       nC[0], nE[0], eS[0], eT[0], poss_x[0],
                                       poss_y[0]);
     }
     else {
       f_u               =
-        single_double_power_two_stage(NumericVector::create(u, u + delta), nC,
+        sat_power_two_stage(NumericVector::create(u, u + delta), nC,
                                       nE, eS, eT, fS, fT, poss_x, poss_y);
     }
     if ((f_u < 1 - beta) && (check == 1)) {
@@ -468,7 +468,7 @@ NumericVector single_double_min_power(int J, double beta, double delta,
 }
 
 // [[Rcpp::export]]
-double single_double_ess_two_stage(NumericVector pi, NumericVector nC,
+double sat_ess_two_stage(NumericVector pi, NumericVector nC,
                                    NumericVector nE, int eS1, int eT1, int fS1,
                                    int fT1) {
   double        S1      = 0;
@@ -486,7 +486,7 @@ double single_double_ess_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-double single_double_des_ess_two_stage(NumericVector pi, NumericVector nC,
+double sat_des_ess_two_stage(NumericVector pi, NumericVector nC,
                                        NumericVector nE, int eS1, int eT1,
                                        int fS1, int fT1, NumericMatrix poss_x1,
                                        NumericVector poss_y1) {
@@ -503,7 +503,7 @@ double single_double_des_ess_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericVector single_double_max_ess_1d_two_stage(NumericVector nC,
+NumericVector sat_max_ess_1d_two_stage(NumericVector nC,
                                                  NumericVector nE, int eS1,
                                                  int eT1, int fS1, int fT1,
                                                  NumericMatrix poss_x1,
@@ -517,12 +517,12 @@ NumericVector single_double_max_ess_1d_two_stage(NumericVector nC,
                 x_right = 1,
                 v       = x_left + golden*(x_right - x_left),
                 f_v     =
-                  -single_double_des_ess_two_stage(NumericVector::create(v, v),
+                  -sat_des_ess_two_stage(NumericVector::create(v, v),
                                                    nC, nE, eS1, eT1, fS1, fT1,
                                                    poss_x1, poss_y1),
                 z       = 0.5,
                 f_z     =
-                  -single_double_des_ess_two_stage(NumericVector::create(z, z),
+                  -sat_des_ess_two_stage(NumericVector::create(z, z),
                                                    nC, nE, eS1, eT1, fS1, fT1,
                                                    poss_x1, poss_y1),
                 w       = v,
@@ -575,7 +575,7 @@ NumericVector single_double_max_ess_1d_two_stage(NumericVector nC,
       u                 = z + (d > 0 ? tol : -tol);
     }
     f_u     =
-      -single_double_des_ess_two_stage(NumericVector::create(u, u), nC, nE, eS1,
+      -sat_des_ess_two_stage(NumericVector::create(u, u), nC, nE, eS1,
                                        eT1, fS1, fT1, poss_x1, poss_y1);
     if (f_u <= f_z) {
       if (u < z) {
@@ -618,7 +618,7 @@ NumericVector single_double_max_ess_1d_two_stage(NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericMatrix single_double_des_one_stage_cpp(double alpha, double beta,
+NumericMatrix sat_des_one_stage_cpp(double alpha, double beta,
                                               double delta,
                                               NumericVector poss_nC,
                                               NumericVector poss_nE,
@@ -687,7 +687,7 @@ NumericMatrix single_double_des_one_stage_cpp(double alpha, double beta,
             }
             else {
               NumericVector min_power        =
-                single_double_min_power(1, beta, delta,
+                sat_min_power(1, beta, delta,
                                         NumericVector::create(nC),
                                         NumericVector::create(nE),
                                         NumericVector::create(eS1),
@@ -707,7 +707,7 @@ NumericMatrix single_double_des_one_stage_cpp(double alpha, double beta,
           }
           else {
             NumericVector max_typeI          =
-              single_double_max_typeI(1, alpha, NumericVector::create(nC),
+              sat_max_typeI(1, alpha, NumericVector::create(nC),
                                       NumericVector::create(nE),
                                       NumericVector::create(eS1),
                                       NumericVector::create(eT1),
@@ -724,7 +724,7 @@ NumericMatrix single_double_des_one_stage_cpp(double alpha, double beta,
               }
               else {
                 NumericVector min_power      =
-                  single_double_min_power(1, beta, delta,
+                  sat_min_power(1, beta, delta,
                                           NumericVector::create(nC),
                                           NumericVector::create(nE),
                                           NumericVector::create(eS1),
@@ -755,7 +755,7 @@ NumericMatrix single_double_des_one_stage_cpp(double alpha, double beta,
 }
 
 // [[Rcpp::export]]
-NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
+NumericMatrix sat_des_two_stage_cpp(double alpha, double beta,
                                               double delta,
                                               NumericVector poss_nC,
                                               NumericVector poss_nE,
@@ -768,10 +768,10 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                                               double pi_ess, int summary) {
   int           fT2,
                 fS2,
-                nC1,
-                nE1,
-                nC2,
-                nE2,
+                n1C,
+                n1E,
+                n2C,
+                n2E,
                 counter                   = 0,
                 interrupt                 = 0,
                 nCmax                     = max(poss_nC);
@@ -791,25 +791,25 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                 dbinom2,
                 feasible_designs(10000000, 14);
   for (int nE = 0; nE <= poss_nC.length() - 1; nE++) {
-    nC1                                   = poss_nC[nE];
-    nE1                                   = poss_nE[nE];
-    if (((equal != 1) && (nC1 < nCmax)) || ((equal == 1) && (nC1 <= 0.5*nCmax))) {
-      if ((summary == 1) && (nC1%10 == 0)) {
-        string str = std::to_string(nC1);
-        message_cpp("currently analysing designs with nC1 = ", str);
+    n1C                                   = poss_nC[nE];
+    n1E                                   = poss_nE[nE];
+    if (((equal != 1) && (n1C < nCmax)) || ((equal == 1) && (n1C <= 0.5*nCmax))) {
+      if ((summary == 1) && (n1C%10 == 0)) {
+        string str = std::to_string(n1C);
+        message_cpp("currently analysing designs with n1C = ", str);
       }
-      NumericVector poss_y1               = poss_y[nC1 + nCmax*(nE1 - 1) - 1];
-      NumericMatrix prob_x1_ess0(nC1 + 1, nE1 + 1),
-                    prob_x1_ess1(nC1 + 1, nE1 + 1),
-                    prob_x1_power(nC1 + 1, nE1 + 1),
-                    prob_x1_typeI(nC1 + 1, nE1 + 1),
-                    poss_x1               = poss_x[nC1 + nCmax*(nE1 - 1) - 1],
+      NumericVector poss_y1               = poss_y[n1C + nCmax*(n1E - 1) - 1];
+      NumericMatrix prob_x1_ess0(n1C + 1, n1E + 1),
+                    prob_x1_ess1(n1C + 1, n1E + 1),
+                    prob_x1_power(n1C + 1, n1E + 1),
+                    prob_x1_typeI(n1C + 1, n1E + 1),
+                    poss_x1               = poss_x[n1C + nCmax*(n1E - 1) - 1],
                     dbinom1               =
-                      dbinom_des_one_stage(pi_typeI, pi_power, delta, nC1, nE1),
+                      dbinom_des_one_stage(pi_typeI, pi_power, delta, n1C, n1E),
                     dbinom_ess            =
                       dbinom_des_ess(dbinom1, pi_typeI, pi_power, delta,
-                                      pi_ess, nC1, nE1);
-      for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+                                      pi_ess, n1C, n1E);
+      for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
         prob_x1_ess0(poss_x1(o1, 0), poss_x1(o1, 1))  =
           dbinom_ess(0, poss_x1(o1, 0))*dbinom_ess(1, poss_x1(o1, 1));
         prob_x1_ess1(poss_x1(o1, 0), poss_x1(o1, 1))  =
@@ -819,15 +819,15 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
         prob_x1_typeI(poss_x1(o1, 0), poss_x1(o1, 1)) =
           dbinom1(0, poss_x1(o1, 0))*dbinom1(2, poss_x1(o1, 1));
       }
-      for (int fT1 = (futility == 1 ? -nC1 : -nC1 - 1);
-           fT1 <= (futility == 1 ? (efficacy == 1 ? nE1 - 2 : nE1 - 1) :
-                     -nC1 - 1); fT1++) {
+      for (int fT1 = (futility == 1 ? -n1C : -n1C - 1);
+           fT1 <= (futility == 1 ? (efficacy == 1 ? n1E - 2 : n1E - 1) :
+                     -n1C - 1); fT1++) {
         for (int fS1 = (futility == 1 ? 0 : -1);
-             fS1 <= (futility == 1 ? (efficacy == 1 ? nE1 - 2 : nE1 - 1) : -1);
+             fS1 <= (futility == 1 ? (efficacy == 1 ? n1E - 2 : n1E - 1) : -1);
              fS1++) {
           typeII1                         = 0;
-          for (int xC1 = 0; xC1 <= nC1; xC1++) {
-            for (int xE1 = 0; xE1 <= nE1; xE1++) {
+          for (int xC1 = 0; xC1 <= n1C; xC1++) {
+            for (int xE1 = 0; xE1 <= n1E; xE1++) {
               if ((xE1 - xC1 <= fT1) || (xE1 <= fS1)) {
                 typeII1                  += prob_x1_power(xC1, xE1);
               }
@@ -836,14 +836,14 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
           if (typeII1 > beta) {
             break;
           }
-          for (int eT1 = (efficacy == 1 ? fT1 + 2 : nE1 + 1);
-               eT1 <= (efficacy == 1 ? nE1 : nE1 + 1); eT1++) {
-            for (int eS1 = (efficacy == 1 ? fS1 + 2 : nE1 + 1);
-                 eS1 <= (efficacy == 1 ? nE1 : nE1 + 1); eS1++) {
+          for (int eT1 = (efficacy == 1 ? fT1 + 2 : n1E + 1);
+               eT1 <= (efficacy == 1 ? n1E : n1E + 1); eT1++) {
+            for (int eS1 = (efficacy == 1 ? fS1 + 2 : n1E + 1);
+                 eS1 <= (efficacy == 1 ? n1E : n1E + 1); eS1++) {
               power1                      = 0;
               typeI1                      = 0;
-              for (int xE1 = eS1; xE1 <= nE1; xE1++) {
-                for (int xC1 = 0; xC1 <= nC1; xC1++) {
+              for (int xE1 = eS1; xE1 <= n1E; xE1++) {
+                for (int xC1 = 0; xC1 <= n1C; xC1++) {
                   if (xE1 - xC1 >= eT1) {
                     power1               += prob_x1_power(xC1, xE1);
                     typeI1               += prob_x1_typeI(xC1, xE1);
@@ -853,7 +853,7 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
               if (typeI1 < alpha) {
                 S1_ess0                   = 0;
                 S1_ess1                   = 0;
-                for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+                for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
                   if (((poss_y1[o1] >= eT1) && (poss_x1(o1, 1) >= eS1)) ||
                       (poss_y1[o1] <= fT1) || (poss_x1(o1, 1) <= fS1)) {
                     S1_ess0              += prob_x1_ess0(poss_x1(o1, 0),
@@ -864,20 +864,20 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                 }
                 for (int n2 = (equal == 1 ? nE : 0);
                      n2 <= (equal == 1 ? nE : poss_nC.length() - 1); n2++) {
-                  nC2                     = poss_nC[n2];
-                  if (nC1 + nC2 <= nCmax) {
-                    nE2                   = poss_nE[n2];
-                    NumericVector poss_y2 = poss_y[nC2 + nCmax*(nE2 - 1) - 1];
-                    NumericMatrix prob_x_power(nC1 + nC2 + 1, nE1 + nE2 + 1),
-                                  prob_x_typeI(nC1 + nC2 + 1, nE1 + nE2 + 1),
-                                  poss_x2 = poss_x[nC2 + nCmax*(nE2 - 1) - 1];
+                  n2C                     = poss_nC[n2];
+                  if (n1C + n2C <= nCmax) {
+                    n2E                   = poss_nE[n2];
+                    NumericVector poss_y2 = poss_y[n2C + nCmax*(n2E - 1) - 1];
+                    NumericMatrix prob_x_power(n1C + n2C + 1, n1E + n2E + 1),
+                                  prob_x_typeI(n1C + n2C + 1, n1E + n2E + 1),
+                                  poss_x2 = poss_x[n2C + nCmax*(n2E - 1) - 1];
                     dbinom2               =
                       dbinom_des_two_stage(dbinom1, pi_typeI, pi_power, delta,
-                                           nC1, nC2, nE1, nE2);
-                    for (int o1 = 0; o1 <= (nC1 + 1)*(nE1 + 1) - 1; o1++) {
+                                           n1C, n2C, n1E, n2E);
+                    for (int o1 = 0; o1 <= (n1C + 1)*(n1E + 1) - 1; o1++) {
                       if ((poss_y1[o1] > fT1) && (poss_x1(o1, 1) > fS1) &&
                           ((poss_y1[o1] < eT1) || (poss_x1(o1, 1) < eS1))) {
-                        for (int o2 = 0; o2 <= (nC2 + 1)*(nE2 + 1) - 1; o2++) {
+                        for (int o2 = 0; o2 <= (n2C + 1)*(n2E + 1) - 1; o2++) {
                           prob_x_power(poss_x1(o1, 0) + poss_x2(o2, 0),
                                        poss_x1(o1, 1) + poss_x2(o2, 1)) +=
                             prob_x1_power(poss_x1(o1, 0), poss_x1(o1, 1))*
@@ -891,9 +891,9 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                         }
                       } 
                     }
-                    for (int eT2 = fT1 + 2 - nC2; eT2 <= eT1 - 1 + nE2; eT2++) {
+                    for (int eT2 = fT1 + 2 - n2C; eT2 <= eT1 - 1 + n2E; eT2++) {
                       fT2                 = eT2 - 1;
-                      for (int eS2 = fS1 + 2; eS2 <= eS1 - 1 + nE2; eS2++) {
+                      for (int eS2 = fS1 + 2; eS2 <= eS1 - 1 + n2E; eS2++) {
                         interrupt++;
                         if (interrupt % 1000 == 0) {
                           Rcpp::checkUserInterrupt();
@@ -901,8 +901,8 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                         fS2               = eS2 - 1;
                         power2            = 0;
                         typeI2            = 0;
-                        for (int xE = eS2; xE <= nE1 + nE2; xE++) {
-                          for (int xC = 0; xC <= nC1 + nC2; xC++) {
+                        for (int xE = eS2; xE <= n1E + n2E; xE++) {
+                          for (int xC = 0; xC <= n1C + n2C; xC++) {
                             if (xE - xC >= eT2) {
                               power2     += prob_x_power(xC, xE);
                               typeI2     += prob_x_typeI(xC, xE);
@@ -916,23 +916,23 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                           if (point_null == 1) {
                             if (point_alt == 1) {
                               feasible_designs(counter, _)   =
-                                NumericVector::create(nC1, nC2, eS1, eS2, eT1,
+                                NumericVector::create(n1C, n2C, eS1, eS2, eT1,
                                                       eT2, fS1, fT1, pi_typeI,
                                                       typeI1 + typeI2, pi_power,
                                                       power1 + power2,
-                                                      nC1 + nE1 + (1 - S1_ess0)*
-                                                                    (nC2 + nE2),
-                                                      nC1 + nE1 +
+                                                      n1C + n1E + (1 - S1_ess0)*
+                                                                    (n2C + n2E),
+                                                      n1C + n1E +
                                                         (1 - S1_ess1)*
-                                                        (nC2 + nE2));
+                                                        (n2C + n2E));
                               counter++;
                             }
                             else {
                               NumericVector min_power        =
-                                single_double_min_power(
+                                sat_min_power(
                                   2, beta, delta,
-                                  NumericVector::create(nC1, nC2),
-                                  NumericVector::create(nE1, nE2),
+                                  NumericVector::create(n1C, n2C),
+                                  NumericVector::create(n1E, n2E),
                                   NumericVector::create(eS1, eS2),
                                   NumericVector::create(eT1, eT2),
                                   NumericVector::create(fS1, fS2),
@@ -944,19 +944,19 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                               }
                               feasible_designs(counter, _)   =
                                 NumericVector::create(
-                                  nC1, nC2, eS1, eS2, eT1, eT2, fS1, fT1,
+                                  n1C, n2C, eS1, eS2, eT1, eT2, fS1, fT1,
                                   pi_typeI, typeI1 + typeI2, min_power[0],
                                   min_power[1],
-                                  nC1 + nE1 + (1 - S1_ess0)*(nC2 + nE2),
-                                  nC1 + nE1 + (1 - S1_ess1)*(nC2 + nE2));
+                                  n1C + n1E + (1 - S1_ess0)*(n2C + n2E),
+                                  n1C + n1E + (1 - S1_ess1)*(n2C + n2E));
                               counter++;
                             }
                           }
                           else {
                             NumericVector max_typeI          =
-                              single_double_max_typeI(
-                                2, alpha, NumericVector::create(nC1, nC2),
-                                NumericVector::create(nE1, nE2),
+                              sat_max_typeI(
+                                2, alpha, NumericVector::create(n1C, n2C),
+                                NumericVector::create(n1E, n2E),
                                 NumericVector::create(eS1, eS2),
                                 NumericVector::create(eT1, eT2),
                                 NumericVector::create(fS1, fS2),
@@ -966,26 +966,26 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                             if (max_typeI[1] <= alpha) {
                               if (point_alt == 1) {
                                 feasible_designs(counter, _) =
-                                  NumericVector::create(nC1, nC2, eS1, eS2, eT1,
+                                  NumericVector::create(n1C, n2C, eS1, eS2, eT1,
                                                         eT2, fS1, fT1,
                                                         max_typeI[0],
                                                         max_typeI[1],
                                                         pi_power,
                                                         power1 + power2,
-                                                        nC1 + nE1 +
+                                                        n1C + n1E +
                                                           (1 - S1_ess0)*
-                                                          (nC2 + nE2),
-                                                        nC1 + nE1 +
+                                                          (n2C + n2E),
+                                                        n1C + n1E +
                                                           (1 - S1_ess0)*
-                                                          (nC2 + nE2));
+                                                          (n2C + n2E));
                                 counter++;
                               }
                               else {
                                 NumericVector min_power      =
-                                  single_double_min_power(
+                                  sat_min_power(
                                     2, beta, delta,
-                                    NumericVector::create(nC1, nC2),
-                                    NumericVector::create(nE1, nE2),
+                                    NumericVector::create(n1C, n2C),
+                                    NumericVector::create(n1E, n2E),
                                     NumericVector::create(eS1, eS2),
                                     NumericVector::create(eT1, eT2),
                                     NumericVector::create(fS1, fS2),
@@ -996,18 +996,18 @@ NumericMatrix single_double_des_two_stage_cpp(double alpha, double beta,
                                   break;
                                 }
                                 feasible_designs(counter, _) =
-                                  NumericVector::create(nC1, nC2, eS1, eS2, eT1,
+                                  NumericVector::create(n1C, n2C, eS1, eS2, eT1,
                                                         eT2, fS1, fT1,
                                                         max_typeI[0],
                                                         max_typeI[1],
                                                         min_power[0],
                                                         min_power[1],
-                                                        nC1 + nE1 +
+                                                        n1C + n1E +
                                                           (1 - S1_ess0)*
-                                                          (nC2 + nE2),
-                                                        nC1 + nE1 +
+                                                          (n2C + n2E),
+                                                        n1C + n1E +
                                                           (1 - S1_ess1)*
-                                                          (nC2 + nE2));
+                                                          (n2C + n2E));
                                 counter++;
                               }
                             }
