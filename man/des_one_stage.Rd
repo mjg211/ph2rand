@@ -12,7 +12,7 @@ des_one_stage(type = "binomial", alpha = 0.1, beta = 0.2,
 \arguments{
 \item{type}{A \code{\link{character}} string indicating the chosen design
 framework/test statistic to assume. Must be one of \code{"barnard"},
-\code{"binomial"}, \code{"fisher"}, or \code{"single_double"}. Defaults to
+\code{"binomial"}, \code{"fisher"}, or \code{"sat"}. Defaults to
 \code{"binomial"}.}
 
 \item{alpha}{A \code{\link{numeric}} indicating the chosen value for
@@ -21,29 +21,30 @@ framework/test statistic to assume. Must be one of \code{"barnard"},
 
 \item{beta}{A \code{\link{numeric}} indicating the chosen value for
 \ifelse{html}{\out{<i>&beta;</i>}}{\eqn{\beta}}, used in the definition of
-the desired power (i.e., the typeiII error-rate). Defaults to \code{0.2}.}
+the desired power (i.e., the type-II error-rate). Defaults to \code{0.2}.}
 
 \item{delta}{A \code{\link{numeric}} indicating the chosen value for
 \ifelse{html}{\out{<i>&delta;</i>}}{\eqn{\delta}}, the treatment effect
 assumed in the power calculation. Defaults to \code{0.2}.}
 
 \item{ratio}{A \code{\link{numeric}} indicating the chosen value for
-\ifelse{html}{\out{<b><i>r</i></b>}}{\eqn{\bold{r}}}, the allocation ratio to
+\ifelse{html}{\out{<i>r</i>}}{\eqn{r}}, the allocation ratio to
 the experimental arm, relative to the control arm. Defaults to \code{1}.}
 
 \item{Pi0}{A \code{\link{numeric}} \code{\link{vector}} indicating the
-chosen values of the control arm response rate to control the type-I
-error-rate to level \ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}} for.
-Must either be of \code{\link{length}} one, indicating a single point, or of
+chosen value for \ifelse{html}{\out{<i>&Pi;</i><sub>0</sub>}}{\eqn{\Pi_0}},
+the control arm response rates to control the type-I error-rate to level
+\ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}} for. Must either be of
+\code{\link{length}} one, indicating a single point, or of
 \code{\link{length}} two. In this case, the elements indicate the
 range of possible response rates to allow for. Defaults to \code{0.1}.}
 
 \item{Pi1}{A \code{\link{numeric}} \code{\link{vector}} indicating the
-chosen values of the control arm response rate to allow for in the power
-calculations. Must either be of \code{\link{length}} one,
-indicating a single point, or of \code{\link{length}} two. In this case, the
-elements indicate the range of possible response rates to allow for. Defaults
-to \code{Pi0[1]}.}
+chosen value for \ifelse{html}{\out{<i>&Pi;</i><sub>1</sub>}}{\eqn{\Pi_1}},
+the control arm response rates to allow for in the power calculations. Must
+either be of \code{\link{length}} one, indicating a single point, or of
+\code{\link{length}} two. In this case, the elements indicate the range of
+possible response rates to allow for. Defaults to \code{Pi0[1]}.}
 
 \item{nCmax}{A \code{\link{numeric}} indicating the maximum value of the
 sample size in the control arm to consider in the search procedure. Defaults
@@ -77,8 +78,9 @@ designs, assuming the primary outcome variable is Bernoulli distributed. It
 supports a flexible framework for specifying which scenarios to control the
 type-I and type-II error-rates for, and allows for design determination
 assuming a variety of test statistics. In all instances, \code{des_one_stage}
-computes the relevant required sample size in each arm, and returns
-information on key operating characteristics.
+computes the optimal required sample size in each arm, the associated optimal
+stopping boundaries, and returns information on key operating
+characteristics.
 }
 \examples{
 # The design for the default parameters

@@ -14,7 +14,7 @@ des_two_stage(type = "binomial", alpha = 0.1, beta = 0.2,
 \arguments{
 \item{type}{A \code{\link{character}} string indicating the chosen design
 framework/test statistic to assume. Must be one of \code{"barnard"},
-\code{"binomial"}, \code{"fisher"}, or \code{"single_double"}. Defaults to
+\code{"binomial"}, \code{"fisher"}, or \code{"sat"}. Defaults to
 \code{"binomial"}.}
 
 \item{alpha}{A \code{\link{numeric}} indicating the chosen value for
@@ -23,14 +23,14 @@ framework/test statistic to assume. Must be one of \code{"barnard"},
 
 \item{beta}{A \code{\link{numeric}} indicating the chosen value for
 \ifelse{html}{\out{<i>&beta;</i>}}{\eqn{\beta}}, used in the definition of
-the desired power (i.e., the typeiII error-rate). Defaults to \code{0.2}.}
+the desired power (i.e., the type-II error-rate). Defaults to \code{0.2}.}
 
 \item{delta}{A \code{\link{numeric}} indicating the chosen value for
 \ifelse{html}{\out{<i>&delta;</i>}}{\eqn{\delta}}, the treatment effect
 assumed in the power calculation. Defaults to \code{0.2}.}
 
 \item{ratio}{A \code{\link{numeric}} indicating the chosen value for
-\ifelse{html}{\out{<b><i>r</i></b>}}{\eqn{\bold{r}}}, the allocation ratio to
+\ifelse{html}{\out{<i>r</i>}}{\eqn{r}}, the allocation ratio to
 the experimental arm, relative to the control arm. Defaults to \code{1}.}
 
 \item{Pi0}{A \code{\link{numeric}} \code{\link{vector}} indicating the
@@ -64,14 +64,14 @@ arm response rate to assume in the optimality criteria. Defaults to
 \code{Pi0[1]}.}
 
 \item{efficacy}{Only used if \code{type} is one of \code{"barnard"},
-\code{"binomial"}, or \code{"single_double"}. Then, it is a
+\code{"binomial"}, or \code{"sat"}. Then, it is a
 \code{\link{logical}} variable indicating whether to include early stopping
 for efficacy in the design. Defaults to \code{F}.}
 
 \item{futility}{Only used if \code{type} is one of \code{"barnard"},
-\code{"binomial"}, or \code{"single_double"}. Then, it is a
+\code{"binomial"}, or \code{"sat"}. Then, it is a
 \code{\link{logical}} variable indicating whether to include early stopping
-for futility in the design. Defaults to \code{F}.}
+for futility in the design. Defaults to \code{T}.}
 
 \item{efficacy_type}{Only used if \code{type} is \code{"fisher"}. Then, it is
 a \code{\link{numeric}} indicating whether, and which type of, early stopping
@@ -118,13 +118,14 @@ operating characteristics of the optimal design.
 }
 }
 \description{
-\code{des_two_stage} determines one-stage two-arm randomised clinical trial
+\code{des_two_stage} determines two-stage two-arm randomised clinical trial
 designs, assuming the primary outcome variable is Bernoulli distributed. It
 supports a flexible framework for specifying which scenarios to control the
 type-I and type-II error-rates for, and allows for design determination
 assuming a variety of test statistics. In all instances, \code{des_two_stage}
-computes the relevant required sample size in each arm, and returns
-information on key operating characteristics.
+computes the optimal required sample size in each arm in each stage, the
+associated optimal stopping boundaries, and returns information on key
+operating characteristics.
 }
 \examples{
 # The design for the default parameters

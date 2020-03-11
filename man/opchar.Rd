@@ -13,10 +13,11 @@ opchar(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
 \code{\link{des_one_stage}} or \code{\link{des_two_stage}}. Defaults to
 \code{ph2rand::des_one_stage()}.}
 
-\item{pi}{A \code{\link{matrix}} with two columns, giving the response rate
-scenarios to consider. The first column should correspond to the control arm
-and the second column to the experimental arm. Defaults to
-\code{des$opchar[, 1:2]}.}
+\item{pi}{A \code{\link{numeric}} \code{\link{vector}} with two elements, or
+a \code{\link{numeric}} \code{\link{matrix}} or \code{\link{data.frame}} with
+two columns, giving the response rate scenarios to consider. The first
+element/column should correspond to the control arm and the second
+element/column to the experimental arm. Defaults to \code{des$opchar[, 1:2]}.}
 
 \item{k}{A \code{\link{numeric}} \code{\link{vector}} indicating which stages
 to consider in determining the operating characteristics. That is, it will

@@ -28,7 +28,9 @@ which gives all of the available produced plots.
 \description{
 \code{plot.ph2rand_des} plots the operating characteristics of a design
 returned by \code{\link{des_one_stage}} or \code{\link{des_two_stage}}, under
-a range of key response rate scenarios.
+a range of key response rate scenarios. For convenience, it also calls
+\code{\link{plot.ph2rand_terminal}} to plot the terminal points of the
+design.
 }
 \examples{
 # The default two-stage design
