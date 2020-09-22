@@ -1,5 +1,5 @@
-#' Probability mass functions of a two-arm randomised clinical trial design that
-#' assumes a Bernoulli primary outcome variable
+#' Probability mass functions of a randomised clinical trial design that assumes
+#' a Bernoulli distributed primary outcome variable
 #'
 #' \code{pmf} determines probability mass functions of a design returned by
 #' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}, under given
@@ -62,38 +62,36 @@ pmf <- function(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
   }
   if (des$J == 1) {
     pmf <- switch(des$type,
-                  barnard       = barnard_pmf_one_stage(pi, des$nC, des$nE,
-                                                        des$boundaries$e1),
-                  binomial      = binomial_pmf_one_stage(pi, des$nC, des$nE,
-                                                         des$boundaries$e1),
-                  fisher        = fisher_pmf_one_stage(pi, des$nC, des$nE,
-                                                       des$boundaries$e1),
-                  sat =
-                    sat_pmf_one_stage(pi, des$nC, des$nE,
-                                                des$boundaries$eS1,
-                                                des$boundaries$eT1))
+                  barnard  = barnard_pmf_one_stage(pi, des$nC, des$nE,
+                                                   des$boundaries$e1),
+                  binomial = binomial_pmf_one_stage(pi, des$nC, des$nE,
+                                                    des$boundaries$e1),
+                  fisher   = fisher_pmf_one_stage(pi, des$nC, des$nE,
+                                                  des$boundaries$e1),
+                  sat      = sat_pmf_one_stage(pi, des$nC, des$nE,
+                                               des$boundaries$eS1,
+                                               des$boundaries$eT1))
   } else {
     pmf <- switch(des$type,
-                  barnard       =
-                    barnard_pmf_two_stage(pi, des$nC, des$nE, des$boundaries$e1,
-                                          des$boundaries$f1, des$boundaries$e2,
-                                          k),
-                  binomial      =
-                    binomial_pmf_two_stage(pi, des$nC, des$nE,
-                                           des$boundaries$e1, des$boundaries$f1,
-                                           des$boundaries$e2, k),
-                  fisher        =
-                    fisher_pmf_two_stage(pi, des$nC, des$nE, des$boundaries$e1,
-                                         des$boundaries$f1, des$boundaries$e2,
-                                         k),
-                  sat =
-                    sat_pmf_two_stage(pi, des$nC, des$nE,
-                                                des$boundaries$eS1,
-                                                des$boundaries$eT1,
-                                                des$boundaries$fS1,
-                                                des$boundaries$fT1,
-                                                des$boundaries$eS2,
-                                                des$boundaries$eT2, k))
+                  barnard  = barnard_pmf_two_stage(pi, des$nC, des$nE,
+                                                   des$boundaries$e1,
+                                                   des$boundaries$f1,
+                                                   des$boundaries$e2, k),
+                  binomial = binomial_pmf_two_stage(pi, des$nC, des$nE,
+                                                    des$boundaries$e1,
+                                                    des$boundaries$f1,
+                                                    des$boundaries$e2, k),
+                  fisher   = fisher_pmf_two_stage(pi, des$nC, des$nE,
+                                                  des$boundaries$e1,
+                                                  des$boundaries$f1,
+                                                  des$boundaries$e2, k),
+                  sat      = sat_pmf_two_stage(pi, des$nC, des$nE,
+                                               des$boundaries$eS1,
+                                               des$boundaries$eT1,
+                                               des$boundaries$fS1,
+                                               des$boundaries$fT1,
+                                               des$boundaries$eS2,
+                                               des$boundaries$eT2, k))
   }
   if (summary) {
     message("..outputting")

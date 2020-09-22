@@ -158,10 +158,10 @@ NumericMatrix dbinom_des_two_stage(NumericMatrix dbinom1, double pi_typeI,
   }
   else if (pi_typeI == pi_power + delta) {
     if (n1C == n2E) {
-      dbinom2(3, _) = dbinom1(0, _);
+      dbinom2(3, _)   = dbinom1(0, _);
     }
     else if (n2C == n2E) {
-      dbinom2(3, _) = dbinom2(0, _);
+      dbinom2(3, _)   = dbinom2(0, _);
     }
   }
   else {

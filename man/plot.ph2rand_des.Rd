@@ -19,6 +19,8 @@ design).}
 
 \item{output}{A \code{\link{logical}} variable indicating whether available
 outputs should be returned by the function.}
+
+\item{...}{Not currently used.}
 }
 \value{
 If \code{output = T}, a \code{\link{list}} containing each of the
@@ -38,7 +40,7 @@ des   <- des_two_stage()
 # Print several key plots
 plot(des)
 # Determine and store all available plots
-plots <- plot(des, output = T)
+plots <- plot(des, output = TRUE)
 }
 \seealso{
 \code{\link{des_one_stage}}, \code{\link{des_two_stage}},

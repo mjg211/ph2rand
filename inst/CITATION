@@ -2,8 +2,8 @@ citHeader("To cite ph2rand in publications please use")
 
 citEntry(entry       = "Misc",
          key         = "grayling2020",
-         title       = "{ph2rand: Design of randomized comparative phase II oncology trials with a Bernoulli primary outcome}",
+         title       = "{ph2rand: Design of randomized comparative phase II oncology trials with a Bernoulli distributed primary outcome}",
          author      = as.person("Michael J. Grayling"),
          year        = "2020",
          url         = "http://www.github.com/mjg211/ph2rand/",
-         textVersion = paste("Grayling MJ (2020) ph2rand: Design of randomized comparative phase II oncology trials with a Bernoulli primary outcome. URL: http://www.github.com/mjg211/ph2rand/."))
+         textVersion = paste("Grayling MJ (2020) ph2rand: Design of randomized comparative phase II oncology trials with a Bernoulli distributed primary outcome. URL: http://www.github.com/mjg211/ph2rand/."))

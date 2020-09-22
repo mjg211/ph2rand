@@ -179,12 +179,12 @@ NumericMatrix barnard_terminal_two_stage_cpp(NumericVector nC, NumericVector nE,
       }
       if (k[0] == 1) {
         if ((statistic >= e1) || (statistic <= f1)) {
-          terminal(counter, _)       =
+          terminal(counter, _)     =
             NumericVector::create(xC1, xE1, nC[0], nE[0], statistic,
                                   (statistic >= e1) + 1, 1);
         }
         else {
-          terminal(counter, _)       =
+          terminal(counter, _)     =
             NumericVector::create(xC1, xE1, nC[0], nE[0], statistic, 3, 1);
         }
         counter++;
@@ -538,7 +538,7 @@ double barnard_ess_two_stage(NumericVector pi, NumericVector nC,
       }
     }
   }
-  double ess           = nC[0] + nE[0] + (1 - S1)*(nC[1] + nE[1]);
+  double ess            = nC[0] + nE[0] + (1 - S1)*(nC[1] + nE[1]);
   return ess;
 }
 

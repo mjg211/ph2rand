@@ -5,11 +5,13 @@
 \title{Summarise a two-arm randomised clinical trial design the assumes a Bernoulli
 primary outcome variable}
 \usage{
-\method{summary}{ph2rand_des}(x, ...)
+\method{summary}{ph2rand_des}(object, ...)
 }
 \arguments{
-\item{x}{An object of class \code{ph2rand_des}, as returned by
+\item{object}{An object of class \code{ph2rand_des}, as returned by
 \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.}
+
+\item{...}{Not currently used.}
 }
 \description{
 \code{summary.ph2rand_des} prints a summary of a design returned by

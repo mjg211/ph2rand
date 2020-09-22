@@ -4,17 +4,18 @@
 # ph2rand <img src='man/figures/ph2rand.png' align="right" height="139" />
 
 *Design of randomized comparative phase II oncology trials with a
-Bernoulli primary outcome*
+Bernoulli distributed primary outcome*
 
 ## Description
 
-**ph2rand** provides a suite of functions to assist with the design of
-randomized comparative phase II oncology trials with a Bernoulli primary
-outcome variable. Specifically, support is provided to (a) perform a
-sample size calculation when using one of several published designs
-(Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017,
-Shan *et al*, 2013), (b) evaluate the operating characteristics of a
-given design, and (c) produce informative plots.
+**ph2rand** provides functions to assist with the design of randomized
+comparative phase II oncology trials that assume their primary outcome
+variable is Bernoulli distributed. Specifically, support is provided to
+(a) perform a sample size calculation when using one of several
+published designs (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010;
+Litwin *et al*, 2017, Shan *et al*, 2013), (b) evaluate the operating
+characteristics of a given design (both analytically and via
+simulation), and (c) produce informative plots.
 
 ## Getting started
 
@@ -37,6 +38,10 @@ from Jung (2008) for the default parameters
 
 ``` r
 des_jung <- des_two_stage()
+#> Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
+#> Using compatibility `.name_repair`.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_warnings()` to see where this warning was generated.
 ```
 
 Then examine its required sample size in each arm, in each stage
@@ -128,7 +133,8 @@ pi <- rbind(c(0.1, 0.1),
 ```
 
 Then find the terminal points, probability mass functions, and operating
-characteristics of the Jung (2008) design with
+characteristics (both analytically and via simulation) of the Jung
+(2008) design with
 
 ``` r
 terminal_jung <- terminal(des_jung)
@@ -172,6 +178,8 @@ opchar_jung$opchar
 #> 2   0.1   0.3  0.813       64.7       10.1        68        0   0.813    0.0972
 #> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
 #> #   N` <int>
+# sim_jung      <- sim(des_jung, pi)
+# sim_jung$opchar
 ```
 
 Finally, we can plot various factors relating to the designs. For
@@ -179,14 +187,13 @@ example, plot the terminal points of the Jung (2008) design (with their
 associated decisions), along with the probability of rejecting the null
 hypothesis when the response probabilities are equal in the two arms or
 when the difference in the response probabilities is the chosen
-treatment
-effect
+treatment effect
 
 ``` r
 plot(des_jung)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-11-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-3-2.png" width="100%" />
 
 See the package vignette for further details.
 

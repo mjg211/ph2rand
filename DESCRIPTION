@@ -1,19 +1,19 @@
 Package: ph2rand
 Type: Package
-Title: Design of Randomized Comparative Phase II Oncology Trials with a
-    Bernoulli Primary Outcome
+Title: Design of randomized comparative phase II oncology trials with a
+    Bernoulli distributed primary outcome
 Version: 0.1
-Date: 2020-03-05
+Date: 2020-09-22
 Authors@R: c(person(given = "Michael", family = "Grayling",
                     email = "michael.grayling@newcastle.ac.uk",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-0680-6668")))
-Description: Provides a suite of functions to assist with the design of
-    randomized comparative phase II oncology trials with a Bernoulli primary
-    outcome variable. Specifically, support is provided to (a) perform a sample
-    size calculation when using one of several published designs, (b) evaluate
-    the operating characteristics of a given design, and (c) produce informative
-    plots.
+Description: ph2rand provides functions to assist with the design of randomized
+    comparative phase II oncology trials that assume their primary outcome
+    variable is Bernoulli distributed. Specifically, support is provided to (a)
+    perform a sample size calculation when using one of several published
+    designs, (b) evaluate the operating characteristics of a given design (both
+    analytically and via simulation), and (c) produce informative plots.
 License: MIT + file LICENSE
 Imports:
     dplyr,
@@ -24,7 +24,7 @@ Imports:
     tibble,
     tidyr
 LinkingTo: Rcpp
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 URL: https://github.com/mjg211/ph2rand
 BugReports: https://github.com/mjg211/ph2rand/issues
 Encoding: UTF-8

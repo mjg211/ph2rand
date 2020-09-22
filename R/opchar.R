@@ -1,9 +1,10 @@
-#' Operating characteristics of a two-arm randomised clinical trial design that
-#' assumes a Bernoulli primary outcome variable
+#' Operating characteristics of a randomised clinical trial design that assumes
+#' a Bernoulli distributed primary outcome variable
 #'
-#' \code{opchar} determines the operating characteristics of a design returned
-#' by \code{\link{des_one_stage}} or \code{\link{des_two_stage}}, under given
-#' response rate scenarios (see \code{pi}).
+#' \code{opchar} determines the operating characteristics (analytically) of a
+#' design returned by \code{\link{des_one_stage}} or
+#' \code{\link{des_two_stage}}, under given response rate scenarios (see
+#' \code{pi}).
 #' 
 #' @param des An object of class \code{ph2rand_des}, as returned by
 #' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}. Defaults to
@@ -62,44 +63,36 @@ opchar <- function(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
   }
   if (des$J == 1) {
     opchar <- switch(des$type,
-                     barnard       =
-                       barnard_opchar_one_stage(pi, des$nC, des$nE,
-                                                des$boundaries$e1),
-                     binomial      =
-                       binomial_opchar_one_stage(pi, des$nC, des$nE,
-                                                 des$boundaries$e1),
-                     fisher        =
-                       fisher_opchar_one_stage(pi, des$nC, des$nE,
-                                               des$boundaries$e1),
-                     sat =
-                       sat_opchar_one_stage(pi, des$nC, des$nE,
-                                                      des$boundaries$eS1,
-                                                      des$boundaries$eT1))
+                     barnard  = barnard_opchar_one_stage(pi, des$nC, des$nE,
+                                                         des$boundaries$e1),
+                     binomial = binomial_opchar_one_stage(pi, des$nC, des$nE,
+                                                          des$boundaries$e1),
+                     fisher   = fisher_opchar_one_stage(pi, des$nC, des$nE,
+                                                        des$boundaries$e1),
+                     sat      = sat_opchar_one_stage(pi, des$nC, des$nE,
+                                                     des$boundaries$eS1,
+                                                     des$boundaries$eT1))
   } else {
     opchar <- switch(des$type,
-                     barnard       =
-                       barnard_opchar_two_stage(pi, des$nC, des$nE,
-                                                des$boundaries$e1,
-                                                des$boundaries$f1,
-                                                des$boundaries$e2, k),
-                     binomial      =
-                       binomial_opchar_two_stage(pi, des$nC, des$nE,
-                                                 des$boundaries$e1,
-                                                 des$boundaries$f1,
-                                                 des$boundaries$e2, k),
-                     fisher        =
-                       fisher_opchar_two_stage(pi, des$nC, des$nE,
-                                               des$boundaries$e1,
-                                               des$boundaries$f1,
-                                               des$boundaries$e2, k),
-                     sat =
-                       sat_opchar_two_stage(pi, des$nC, des$nE,
-                                                      des$boundaries$eS1,
-                                                      des$boundaries$eT1,
-                                                      des$boundaries$fS1,
-                                                      des$boundaries$fT1,
-                                                      des$boundaries$eS2,
-                                                      des$boundaries$eT2, k))
+                     barnard  = barnard_opchar_two_stage(pi, des$nC, des$nE,
+                                                         des$boundaries$e1,
+                                                         des$boundaries$f1,
+                                                         des$boundaries$e2, k),
+                     binomial = binomial_opchar_two_stage(pi, des$nC, des$nE,
+                                                          des$boundaries$e1,
+                                                          des$boundaries$f1,
+                                                          des$boundaries$e2, k),
+                     fisher   = fisher_opchar_two_stage(pi, des$nC, des$nE,
+                                                        des$boundaries$e1,
+                                                        des$boundaries$f1,
+                                                        des$boundaries$e2, k),
+                     sat      = sat_opchar_two_stage(pi, des$nC, des$nE,
+                                                     des$boundaries$eS1,
+                                                     des$boundaries$eT1,
+                                                     des$boundaries$fS1,
+                                                     des$boundaries$fT1,
+                                                     des$boundaries$eS2,
+                                                     des$boundaries$eT2, k))
   }
   if (summary) {
     message("..outputting")

@@ -133,7 +133,7 @@ check_fisher_params          <- function(efficacy_type, efficacy_param,
 }
 
 check_ph2rand_des            <- function(des, type, name = "des") {
-  if (class(des) != "ph2rand_des") {
+  if (!("ph2rand_des" %in% class(des))) {
     stop(name, " must be of class ph2rand_des")
   }
   if (all(type == "any", !(des$type %in% c("barnard", "binomial", "fisher",

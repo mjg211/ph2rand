@@ -1,5 +1,5 @@
 #' Design a two-stage two-arm randomised clinical trial assuming a Bernoulli
-#' primary outcome variable
+#' distributed primary outcome variable
 #'
 #' \code{des_two_stage} determines two-stage two-arm randomised clinical trial
 #' designs, assuming the primary outcome variable is Bernoulli distributed. It
@@ -116,15 +116,14 @@ des_two_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
 
   ##### Check inputs ###########################################################
 
-  check_belong(type, "type", c("barnard", "binomial", "fisher",
-                               "sat"), 1)
+  check_belong(type, "type", c("barnard", "binomial", "fisher", "sat"), 1)
   check_real_range_strict(alpha, "alpha", c(0, 1),   1)
   check_real_range_strict(beta,  "beta",  c(0, 1),   1)
   check_real_range_strict(delta, "delta", c(0, 1),   1)
   check_real_range_strict(ratio, "ratio", c(0, Inf), 1)
   check_Pi0(Pi0)
   check_Pi1(Pi1, delta)
-  nCmax <- check_integer_range(nCmax, "nCmax", c(1, Inf), 1)
+  nCmax            <- check_integer_range(nCmax, "nCmax", c(1, Inf), 1)
   check_logical(equal, "equal")
   check_w(w)
   check_real_range(piO, "piO", c(0, 1 - delta), 1)
@@ -162,23 +161,23 @@ des_two_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
     message("  Identifying feasible designs..")
   }
   output <- switch(type,
-                   barnard       =
+                   barnard  =
                      barnard_des_two_stage(alpha, beta, delta, ratio, Pi0, Pi1,
                                            nCmax, equal, w, piO, efficacy,
                                            futility, summary),
-                   binomial      =
+                   binomial =
                      binomial_des_two_stage(alpha, beta, delta, ratio, Pi0, Pi1,
                                             nCmax, equal, w, piO, efficacy,
                                             futility, summary),
-                   fisher        =
+                   fisher   =
                      fisher_des_two_stage(alpha, beta, delta, ratio, Pi0, Pi1,
                                           nCmax, equal, w, piO, efficacy_type,
                                           efficacy_param, futility_type,
                                           futility_param, summary),
                    sat =
-                     sat_des_two_stage(alpha, beta, delta, ratio,
-                                                 Pi0, Pi1, nCmax, equal, w, piO,
-                                                 efficacy, futility, summary))
+                     sat_des_two_stage(alpha, beta, delta, ratio, Pi0, Pi1,
+                                       nCmax, equal, w, piO, efficacy, futility,
+                                       summary))
   if (summary) {
     message("..outputting")
   }

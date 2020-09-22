@@ -11,12 +11,10 @@ using namespace Rcpp;
 using namespace std;
 
 // [[Rcpp::export]]
-NumericMatrix sat_pmf_two_stage_cpp(NumericVector pi,
-                                              NumericVector nC,
-                                              NumericVector nE, double eS1,
-                                              double eT1, double fS1,
-                                              double fT1, double eS2,
-                                              double eT2, NumericVector k) {
+NumericMatrix sat_pmf_two_stage_cpp(NumericVector pi, NumericVector nC,
+                                    NumericVector nE, double eS1, double eT1,
+                                    double fS1, double fT1, double eS2,
+                                    double eT2, NumericVector k) {
   
   int           counter                    = 0,
                 sum_nC                     = sum(nC),
@@ -67,9 +65,8 @@ NumericMatrix sat_pmf_two_stage_cpp(NumericVector pi,
 }
 
 // [[Rcpp::export]]
-double sat_power_one_stage(NumericVector pi, int nC, int nE, int eS,
-                                     int eT, NumericMatrix poss_x,
-                                     NumericVector poss_y) {
+double sat_power_one_stage(NumericVector pi, int nC, int nE, int eS, int eT,
+                           NumericMatrix poss_x, NumericVector poss_y) {
   double        power  = 0;
   NumericMatrix dbinom = dbinom_one_stage(pi, nC, nE);
   for (int o = 0; o <= (nC + 1)*(nE + 1) - 1; o++) {
@@ -81,11 +78,9 @@ double sat_power_one_stage(NumericVector pi, int nC, int nE, int eS,
 }
 
 // [[Rcpp::export]]
-double sat_power_two_stage(NumericVector pi, NumericVector nC,
-                                     NumericVector nE, NumericVector eS,
-                                     NumericVector eT, NumericVector fS,
-                                     NumericVector fT, List poss_x,
-                                     List poss_y) {
+double sat_power_two_stage(NumericVector pi, NumericVector nC, NumericVector nE,
+                           NumericVector eS, NumericVector eT, NumericVector fS,
+                           NumericVector fT, List poss_x, List poss_y) {
   double        prob_x1,
                 power   = 0;
   NumericVector poss_y1 = poss_y[0],
@@ -112,12 +107,10 @@ double sat_power_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericMatrix sat_terminal_two_stage_cpp(NumericVector nC,
-                                                   NumericVector nE, double eS1,
-                                                   double eT1, double fS1,
-                                                   double fT1, double eS2,
-                                                   double eT2,
-                                                   NumericVector k) {
+NumericMatrix sat_terminal_two_stage_cpp(NumericVector nC, NumericVector nE,
+                                         double eS1, double eT1, double fS1,
+                                         double fT1, double eS2, double eT2,
+                                         NumericVector k) {
   
   int           xC,
                 xE,
@@ -131,13 +124,13 @@ NumericMatrix sat_terminal_two_stage_cpp(NumericVector nC,
       if (k[0] == 1) {
         if ((xE1 <= fS1) || (xE1 - xC1 <= fT1) ||
               ((xE1 >= eS1) && (xE1 - xC1 >= eT1))) {
-          terminal(counter, _)       =
+          terminal(counter, _)     =
             NumericVector::create(xC1, xE1, nC[0], nE[0], xE1, xE1 - xC1,
                                   ((xE1 >= eS1) && (xE1 - xC1 >= eT1)) + 1, 1);
           counter++;
         }
         else {
-          terminal(counter, _)       =
+          terminal(counter, _)     =
             NumericVector::create(xC1, xE1, nC[0], nE[0], xE1, xE1 - xC1, 3, 1);
           counter++;
         }
@@ -169,11 +162,10 @@ NumericMatrix sat_terminal_two_stage_cpp(NumericVector nC,
 
 // [[Rcpp::export]]
 NumericVector sat_max_typeI(int J, double alpha, NumericVector nC,
-                                      NumericVector nE, NumericVector eS,
-                                      NumericVector eT, NumericVector fS,
-                                      NumericVector fT, List poss_x,
-                                      List poss_y, NumericVector pi_null,
-                                      int check) {
+                            NumericVector nE, NumericVector eS,
+                            NumericVector eT, NumericVector fS,
+                            NumericVector fT, List poss_x, List poss_y,
+                            NumericVector pi_null, int check) {
   int           iter    = 0;
   double        f_v,
                 golden  = 0.5*(3 - pow(5, 0.5)),
@@ -318,12 +310,11 @@ NumericVector sat_max_typeI(int J, double alpha, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericVector sat_min_power(int J, double beta, double delta,
-                                      NumericVector nC, NumericVector nE,
-                                      NumericVector eS, NumericVector eT,
-                                      NumericVector fS, NumericVector fT,
-                                      List poss_x, List poss_y,
-                                      NumericVector pi_alt, int check) {
+NumericVector sat_min_power(int J, double beta, double delta, NumericVector nC,
+                            NumericVector nE, NumericVector eS,
+                            NumericVector eT, NumericVector fS,
+                            NumericVector fT, List poss_x, List poss_y,
+                            NumericVector pi_alt, int check) {
   int           iter    = 0;
   double        f_v,
                 golden  = 0.5*(3 - pow(5, 0.5)),
@@ -468,9 +459,8 @@ NumericVector sat_min_power(int J, double beta, double delta,
 }
 
 // [[Rcpp::export]]
-double sat_ess_two_stage(NumericVector pi, NumericVector nC,
-                                   NumericVector nE, int eS1, int eT1, int fS1,
-                                   int fT1) {
+double sat_ess_two_stage(NumericVector pi, NumericVector nC, NumericVector nE,
+                         int eS1, int eT1, int fS1, int fT1) {
   double        S1      = 0;
   NumericMatrix dbinom1 = dbinom_one_stage(pi, nC[0], nE[0]);
   for (int xC1 = 0; xC1 <= nC[0]; xC1++) {
@@ -487,9 +477,9 @@ double sat_ess_two_stage(NumericVector pi, NumericVector nC,
 
 // [[Rcpp::export]]
 double sat_des_ess_two_stage(NumericVector pi, NumericVector nC,
-                                       NumericVector nE, int eS1, int eT1,
-                                       int fS1, int fT1, NumericMatrix poss_x1,
-                                       NumericVector poss_y1) {
+                             NumericVector nE, int eS1, int eT1, int fS1,
+                             int fT1, NumericMatrix poss_x1,
+                             NumericVector poss_y1) {
   double        S1      = 0;
   NumericMatrix dbinom1 = dbinom_one_stage(pi, nC[0], nE[0]);
   for (int o1 = 0; o1 <= (nC[0] + 1)*(nE[0] + 1) - 1; o1++) {
@@ -503,11 +493,10 @@ double sat_des_ess_two_stage(NumericVector pi, NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericVector sat_max_ess_1d_two_stage(NumericVector nC,
-                                                 NumericVector nE, int eS1,
-                                                 int eT1, int fS1, int fT1,
-                                                 NumericMatrix poss_x1,
-                                                 NumericVector poss_y1) {
+NumericVector sat_max_ess_1d_two_stage(NumericVector nC, NumericVector nE,
+                                       int eS1, int eT1, int fS1, int fT1,
+                                       NumericMatrix poss_x1,
+                                       NumericVector poss_y1) {
   int           iter    = 0;
   double        f_u,
                 midpoint,
@@ -618,16 +607,12 @@ NumericVector sat_max_ess_1d_two_stage(NumericVector nC,
 }
 
 // [[Rcpp::export]]
-NumericMatrix sat_des_one_stage_cpp(double alpha, double beta,
-                                              double delta,
-                                              NumericVector poss_nC,
-                                              NumericVector poss_nE,
-                                              List poss_x, List poss_y,
-                                              int point_null,
-                                              NumericVector pi_null,
-                                              int point_alt,
-                                              NumericVector pi_alt,
-                                              int summary) {
+NumericMatrix sat_des_one_stage_cpp(double alpha, double beta, double delta,
+                                    NumericVector poss_nC,
+                                    NumericVector poss_nE, List poss_x,
+                                    List poss_y, int point_null,
+                                    NumericVector pi_null, int point_alt,
+                                    NumericVector pi_alt, int summary) {
   int           nC,
                 nE,
                 counter    = 0,
@@ -755,17 +740,14 @@ NumericMatrix sat_des_one_stage_cpp(double alpha, double beta,
 }
 
 // [[Rcpp::export]]
-NumericMatrix sat_des_two_stage_cpp(double alpha, double beta,
-                                              double delta,
-                                              NumericVector poss_nC,
-                                              NumericVector poss_nE,
-                                              List poss_x, List poss_y,
-                                              int point_null,
-                                              NumericVector pi_null,
-                                              int point_alt,
-                                              NumericVector pi_alt, int equal,
-                                              int efficacy, int futility,
-                                              double pi_ess, int summary) {
+NumericMatrix sat_des_two_stage_cpp(double alpha, double beta, double delta,
+                                    NumericVector poss_nC,
+                                    NumericVector poss_nE, List poss_x,
+                                    List poss_y, int point_null,
+                                    NumericVector pi_null, int point_alt,
+                                    NumericVector pi_alt, int equal,
+                                    int efficacy, int futility, double pi_ess,
+                                    int summary) {
   int           fT2,
                 fS2,
                 n1C,

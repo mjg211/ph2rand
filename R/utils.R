@@ -16,7 +16,7 @@ build_des_one_stage_output <- function(alpha, beta, boundaries, delta, feasible,
                         ratio      = ratio,
                         summary    = summary,
                         type       = type)
-  class(output) <- "ph2rand_des"
+  class(output) <- c("ph2rand_des", class(output))
   output
 }
 
@@ -49,7 +49,7 @@ build_des_two_stage_output <- function(alpha, beta, boundaries, delta, efficacy,
                         summary        = summary,
                         type           = type,
                         w              = w)
-  class(output) <- "ph2rand_des"
+  class(output) <- c("ph2rand_des", class(output))
   output
 }
 

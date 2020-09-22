@@ -1,5 +1,5 @@
 #' Design a one-stage two-arm randomised clinical trial assuming a Bernoulli
-#' primary outcome variable
+#' distributed primary outcome variable
 #'
 #' \code{des_one_stage} determines one-stage two-arm randomised clinical trial
 #' designs, assuming the primary outcome variable is Bernoulli distributed. It
@@ -69,8 +69,8 @@
 #' des_range <- des_one_stage(Pi0 = c(0, 1),
 #'                            Pi1 = c(0, 0.8))
 #' @seealso \code{\link{des_two_stage}}, \code{\link{opchar}},
-#' \code{\link{pmf}}, \code{\link{terminal}}, \code{\link{plot.ph2rand_des}},
-#' \code{\link{summary.ph2rand_des}}.
+#' \code{\link{pmf}}, \code{\link{sim}}, \code{\link{terminal}},
+#' \code{\link{plot.ph2rand_des}}, \code{\link{summary.ph2rand_des}}.
 #' @export
 des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
                           delta = 0.2, ratio = 1, Pi0 = 0.1, Pi1 = Pi0[1],
@@ -78,8 +78,7 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
 
   ##### Check inputs ###########################################################
 
-  check_belong(type, "type", c("barnard", "binomial", "fisher",
-                               "sat"), 1)
+  check_belong(type, "type", c("barnard", "binomial", "fisher", "sat"), 1)
   check_real_range_strict(alpha, "alpha", c(0, 1),   1)
   check_real_range_strict(beta,  "beta",  c(0, 1),   1)
   check_real_range_strict(delta, "delta", c(0, 1),   1)
@@ -104,18 +103,14 @@ des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
     message("  Identifying feasible designs..")
   }
   output <- switch(type,
-                   barnard       =
-                     barnard_des_one_stage(alpha, beta, delta, ratio, Pi0, Pi1,
-                                           nCmax, summary),
-                   binomial      =
-                     binomial_des_one_stage(alpha, beta, delta, ratio, Pi0, Pi1,
-                                            nCmax, summary),
-                   fisher        =
-                     fisher_des_one_stage(alpha, beta, delta, ratio, Pi0, Pi1,
-                                          nCmax, summary),
-                   sat =
-                     sat_des_one_stage(alpha, beta, delta, ratio, Pi0,
-                                                 Pi1, nCmax, summary))
+                   barnard  = barnard_des_one_stage(alpha, beta, delta, ratio,
+                                                    Pi0, Pi1, nCmax, summary),
+                   binomial = binomial_des_one_stage(alpha, beta, delta, ratio,
+                                                     Pi0, Pi1, nCmax, summary),
+                   fisher   = fisher_des_one_stage(alpha, beta, delta, ratio,
+                                                   Pi0, Pi1, nCmax, summary),
+                   sat      = sat_des_one_stage(alpha, beta, delta, ratio, Pi0,
+                                                Pi1, nCmax, summary))
   if (summary) {
     message("..outputting")
   }

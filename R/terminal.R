@@ -1,5 +1,5 @@
-#' Terminal points of a two-arm randomised clinical trial design that assumes a
-#' Bernoulli primary outcome variable
+#' Terminal points of a randomised clinical trial design that assumes a
+#' Bernoulli distributed primary outcome variable
 #'
 #' \code{terminal} determines the 'terminal' points of a design returned by
 #' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.
@@ -52,37 +52,33 @@ terminal <- function(des = ph2rand::des_one_stage(), k = 1:des$J, summary = F) {
   }
   if (des$J == 1) {
     terminal <- switch(des$type,
-                       barnard       =
-                         barnard_terminal_one_stage(des$nC, des$nE,
-                                                    des$boundaries$e1),
-                       binomial      =
+                       barnard  = barnard_terminal_one_stage(des$nC, des$nE,
+                                                             des$boundaries$e1),
+                       binomial =
                          binomial_terminal_one_stage(des$nC, des$nE,
                                                      des$boundaries$e1),
-                       fisher        =
-                         fisher_terminal_one_stage(des$nC, des$nE,
-                                                   des$boundaries$e1),
-                       sat =
-                         sat_terminal_one_stage(des$nC, des$nE,
-                                                          des$boundaries$e1))
+                       fisher   = fisher_terminal_one_stage(des$nC, des$nE,
+                                                            des$boundaries$e1),
+                       sat      = sat_terminal_one_stage(des$nC, des$nE,
+                                                         des$boundaries$e1))
   } else {
     terminal <- switch(des$type,
-                       barnard       =
-                         barnard_terminal_two_stage(des$nC, des$nE,
-                                                    des$boundaries$e1,
-                                                    des$boundaries$f1,
-                                                    des$boundaries$e2, k),
-                       binomial      =
-                         binomial_terminal_two_stage(des$nC, des$nE,
-                                                     des$boundaries$e1,
-                                                     des$boundaries$f1,
-                                                     des$boundaries$e2, k),
-                       fisher        =
-                         fisher_terminal_two_stage(des$nC, des$nE,
-                                                   des$boundaries$e1,
-                                                   des$boundaries$f1,
-                                                   des$boundaries$e2, k),
-                       sat =
-                         sat_terminal_two_stage(des$nC, des$nE,
+                       barnard  = barnard_terminal_two_stage(des$nC, des$nE,
+                                                             des$boundaries$e1,
+                                                             des$boundaries$f1,
+                                                             des$boundaries$e2,
+                                                             k),
+                       binomial = binomial_terminal_two_stage(des$nC, des$nE,
+                                                              des$boundaries$e1,
+                                                              des$boundaries$f1,
+                                                              des$boundaries$e2,
+                                                              k),
+                       fisher   = fisher_terminal_two_stage(des$nC, des$nE,
+                                                            des$boundaries$e1,
+                                                            des$boundaries$f1,
+                                                            des$boundaries$e2,
+                                                            k),
+                       sat       = sat_terminal_two_stage(des$nC, des$nE,
                                                           des$boundaries$eS1,
                                                           des$boundaries$eT1,
                                                           des$boundaries$fS1,

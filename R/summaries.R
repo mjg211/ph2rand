@@ -214,13 +214,13 @@ summary_opchar      <- function(des, pi, k) {
 }
 
 summary_ph2rand_des <- function(x) {
-  J     <- x$J
-  type  <- x$type
-  alpha <- x$alpha
-  beta  <- x$beta
-  delta <- x$delta
-  Pi0   <- x$Pi0
-  Pi1   <- x$Pi1
+  J          <- x$J
+  type       <- x$type
+  alpha      <- x$alpha
+  beta       <- x$beta
+  delta      <- x$delta
+  Pi0        <- x$Pi0
+  Pi1        <- x$Pi1
   if (J == 1) {
     stage    <- "single-stage"
   } else {

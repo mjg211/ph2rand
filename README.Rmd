@@ -19,12 +19,12 @@ suppressPackageStartupMessages(library(ph2rand))
 
 # ph2rand <img src='man/figures/ph2rand.png' align="right" height="139" />
 
-*Design of randomized comparative phase II oncology trials with a Bernoulli primary outcome*
+*Design of randomized comparative phase II oncology trials with a Bernoulli distributed primary outcome*
 
 ## Description
 
-__ph2rand__ provides a suite of functions to assist with the design of randomized comparative phase II oncology trials with a Bernoulli primary outcome variable.
-Specifically, support is provided to (a) perform a sample size calculation when using one of several published designs (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017, Shan *et al*, 2013), (b) evaluate the operating characteristics of a given design, and (c) produce informative plots.
+__ph2rand__ provides functions to assist with the design of randomized comparative phase II oncology trials that assume their primary outcome variable is Bernoulli distributed.
+Specifically, support is provided to (a) perform a sample size calculation when using one of several published designs (Jung, 2008; Jung and Sargent, 2014; Kepner, 2010; Litwin *et al*, 2017, Shan *et al*, 2013), (b) evaluate the operating characteristics of a given design (both analytically and via simulation), and (c) produce informative plots.
 
 ## Getting started
 
@@ -42,26 +42,26 @@ For further help, please email michael.grayling@newcastle.ac.uk.
 We demonstrate functionality for two-stage designs, with the approach for single-stage designs being similar.
 First, find a two-stage design from Jung (2008) for the default parameters
 
-```{r}
+```{r binomial}
 des_jung <- des_two_stage()
 ```
 
 Then examine its required sample size in each arm, in each stage
 
-```{r}
+```{r binomial_samplesize}
 des_jung$nC
 des_jung$nE
 ```
 
 Next, look at its key operating characteristics
 
-```{r}
+```{r binomial_opchar}
 des_jung$opchar
 ```
 
 Compare this to the equivalent design from Litwin *et al* (2017)
 
-```{r}
+```{r sat}
 des_litwin_et_al <- des_two_stage(type  = "sat",
                                   nCmax = 20L)
 des_litwin_et_al$nC
@@ -71,7 +71,7 @@ des_litwin_et_al$opchar
 
 Now to that from Shan (2013)
 
-```{r}
+```{r barnard}
 des_shan_et_al <- des_two_stage(type  = "barnard",
                                 nCmax = 40L)
 des_shan_et_al$nC
@@ -81,7 +81,7 @@ des_shan_et_al$opchar
 
 And finally that from Jung and Sargent (2014)
 
-```{r}
+```{r fisher}
 des_jung_sargent <- des_two_stage(type  = "fisher")
 des_jung_sargent$nC
 des_jung_sargent$nE
@@ -91,26 +91,28 @@ des_jung_sargent$opchar
 We can then readily find the terminal points of any of these designs, along with their probability mass functions and operating characteristics for any true response rates.
 For example, consider two scenarios given by
 
-```{r}
+```{r pi}
 pi <- rbind(c(0.1, 0.1),
             c(0.1, 0.3))
 ```
 
-Then find the terminal points, probability mass functions, and operating characteristics of the Jung (2008) design with
+Then find the terminal points, probability mass functions, and operating characteristics (both analytically and via simulation) of the Jung (2008) design with
 
-```{r}
+```{r terminal_pmf_opchar}
 terminal_jung <- terminal(des_jung)
 terminal_jung$terminal
 pmf_jung      <- pmf(des_jung, pi)
 pmf_jung$pmf
 opchar_jung   <- opchar(des_jung, pi)
 opchar_jung$opchar
+# sim_jung      <- sim(des_jung, pi)
+# sim_jung$opchar
 ```
 
 Finally, we can plot various factors relating to the designs.
 For example, plot the terminal points of the Jung (2008) design (with their associated decisions), along with the probability of rejecting the null hypothesis when the response probabilities are equal in the two arms or when the difference in the response probabilities is the chosen treatment effect
 
-```{r}
+```{r plot}
 plot(des_jung)
 ```
 

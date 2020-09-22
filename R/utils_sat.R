@@ -1,5 +1,5 @@
-sat_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0,
-                                               Pi1, nCmax, summary) {
+sat_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1, nCmax,
+                                     summary) {
   params               <- search_parameters(1, "sat", nCmax, ratio)
   feasible             <-
     sat_des_one_stage_cpp(alpha, beta, delta, params$poss_nC,
@@ -52,9 +52,9 @@ sat_des_one_stage        <- function(alpha, beta, delta, ratio, Pi0,
   
 }
 
-sat_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0,
-                                               Pi1, nCmax, equal, w, piO,
-                                               efficacy, futility, summary) {
+sat_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1, nCmax,
+                                     equal, w, piO, efficacy, futility,
+                                     summary) {
   params               <- search_parameters(2, "sat", nCmax, ratio)
   feasible             <-
     sat_des_two_stage_cpp(alpha, beta, delta, params$poss_nC,
@@ -164,8 +164,8 @@ sat_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0,
                              Pi1, piO, ratio, summary, w, "sat")
 }
 
-sat_max_ess_2d_two_stage <- function(nC, nE, eS1, eT1, fS1, fT1,
-                                               poss_x1, poss_y1) {
+sat_max_ess_2d_two_stage <- function(nC, nE, eS1, eT1, fS1, fT1, poss_x1,
+                                     poss_y1) {
   max_ESS_2d <- stats::optim(par     = c(0.5, 0.5),
                              fn      = sat_minus_ess_two_stage,
                              nC      = nC,
@@ -179,8 +179,8 @@ sat_max_ess_2d_two_stage <- function(nC, nE, eS1, eT1, fS1, fT1,
   c(max_ESS_2d$par, -max_ESS_2d$value)
 }
 
-sat_minus_ess_two_stage  <- function(pi, nC, nE, eS1, eT1, fS1, fT1,
-                                               poss_x1, poss_y1) {
+sat_minus_ess_two_stage  <- function(pi, nC, nE, eS1, eT1, fS1, fT1, poss_x1,
+                                     poss_y1) {
   if (!missing(poss_x1)) {
     -sat_des_ess_two_stage(pi, nC, nE, eS1, eT1, fS1, fT1, poss_x1,
                                      poss_y1)
@@ -205,8 +205,8 @@ sat_opchar_one_stage     <- function(pi, nC, nE, eS, eT, pmf_pi) {
                         `P(pi)` = P))
 }
 
-sat_opchar_two_stage     <- function(pi, nC, nE, eS1, eT1, fS1, fT1,
-                                               eS2, eT2, k, pmf_pi) {
+sat_opchar_two_stage     <- function(pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2,
+                                     k, pmf_pi) {
   if (missing(pmf_pi)) {
     pmf_pi         <- sat_pmf_two_stage(pi, nC, nE, eS1, eT1, fS1,
                                                   fT1, eS2, eT2, k)
@@ -289,8 +289,8 @@ sat_pmf_one_stage        <- function(pi, nC, nE, eS1, eT1) {
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$xC, .data$xE)
 }
 
-sat_pmf_two_stage        <- function(pi, nC, nE, eS1, eT1, fS1, fT1,
-                                               eS2, eT2, k) {
+sat_pmf_two_stage        <- function(pi, nC, nE, eS1, eT1, fS1, fT1, eS2, eT2,
+                                     k) {
   if (eS1 == Inf) {
     eS1                                          <- nE[1] + 1
   }
@@ -348,8 +348,7 @@ sat_terminal_one_stage   <- function(nC, nE, eS1, eT1) {
                  k          = factor(rep(1, nrow_pmf), 1))
 }
 
-sat_terminal_two_stage   <- function(nC, nE, eS1, eT1, fS1, fT1, eS2,
-                                               eT2, k) {
+sat_terminal_two_stage   <- function(nC, nE, eS1, eT1, fS1, fT1, eS2, eT2, k) {
   if (eS1 == Inf) {
     eS1    <- nE[1] + 1
   }
