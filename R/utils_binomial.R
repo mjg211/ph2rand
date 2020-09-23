@@ -215,10 +215,10 @@ binomial_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
     opchar[i, ]    <- c(pi[i, 1], pi[i, 2], sum(E), ESS, SDSS, MSS, E, Fu, S,
                         n[2])
   }
-  opchar           <- tibble::as_tibble(opchar)
   colnames(opchar) <- c("piC", "piE", "P(pi)", "ESS(pi)", "SDSS(pi)", "MSS(pi)",
                         paste0(rep(c("E", "F", "S"), each = 2), rep(1:2, 3),
                                "(pi)"), "max N")
+  opchar           <- tibble::as_tibble(opchar)
   opchar$`max N`   <- as.integer(opchar$`max N`)
   opchar
 }

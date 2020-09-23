@@ -129,6 +129,124 @@ search_parameters          <- function(J, type, nCmax, ratio) {
        unique_B     = unique_B)
 }
 
+sim_internal               <- function(pi, completed_replicates, des, k,
+                                       replicates, summary, total_replicates) {
+  summary_i                   <-
+    round(seq(1, total_replicates, length.out = 11)[-c(1, 11)])
+  J                           <- des$J
+  nC                          <- des$nC
+  nE                          <- des$nE
+  if (des$type %in% c("barnard", "binomial")) {
+    e                         <- list(des$boundaries$e1, des$boundaries$e2)
+    f                         <- list(des$boundaries$f1, des$boundaries$f2)
+  }
+  cum_nC                      <- cumsum(nC)
+  cum_nE                      <- cumsum(nE)
+  seq_J                       <- 1:J
+  E                           <- Fu <- numeric(J)
+  numeric_2                   <- numeric(2)
+  for (i in 1:replicates) {
+    x                         <- z <- numeric_2
+    for (j in seq_J) {
+      x_iterate               <- stats::rbinom(2, c(nC[j], nE[j]), pi)
+      z[j]                    <- x_iterate[1] + x_iterate[2]
+      x                       <- x + x_iterate
+      if (des$type %in% c("binomial", "fisher", "sat")) {
+        tD                    <- x[2] - x[1]
+        if (des$type == "sat") {
+          tS                  <- x[2]
+        }
+      } else if (des$type == "barnard") {
+        if (any(all(x == 0), all(x == c(cum_nC[j], cum_nE[j])))) {
+          tB                  <- 0
+        } else {
+          fact                <- (x[1] + x[2])/(cum_nC[j] + cum_nE[j])
+          tB                  <-
+            (x[2]/cum_nE[j] - x[1]/cum_nC[j])/
+            sqrt(fact*(1 - fact)*(1/cum_nC[j] + 1/cum_nE[j]))
+        }
+      }
+      continue                <- TRUE
+      if (des$type == "barnard") {
+        if (tB >= e[[j]]) {
+          E[j]                <- E[j] + 1
+          continue            <- FALSE
+        } else if (tB <= f[[j]]) {
+          Fu[j]               <- Fu[j] + 1
+          continue            <- FALSE
+        }
+      } else if (des$type == "binomial") {
+        if (tD >= e[[j]]) {
+          E[j]                <- E[j] + 1
+          continue            <- FALSE
+        } else if (tD <= f[[j]]) {
+          Fu[j]               <- Fu[j] + 1
+          continue            <- FALSE
+        }
+      } else if (des$type == "fisher") {
+        if (j == 1) {
+          if (tD >= des$boundaries$e1[z[1] + 1]) {
+            E[1]              <- E[1] + 1
+            continue          <- FALSE
+          } else if (tD <= des$boundaries$f1[z[1] + 1]) {
+            Fu[1]             <- Fu[1] + 1
+            continue          <- FALSE
+          }
+        } else {
+          if (tD >= des$boundaries$e2[z[1] + 1, z[2] + 1]) {
+            E[2]              <- E[2] + 1
+          } else {
+            Fu[2]             <- Fu[2] + 1
+          }
+        }
+      } else if (des$type == "sat") {
+        if (j == 1) {
+          if (all(tD >= des$boundaries$eT1, tS >= des$boundaries$eS1)) {
+            E[1]              <- E[1] + 1
+            continue          <- FALSE
+          } else if (all(tD <= des$boundaries$fT1, tS <= des$boundaries$fS1)) {
+            Fu[1]             <- Fu[1] + 1
+            continue          <- FALSE
+          }
+        } else {
+          if (all(tD >= des$boundaries$eT2, tS >= des$boundaries$eS2)) {
+            E[2]              <- E[2] + 1
+            continue          <- FALSE
+          } else {
+            Fu[2]             <- Fu[2] + 1
+          }
+        }
+      }
+      if (!continue) {
+        break
+      }
+    }
+    if (all((completed_replicates + i) %in% summary_i, summary)) {
+      message("..approximately ",
+              10*which(summary_i == (completed_replicates + i)),
+              "% through the required simulations..")
+    }
+  }
+  E          <- E/replicates
+  Fu         <- Fu/replicates
+  if (J == 1) {
+    c(pi, E[1])
+  } else {
+    S        <- E + Fu
+    if (length(k) == 1) {
+      E      <- E/S[k]
+      Fu     <- Fu/S[k]
+      E[-k]  <- 0
+      Fu[-k] <- 0
+      S      <- E + Fu
+    }
+    n        <- c(rep(nC[1] + nE[1], replicates*S[1]),
+                  rep(cum_nC[2] + cum_nE[2], replicates*S[2]))
+    c(pi, sum(E), sum(n)/replicates, sd(n), quantile(n, 0.5), E, Fu, S,
+      cum_nC[2] + cum_nE[2])
+  }
+}
+
 theme_ph2rand              <- function(base_size = 11, base_family = "") {
   ggplot2::theme_grey(base_family = base_family,
                       base_size   = base_size) +

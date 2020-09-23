@@ -35,7 +35,7 @@ devtools::install_github("mjg211/ph2rand")
 ```
 
 An introductory example of how to make use of the package’s core functionality can be found below.
-For further help, please email michael.grayling@newcastle.ac.uk.
+For further help, please see the package vignettes or email michael.grayling@newcastle.ac.uk.
 
 ## Example: Two-stage designs
 
@@ -105,8 +105,8 @@ pmf_jung      <- pmf(des_jung, pi)
 pmf_jung$pmf
 opchar_jung   <- opchar(des_jung, pi)
 opchar_jung$opchar
-# sim_jung      <- sim(des_jung, pi)
-# sim_jung$opchar
+sim_jung      <- sim(des_jung, pi)
+sim_jung$sim
 ```
 
 Finally, we can plot various factors relating to the designs.
@@ -116,7 +116,7 @@ For example, plot the terminal points of the Jung (2008) design (with their asso
 plot(des_jung)
 ```
 
-See the package vignette for further details.
+See the package vignettes for further details.
 
 ## References
 

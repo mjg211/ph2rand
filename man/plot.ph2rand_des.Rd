@@ -2,8 +2,8 @@
 % Please edit documentation in R/plot.ph2rand_des.R
 \name{plot.ph2rand_des}
 \alias{plot.ph2rand_des}
-\title{Plot the operating characteristics of a two-arm randomised clinical trial
-design that assumes a Bernoulli primary outcome variable}
+\title{Plot the operating characteristics of a randomised clinical trial design that
+assumes a Bernoulli distributed primary outcome variable}
 \usage{
 \method{plot}{ph2rand_des}(x, k = 1:x$J, output = F, ...)
 }

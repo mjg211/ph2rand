@@ -2,8 +2,8 @@
 % Please edit documentation in R/summary.ph2rand_des.R
 \name{summary.ph2rand_des}
 \alias{summary.ph2rand_des}
-\title{Summarise a two-arm randomised clinical trial design the assumes a Bernoulli
-primary outcome variable}
+\title{Summarise a randomised clinical trial design that assumes a Bernoulli
+distributed primary outcome variable}
 \usage{
 \method{summary}{ph2rand_des}(object, ...)
 }
@@ -19,7 +19,7 @@ primary outcome variable}
 }
 \examples{
 # The default two-stage design
-des   <- des_two_stage()
+des <- des_two_stage()
 # Print a summary
 summary(des)
 }

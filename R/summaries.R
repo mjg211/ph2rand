@@ -159,8 +159,8 @@ summary_opchar      <- function(des, pi, k) {
   message("  Operating characteristics of a ", stage, " design based on ",
           design)
   message("  ", rep("-", dashes))
-  message("\n  You have chosen to find the operating characteristics of a ",
-          "design with")
+  message("\n  You have chosen to analytically determine the operating ",
+          "characteristics of a design with")
   if (des$J == 1) {
     message("    - n1C = ", des$nC)
     message("    - n1E = ", des$nE)
@@ -390,6 +390,84 @@ summary_pmf         <- function(des, pi, k) {
     message("  when pi in {(", pi[1, 1], ", ", pi[1, 2], ")', ..., (",
             pi[nrow(pi), 1], ", ", pi[nrow(pi), 2], ")'}.")
   }
+}
+
+summary_sim         <- function(des, pi, k, replicates) {
+  if (des$J == 1) {
+    stage  <- "one-stage"
+  } else {
+    stage  <- "two-stage"
+  }
+  if (des$type == "barnard") {
+    design <- "barnard's exact test"
+    dashes <- 77
+  } else if (des$type == "binomial") {
+    design <- "an exact binomial test"
+    dashes <- 79
+  } else if (des$type == "fisher") {
+    design <- "Fisher's exact test"
+    dashes <- 76
+  } else if (des$type == "sat") {
+    design <- "one-arm and two-arm testing\n  decisions"
+    dashes <- 84
+  }
+  message("  ", rep("-", dashes))
+  message("  Operating characteristics of a ", stage, " design based on ",
+          design)
+  message("  ", rep("-", dashes))
+  message("\n  You have chosen to estimate via simulation the operating ",
+          "characteristics of a design\n  with")
+  if (des$J == 1) {
+    message("    - n1C = ", des$nC)
+    message("    - n1E = ", des$nE)
+    if (des$type %in% c("barnard", "binomial")) {
+      message("    - e1 = ", round(des$boundaries$e1, 3))
+    } else if (des$type == "fisher") {
+      message("    - e10 = ", des$boundaries$e1[1], ", ..., e11 = ",
+              des$boundaries$e1[2], ", ..., e1", des$nC + des$nE, " = ",
+              des$boundaries$e1[des$nC + des$nE + 1])
+    } else if (des$type == "sat") {
+      message("    - eS1 = ", des$boundaries$eS1)
+      message("    - eT1 = ", des$boundaries$eT1)
+    }
+  } else if (des$J == 2) {
+    message("    - n1C = ", des$nC[1])
+    message("    - n2C = ", des$nC[2])
+    message("    - n1E = ", des$nE[1])
+    message("    - n2E = ", des$nE[2])
+    if (des$type %in% c("barnard", "binomial")) {
+      message("    - e1 = ", round(des$boundaries$e1, 3))
+      message("    - f1 = ", round(des$boundaries$f1, 3))
+      message("    - e2 = ", round(des$boundaries$e2, 3))
+    } else if (des$type == "fisher") {
+      message("    - e10 = ", des$boundaries$e1[1], ", ..., e11 = ",
+              des$boundaries$e1[2], ", ..., e1", des$nC + des$nE, " = ",
+              des$boundaries$e1[des$nC + des$nE + 1])
+      message("    - f10 = ", des$boundaries$f1[1], ", ..., f11 = ",
+              des$boundaries$f1[2], ", ..., f1", des$nC + des$nE, " = ",
+              des$boundaries$f1[des$nC + des$nE + 1])
+      message("    - e200 = ", des$boundaries$e2[1, 1], ", ..., ",
+              "e2", des$nC[1] + des$nE[1], des$nC[2] + des$nE[2], " = ",
+              des$boundaries$e2[des$nC[1] + des$nE[1], des$nC[2] + des$nE[2]])
+    } else if (des$type == "sat") {
+      message("    - eS1 = ", des$boundaries$eS1)
+      message("    - eT1 = ", des$boundaries$eT1)
+      message("    - fS1 = ", des$boundaries$fS1)
+      message("    - fT1 = ", des$boundaries$fT1)
+      message("    - eS2 = ", des$boundaries$eS2)
+      message("    - eT2 = ", des$boundaries$eT2)
+    }
+  }
+  if (nrow(pi) == 1) {
+    message("  when pi = (", pi[1, 1], ", ", pi[1, 2], ")'.")
+  } else if (nrow(pi) == 2) {
+    message("  when pi in {(", pi[1, 1], ", ", pi[1, 2], ")', (", pi[2, 1],
+            ", ", pi[2, 2], ")'}.")
+  } else {
+    message("  when pi in {(", pi[1, 1], ", ", pi[1, 2], ")', ..., (",
+            pi[nrow(pi), 1], ", ", pi[nrow(pi), 2], ")'}.")
+  }
+  message("\n  ", replicates, " simulations will be used for each value of pi.")
 }
 
 summary_terminal    <- function(des, k) {

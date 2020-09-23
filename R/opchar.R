@@ -1,5 +1,5 @@
-#' Operating characteristics of a randomised clinical trial design that assumes
-#' a Bernoulli distributed primary outcome variable
+#' Determine operating characteristics of a randomised clinical trial design
+#' that assumes a Bernoulli distributed primary outcome variable
 #'
 #' \code{opchar} determines the operating characteristics (analytically) of a
 #' design returned by \code{\link{des_one_stage}} or
@@ -34,8 +34,7 @@
 #' # The same operating characteristics, conditioning on the trial ending in
 #' # stage 2
 #' opchar <- opchar(des, k = 2)
-#' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
-#' \code{\link{plot.ph2rand_terminal}}.
+#' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}}.
 #' @export
 opchar <- function(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
                    k = 1:des$J, summary = F) {

@@ -2,8 +2,8 @@
 % Please edit documentation in R/plot.ph2rand_terminal.R
 \name{plot.ph2rand_terminal}
 \alias{plot.ph2rand_terminal}
-\title{Plot the terminal points of a two-arm randomised clinical trial design that
-assumes a Bernoulli primary outcome variable}
+\title{Plot the terminal points of a randomised clinical trial design that assumes a
+Bernoulli distributed primary outcome variable}
 \usage{
 \method{plot}{ph2rand_terminal}(x, output = F, ...)
 }

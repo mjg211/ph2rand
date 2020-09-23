@@ -17,7 +17,8 @@
 #'
 #' An introductory example of how to make use of the package's core
 #' functionality can be found \href{https://github.com/mjg211/ph2rand}{here}.
-#' For further help, please email \email{michael.grayling@@newcastle.ac.uk}.
+#' For further help, please see the package vignettes or email
+#' \email{michael.grayling@@newcastle.ac.uk}.
 #'
 #' @section Details:
 #' 

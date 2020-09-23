@@ -2,11 +2,15 @@
 % Please edit documentation in R/pmf.R
 \name{pmf}
 \alias{pmf}
-\title{Probability mass functions of a two-arm randomised clinical trial design that
-assumes a Bernoulli primary outcome variable}
+\title{Probability mass functions of a randomised clinical trial design that assumes
+a Bernoulli distributed primary outcome variable}
 \usage{
-pmf(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
-  k = 1:des$J, summary = F)
+pmf(
+  des = ph2rand::des_one_stage(),
+  pi = des$opchar[, 1:2],
+  k = 1:des$J,
+  summary = F
+)
 }
 \arguments{
 \item{des}{An object of class \code{ph2rand_des}, as returned by

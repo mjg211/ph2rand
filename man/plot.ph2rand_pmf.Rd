@@ -2,8 +2,8 @@
 % Please edit documentation in R/plot.ph2rand_pmf.R
 \name{plot.ph2rand_pmf}
 \alias{plot.ph2rand_pmf}
-\title{Plot probability mass functions of a two-arm randomised clinical trial design
-that assumes a Bernoulli primary outcome variable}
+\title{Plot probability mass functions of a randomised clinical trial design that
+assumes a Bernoulli distributed primary outcome variable}
 \usage{
 \method{plot}{ph2rand_pmf}(x, output = F, ...)
 }

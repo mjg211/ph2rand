@@ -3,11 +3,19 @@
 \name{des_one_stage}
 \alias{des_one_stage}
 \title{Design a one-stage two-arm randomised clinical trial assuming a Bernoulli
-primary outcome variable}
+distributed primary outcome variable}
 \usage{
-des_one_stage(type = "binomial", alpha = 0.1, beta = 0.2,
-  delta = 0.2, ratio = 1, Pi0 = 0.1, Pi1 = Pi0[1], nCmax = 50L,
-  summary = F)
+des_one_stage(
+  type = "binomial",
+  alpha = 0.1,
+  beta = 0.2,
+  delta = 0.2,
+  ratio = 1,
+  Pi0 = 0.1,
+  Pi1 = Pi0[1],
+  nCmax = 50L,
+  summary = F
+)
 }
 \arguments{
 \item{type}{A \code{\link{character}} string indicating the chosen design
@@ -92,6 +100,6 @@ des_range <- des_one_stage(Pi0 = c(0, 1),
 }
 \seealso{
 \code{\link{des_two_stage}}, \code{\link{opchar}},
-\code{\link{pmf}}, \code{\link{terminal}}, \code{\link{plot.ph2rand_des}},
-\code{\link{summary.ph2rand_des}}.
+\code{\link{pmf}}, \code{\link{sim}}, \code{\link{terminal}},
+\code{\link{plot.ph2rand_des}}, \code{\link{summary.ph2rand_des}}.
 }

@@ -3,13 +3,28 @@
 \name{des_two_stage}
 \alias{des_two_stage}
 \title{Design a two-stage two-arm randomised clinical trial assuming a Bernoulli
-primary outcome variable}
+distributed primary outcome variable}
 \usage{
-des_two_stage(type = "binomial", alpha = 0.1, beta = 0.2,
-  delta = 0.2, ratio = 1, Pi0 = 0.1, Pi1 = Pi0[1], nCmax = 50L,
-  equal = T, w = c(1, 0, 0, 0, 0), piO = Pi0[1], efficacy = F,
-  futility = T, efficacy_type = 0L, efficacy_param = NULL,
-  futility_type = 1L, futility_param = 0L, summary = F)
+des_two_stage(
+  type = "binomial",
+  alpha = 0.1,
+  beta = 0.2,
+  delta = 0.2,
+  ratio = 1,
+  Pi0 = 0.1,
+  Pi1 = Pi0[1],
+  nCmax = 50L,
+  equal = T,
+  w = c(1, 0, 0, 0, 0),
+  piO = Pi0[1],
+  efficacy = F,
+  futility = T,
+  efficacy_type = 0L,
+  efficacy_param = NULL,
+  futility_type = 1L,
+  futility_param = 0L,
+  summary = F
+)
 }
 \arguments{
 \item{type}{A \code{\link{character}} string indicating the chosen design

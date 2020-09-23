@@ -2,8 +2,8 @@
 % Please edit documentation in R/terminal.R
 \name{terminal}
 \alias{terminal}
-\title{Terminal points of a two-arm randomised clinical trial design that assumes a
-Bernoulli primary outcome variable}
+\title{Terminal points of a randomised clinical trial design that assumes a
+Bernoulli distributed primary outcome variable}
 \usage{
 terminal(des = ph2rand::des_one_stage(), k = 1:des$J, summary = F)
 }

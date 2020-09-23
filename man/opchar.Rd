@@ -2,11 +2,15 @@
 % Please edit documentation in R/opchar.R
 \name{opchar}
 \alias{opchar}
-\title{Operating characteristics of a two-arm randomised clinical trial design that
-assumes a Bernoulli primary outcome variable}
+\title{Determine operating characteristics of a randomised clinical trial design
+that assumes a Bernoulli distributed primary outcome variable}
 \usage{
-opchar(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
-  k = 1:des$J, summary = F)
+opchar(
+  des = ph2rand::des_one_stage(),
+  pi = des$opchar[, 1:2],
+  k = 1:des$J,
+  summary = F
+)
 }
 \arguments{
 \item{des}{An object of class \code{ph2rand_des}, as returned by
@@ -35,9 +39,10 @@ containing each of the input parameters along with a tibble in the slot
 \code{$opchar}, which gives the determined operating characteristics.
 }
 \description{
-\code{opchar} determines the operating characteristics of a design returned
-by \code{\link{des_one_stage}} or \code{\link{des_two_stage}}, under given
-response rate scenarios (see \code{pi}).
+\code{opchar} determines the operating characteristics (analytically) of a
+design returned by \code{\link{des_one_stage}} or
+\code{\link{des_two_stage}}, under given response rate scenarios (see
+\code{pi}).
 }
 \examples{
 # The default two-stage design
@@ -50,6 +55,5 @@ opchar <- opchar(des)
 opchar <- opchar(des, k = 2)
 }
 \seealso{
-\code{\link{des_one_stage}}, \code{\link{des_two_stage}},
-\code{\link{plot.ph2rand_terminal}}.
+\code{\link{des_one_stage}}, \code{\link{des_two_stage}}.
 }

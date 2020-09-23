@@ -27,8 +27,8 @@ devtools::install_github("mjg211/ph2rand")
 ```
 
 An introductory example of how to make use of the package’s core
-functionality can be found below. For further help, please email
-<michael.grayling@newcastle.ac.uk>.
+functionality can be found below. For further help, please see the
+package vignettes or email <michael.grayling@newcastle.ac.uk>.
 
 ## Example: Two-stage designs
 
@@ -38,10 +38,6 @@ from Jung (2008) for the default parameters
 
 ``` r
 des_jung <- des_two_stage()
-#> Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
-#> Using compatibility `.name_repair`.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_warnings()` to see where this warning was generated.
 ```
 
 Then examine its required sample size in each arm, in each stage
@@ -178,8 +174,15 @@ opchar_jung$opchar
 #> 2   0.1   0.3  0.813       64.7       10.1        68        0   0.813    0.0972
 #> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
 #> #   N` <int>
-# sim_jung      <- sim(des_jung, pi)
-# sim_jung$opchar
+sim_jung      <- sim(des_jung, pi)
+sim_jung$sim
+#> # A tibble: 2 x 13
+#>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
+#>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
+#> 1   0.1   0.1  0.0718      47.0       16.5        34        0   0.0718    0.618
+#> 2   0.1   0.3  0.804       64.6       10.2        68        0   0.804     0.101
+#> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
+#> #   N` <int>
 ```
 
 Finally, we can plot various factors relating to the designs. For
@@ -193,9 +196,9 @@ treatment effect
 plot(des_jung)
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-3-2.png" width="100%" />
+<img src="man/figures/README-plot-1.png" width="100%" /><img src="man/figures/README-plot-2.png" width="100%" />
 
-See the package vignette for further details.
+See the package vignettes for further details.
 
 ## References
 
