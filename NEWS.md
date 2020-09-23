@@ -1,8 +1,6 @@
-# News: ph2rand
+# ph2rand 0.1
 
-## v.0.1
-
-- Support established for a variety of single-stage and two-stage randomized
+* Support established for a variety of single-stage and two-stage randomized
 comparative designs, assuming the primary outcome variable is Bernoulli
 distributed (`des_one_stage()` and `des_two_stage()`). In addition, functions
 created to return the probability mass functions (`pmf()`), terminal points
