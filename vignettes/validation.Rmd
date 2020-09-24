@@ -1,0 +1,809 @@
+---
+title: "ph2rand: Validation"
+author: "Michael J Grayling (michael.grayling@newcastle.ac.uk)"
+date: "`r Sys.Date()`"
+output: pdf_document
+header-includes:
+  - \usepackage{mathrsfs}
+vignette: >
+  %\VignetteIndexEntry{ph2rand: Validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, cache = TRUE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r ph2rand, echo = F, cache = TRUE}
+suppressPackageStartupMessages(library(ph2rand))
+```
+
+# 1. Using `sim()` to confirm design operating characteristics
+
+All exported commands in __ph2rand__, with the exception of `sim()`, rely on a number of underlying modules to perform the required calculations analytically (i.e., exactly, using binomial densities), without recourse to simulation.
+Therefore, while good programming practices have been implemented to minimise potential bugs, and all code has been tested extensively, to provide greater assurance that any returned design has the anticipated operating characteristics, the function `sim()` has also been made available.
+
+`sim()` operates in a different manner, not calling any of the other sub-modules used by the other exported commands; it uses a simple simulation study to estimate a design's operating characteristics.
+In this vignette, we provide an example on how to use `sim()` to acquire some degree of increased confidence in identified designs.
+In addition, we also provide code that seeks to reproduce results from previous relevant articles using `des_one_stage()` and `des_two_stage()`; this code also serves to increase confidence in __ph2rand__.
+
+## 2. Example: Two-stage design from Jung (2008)
+
+As explained in `vignette("ph2rand")`, the default two-stage design can be found with
+
+```{r default}
+des_jung <- des_two_stage()
+```
+
+The operating characteristics under the null and alternative are then available with
+
+```{r opchar}
+des_jung$opchar
+```
+
+These can be re-evaluated using simulation by calling `sim()` as follows
+
+```{r sim}
+sim_jung <- sim(des_jung, replicates = 1e5)
+sim_jung$sim
+```
+
+As can be seen, the estimated operating characteristics are almost identical allowing for simulation error.
+
+# 3. Reproducing results from previous publications
+
+## 3.1. Jung (2008)
+
+We begin by providing code to reproduce results Jung (2008).
+First, we can reproduce Table I with
+
+```{r table_I, eval = FALSE}
+fact              <- rep(seq(0.1, 0.75, 0.05), each = 2)
+p0p1              <- rbind(c(0.05, 0.15),
+                           c(0.05, 0.20),
+                           c(0.05, 0.25),
+                           cbind(fact, fact + rep(c(0.15, 0.2), 14)),
+                           c(0.80, 0.95),
+                           c(0.85, 0.95))
+# Table I
+table_I           <- cbind(p0p1, matrix(0, nrow(p0p1), 11))
+colnames(table_I) <- c("p0", "p1", "Single-stage design: (n,a)",
+                       "Single-stage design: alpha",
+                       "Single-stage design: 1-beta",
+                       "Minimax design: (n,n1,a1,a)", "Minimax design: alpha",
+                       "Minimax design: 1-beta", "Minimax design: EN",
+                       "Optimal design: (n,n1,a1,a)", "Optimal design: alpha",
+                       "Optimal design: 1-beta", "Optimal design: EN")
+table_I           <- tibble::as_tibble(table_I)
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_one_stage(alpha = 0.15,
+                                   beta  = 0.2,
+                                   delta = table_I$p1[i] - table_I$p0[i],
+                                   Pi0   = table_I$p0[i],
+                                   Pi1   = table_I$p0[i],
+                                   nCmax = 100L)
+  table_I$`Single-stage design: (n,a)`[i]  <- paste0("(", des_i$nC, ",",
+                                                     des_i$boundaries$e1, ")")
+  table_I$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_I$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table I single-stage design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(50, 22, 16, 38, 24, 46, 32, 57, 33, 67, 39, 70, 41,
+                           78, 42, 78, 45, 78, 46, 78, 45, 77, 43, 76, 40, 68,
+                           38, 63, 33, 52, 29, 42, 76)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.15,
+                                   beta    = 0.2,
+                                   delta   = table_I$p1[i] - table_I$p0[i],
+                                   Pi0     = table_I$p0[i],
+                                   Pi1     = table_I$p0[i],
+                                   equal   = FALSE,
+                                   w       = c(1e-6, 0, 0, 0, 1),
+                                   nCmax   = nCmax[i])
+  table_I$`Minimax design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_I$`Minimax design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_I$`Minimax design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_I$`Minimax design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table I minimax design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(57, 27, 22, 56, 28, 51, 32, 66, 39, 78, 43, 77, 46,
+                           95, 50, 90, 49, 90, 49, 90, 53, 90, 48, 89, 45, 75,
+                           44, 73, 36, 60, 33, 46, 89)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.15,
+                                   beta    = 0.2,
+                                   delta   = table_I$p1[i] - table_I$p0[i],
+                                   Pi0     = table_I$p0[i],
+                                   Pi1     = table_I$p0[i],
+                                   equal   = FALSE,
+                                   w       = c(1, 0, 0, 0, 0),
+                                   nCmax   = nCmax[i])
+  table_I$`Optimal design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_I$`Optimal design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_I$`Optimal design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_I$`Optimal design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table I optimal design ", i, " completed..")
+}
+```
+
+Note that when searching for the minimax and optimal designs we allow the control arm sample size to be up to 10% larger than that given in Table I of Jung (2008).
+This approach will be taken where relevant throughout this vignette.
+
+To reproduce Tables II-IV, we can use
+
+```{r other_tables, eval = FALSE}
+table_II            <- cbind(p0p1, matrix(0, nrow(p0p1), 11))
+colnames(table_II)  <- c("p0", "p1", "Single-stage design: (n,a)",
+                        "Single-stage design: alpha",
+                        "Single-stage design: 1-beta",
+                        "Minimax design: (n,n1,a1,a)", "Minimax design: alpha",
+                        "Minimax design: 1-beta", "Minimax design: EN",
+                        "Optimal design: (n,n1,a1,a)", "Optimal design: alpha",
+                        "Optimal design: 1-beta", "Optimal design: EN")
+table_II            <- tibble::as_tibble(table_II)
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_one_stage(alpha = 0.15,
+                                     beta  = 0.15,
+                                     delta = table_II$p1[i] - table_II$p0[i],
+                                     Pi0   = table_II$p0[i],
+                                     Pi1   = table_II$p0[i],
+                                     nCmax = 100L)
+  table_II$`Single-stage design: (n,a)`[i]  <- paste0("(", des_i$nC, ",",
+                                                     des_i$boundaries$e1, ")")
+  table_II$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_II$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table II single-stage design ", i, " completed..")
+}
+nCmax               <-
+  as.integer(ceiling(1.1*c(58, 34, 19, 49, 28, 62, 36, 74, 43, 78, 46, 87, 50,
+                           91, 54, 98, 54, 98, 54, 98, 54, 96, 53, 88, 51, 83,
+                           44, 73, 41, 67, 32, 53, 95)))
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_two_stage(alpha   = 0.15,
+                                     beta    = 0.15,
+                                     delta   = table_II$p1[i] - table_II$p0[i],
+                                     Pi0     = table_II$p0[i],
+                                     Pi1     = table_II$p0[i],
+                                     equal   = FALSE,
+                                     w       = c(1e-6, 0, 0, 0, 1),
+                                     nCmax   = nCmax[i])
+  table_II$`Minimax design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_II$`Minimax design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_II$`Minimax design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_II$`Minimax design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table II minimax design ", i, " completed..")
+}
+nCmax               <-
+  as.integer(ceiling(1.1*c(69, 34, 22, 59, 32, 73, 44, 89, 45, 87, 52, 98, 55,
+                           103, 63, 112, 61, 109, 63, 100, 60, 107, 60, 99, 55,
+                           94, 49, 82, 47, 69, 37, 60, 103)))
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_two_stage(alpha   = 0.15,
+                                     beta    = 0.15,
+                                     delta   = table_II$p1[i] - table_II$p0[i],
+                                     Pi0     = table_II$p0[i],
+                                     Pi1     = table_II$p0[i],
+                                     equal   = FALSE,
+                                     w       = c(1, 0, 0, 0, 0),
+                                     nCmax   = nCmax[i])
+  table_II$`Optimal design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_II$`Optimal design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_II$`Optimal design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_II$`Optimal design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table II optimal design ", i, " completed..")
+}
+# Table III
+table_III           <- cbind(p0p1, matrix(0, nrow(p0p1), 11))
+colnames(table_III) <- c("p0", "p1", "Single-stage design: (n,a)",
+                         "Single-stage design: alpha",
+                         "Single-stage design: 1-beta",
+                         "Minimax design: (n,n1,a1,a)", "Minimax design: alpha",
+                         "Minimax design: 1-beta", "Minimax design: EN",
+                         "Optimal design: (n,n1,a1,a)", "Optimal design: alpha",
+                         "Optimal design: 1-beta", "Optimal design: EN")
+table_III           <- tibble::as_tibble(table_III)
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_one_stage(alpha = 0.2,
+                                     beta  = 0.2,
+                                     delta = table_III$p1[i] - table_III$p0[i],
+                                     Pi0   = table_III$p0[i],
+                                     Pi1   = table_III$p0[i],
+                                     nCmax = 100L)
+  table_III$`Single-stage design: (n,a)`[i]  <- paste0("(", des_i$nC, ",",
+                                                      des_i$boundaries$e1, ")")
+  table_III$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_III$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table III single-stage design ", i, " completed..")
+}
+nCmax               <-
+  as.integer(ceiling(1.1*c(41, 22, 16, 34, 17, 41, 25, 48, 27, 53, 32, 60, 35,
+                           60, 35, 62, 35, 64, 35, 64, 35, 61, 34, 58, 33, 57,
+                           32, 49, 26, 43, 23, 33, 63)))
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_two_stage(alpha   = 0.2,
+                                     beta    = 0.2,
+                                     delta   = table_III$p1[i] -
+                                       table_III$p0[i],
+                                     Pi0     = table_III$p0[i],
+                                     Pi1     = table_III$p0[i],
+                                     equal   = FALSE,
+                                     w       = c(1e-6, 0, 0, 0, 1),
+                                     nCmax   = nCmax[i])
+  table_III$`Minimax design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_III$`Minimax design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_III$`Minimax design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_III$`Minimax design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table III minimax design ", i, " completed..")
+}
+nCmax               <-
+  as.integer(ceiling(1.1*c(42, 27, 18, 35, 18, 42, 28, 53, 29, 56, 35, 68, 41,
+                           67, 38, 69, 39, 69, 38, 67, 38, 66, 37, 63, 36, 69,
+                           38, 51, 28, 47, 24, 34, 69)))
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_two_stage(alpha   = 0.2,
+                                     beta    = 0.2,
+                                     delta   = table_III$p1[i] -
+                                       table_III$p0[i],
+                                     Pi0     = table_III$p0[i],
+                                     Pi1     = table_III$p0[i],
+                                     equal   = FALSE,
+                                     w       = c(1, 0, 0, 0, 0),
+                                     nCmax   = nCmax[i])
+  table_III$`Optimal design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_III$`Optimal design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_III$`Optimal design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_III$`Optimal design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table III ptimal design ", i, " completed..")
+}
+# Table IV
+table_IV            <- cbind(p0p1, matrix(0, nrow(p0p1), 11))
+colnames(table_IV)  <- c("p0", "p1", "Single-stage design: (n,a)",
+                         "Single-stage design: alpha",
+                         "Single-stage design: 1-beta",
+                         "Minimax design: (n,n1,a1,a)", "Minimax design: alpha",
+                         "Minimax design: 1-beta", "Minimax design: EN",
+                         "Optimal design: (n,n1,a1,a)", "Optimal design: alpha",
+                         "Optimal design: 1-beta", "Optimal design: EN")
+table_IV            <- tibble::as_tibble(table_IV)
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_one_stage(alpha = 0.2,
+                                     beta  = 0.15,
+                                     delta = table_IV$p1[i] - table_IV$p0[i],
+                                     Pi0   = table_IV$p0[i],
+                                     Pi1   = table_IV$p0[i],
+                                     nCmax = 100L)
+  table_IV$`Single-stage design: (n,a)`[i]  <- paste0("(", des_i$nC, ",",
+                                                       des_i$boundaries$e1, ")")
+  table_IV$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_IV$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table IV single-stage design ", i, " completed..")
+}
+nCmax               <-
+  as.integer(ceiling(1.1*c(58, 26, 19, 40, 27, 53, 30, 58, 36, 67, 39, 70, 40,
+                           78, 43, 80, 47, 80, 47, 80, 47, 78, 44, 75, 39, 66,
+                           36, 62, 34, 50, 26, 42, 73)))
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_two_stage(alpha   = 0.2,
+                                     beta    = 0.15,
+                                     delta   = table_IV$p1[i] - table_IV$p0[i],
+                                     Pi0     = table_IV$p0[i],
+                                     Pi1     = table_IV$p0[i],
+                                     equal   = FALSE,
+                                     w       = c(1e-6, 0, 0, 0, 1),
+                                     nCmax   = nCmax[i])
+  table_IV$`Minimax design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_IV$`Minimax design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_IV$`Minimax design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_IV$`Minimax design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table IV minimax design ", i, " completed..")
+}
+nCmax               <-
+  as.integer(ceiling(1.1*c(70, 27, 22, 43, 27, 59, 32, 61, 40, 74, 43, 78, 45,
+                           85, 45, 90, 49, 94, 53, 94, 50, 85, 45, 77, 41, 71,
+                           39, 69, 42, 54, 27, 46, 79)))
+for (i in 1:nrow(p0p1)) {
+  des_i             <- des_two_stage(alpha   = 0.2,
+                                     beta    = 0.15,
+                                     delta   = table_IV$p1[i] - table_IV$p0[i],
+                                     Pi0     = table_IV$p0[i],
+                                     Pi1     = table_IV$p0[i],
+                                     equal   = FALSE,
+                                     w       = c(1, 0, 0, 0, 0),
+                                     nCmax   = nCmax[i])
+  table_IV$`Optimal design: (n,n1,a1,a)`[i] <-
+    paste0("(", sum(des_i$nC), ",", des_i$nC[1], ",",
+           des_i$boundaries$f1 + 1, ",", des_i$boundaries$e2, ")")
+  table_IV$`Optimal design: alpha`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_IV$`Optimal design: 1-beta`[i]      <- des_i$opchar$`P(pi)`[2]
+  table_IV$`Optimal design: EN`[i]          <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table IV optimal design ", i, " completed..")
+}
+```
+
+Note that Jung (2008) does not make it clear exactly how minimax designs are specified, i.e., how a choice between designs with the same minimal maximal sample size is made.
+Therefore, some differences may appear between identified minimax designs.
+
+Finally, the designs of Examples 1-2 and from Section 3.2 can be reproduced with
+
+```{r examples, eval = FALSE}
+# Example 1
+single_stage <- des_one_stage(alpha = 0.15,
+                              beta  = 0.2,
+                              Pi0   = 0.7,
+                              Pi1   = 0.7,
+                              delta = 0.15)
+minimax      <- des_two_stage(alpha = 0.15,
+                              beta  = 0.2,
+                              Pi0   = 0.7,
+                              Pi1   = 0.7,
+                              delta = 0.15,
+                              equal = FALSE,
+                              w     = c(1e-6, 0, 0, 0, 1))
+optimal      <- des_two_stage(alpha = 0.15,
+                              beta  = 0.2,
+                              Pi0   = 0.7,
+                              Pi1   = 0.7,
+                              delta = 0.15,
+                              equal = FALSE,
+                              w     = c(1, 0, 0, 0, 0))
+calgb        <- des_two_stage(alpha = 0.16,
+                              beta  = 0.2,
+                              Pi0   = 0.7,
+                              Pi1   = 0.7,
+                              delta = 0.15,
+                              equal = FALSE,
+                              w     = c(1, 0, 0, 0, 0))
+# Example 2
+minimax      <- des_two_stage(alpha = 0.15,
+                              beta  = 0.2,
+                              Pi0   = 0.7,
+                              Pi1   = 0.7,
+                              delta = 0.15,
+                              equal = FALSE,
+                              ratio = 2,
+                              w     = c(1e-6, 0, 0, 0, 1))
+optimal      <- des_two_stage(alpha = 0.15,
+                              beta  = 0.2,
+                              Pi0   = 0.7,
+                              Pi1   = 0.7,
+                              delta = 0.15,
+                              equal = FALSE,
+                              ratio = 2,
+                              w     = c(1, 0, 0, 0, 0))
+# Section 3.2
+minimax      <- des_two_stage(alpha = 0.15,
+                              beta  = 0.2,
+                              Pi0   = c(0, 1),
+                              Pi1   = c(0, 0.85),
+                              delta = 0.15,
+                              equal = FALSE,
+                              w     = c(1e-6, 0, 0, 0, 1))
+optimal      <- des_two_stage(alpha = 0.15,
+                              beta  = 0.2,
+                              Pi0   = c(0, 1),
+                              Pi1   = c(0, 0.85),
+                              delta = 0.15,
+                              equal = FALSE,
+                              w     = c(1, 0, 0, 0, 0))
+```
+
+## 3.2. Jung and Sargent (2014)
+
+Tables 2-5 from Jung and Sargent (2014) can be reproduced with
+
+```{r jung_sargent, eval = FALSE}
+# Table 2
+table_2           <-
+  cbind(p0p1, p0p1[, 2]*(1 - p0p1[, 1])/(p0p1[, 1]*(1 - p0p1[, 2])),
+        matrix(0, nrow(p0p1), 11))
+colnames(table_2) <- c("py", "px", "theta", "Single-stage design: n",
+                       "Single-stage design: alpha",
+                       "Single-stage design: 1-beta",
+                       "Minimax design: (n,n1)", "Minimax design: alpha",
+                       "Minimax design: 1-beta", "Minimax design: EN",
+                       "Optimal design: (n,n1)", "Optimal design: alpha",
+                       "Optimal design: 1-beta", "Optimal design: EN")
+table_2           <- tibble::as_tibble(table_2)
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_one_stage(alpha = 0.15,
+                                   beta  = 0.2,
+                                   type  = "fisher",
+                                   delta = table_2$px[i] - table_2$py[i],
+                                   Pi0   = table_2$py[i],
+                                   Pi1   = table_2$py[i],
+                                   nCmax = 100L)
+  table_2$`Single-stage design: n`[i]      <- des_i$nC
+  table_2$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_2$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table 2 single-stage design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(78, 44, 29, 56, 36, 65, 41, 74, 46, 81, 47, 85, 49,
+                           86, 54, 87, 54, 87, 54, 86, 49, 85, 47, 81, 46, 74,
+                           41, 65, 36, 56, 29, 44, 78)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.15,
+                                   beta    = 0.2,
+                                   type    = "fisher",
+                                   delta   = table_2$px[i] - table_2$py[i],
+                                   Pi0     = table_2$py[i],
+                                   Pi1     = table_2$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1e-6, 0, 0, 0, 1),
+                                   nCmax   = nCmax[i])
+  table_2$`Minimax design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_2$`Minimax design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_2$`Minimax design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_2$`Minimax design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 2 minimax design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(81, 44, 29, 58, 37, 69, 42, 79, 49, 84, 50, 95, 52,
+                           95, 55, 94, 56, 94, 55, 95, 52, 96, 50, 84, 50, 81,
+                           43, 69, 38, 59, 30, 46, 83)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.15,
+                                   beta    = 0.2,
+                                   delta   = table_2$px[i] - table_2$py[i],
+                                   Pi0     = table_2$py[i],
+                                   Pi1     = table_2$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1, 0, 0, 0, 0),
+                                   nCmax   = nCmax[i])
+  table_2$`Optimal design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_2$`Optimal design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_2$`Optimal design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_2$`Optimal design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 2 optimal design ", i, " completed..")
+}
+# Table 3
+table_3           <-
+  cbind(p0p1, p0p1[, 2]*(1 - p0p1[, 1])/(p0p1[, 1]*(1 - p0p1[, 2])),
+        matrix(0, nrow(p0p1), 11))
+colnames(table_3) <- c("p0", "p1", "theta", "Single-stage design: n",
+                       "Single-stage design: alpha",
+                       "Single-stage design: 1-beta",
+                       "Minimax design: (n,n1)", "Minimax design: alpha",
+                       "Minimax design: 1-beta", "Minimax design: EN",
+                       "Optimal design: (n,n1)", "Optimal design: alpha",
+                       "Optimal design: 1-beta", "Optimal design: EN")
+table_3           <- tibble::as_tibble(table_3)
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_one_stage(alpha = 0.15,
+                                   beta  = 0.15,
+                                   type  = "fisher",
+                                   delta = table_3$px[i] - table_2$py[i],
+                                   Pi0   = table_3$py[i],
+                                   Pi1   = table_3$py[i],
+                                   nCmax = 100L)
+  table_3$`Single-stage design: n`[i]      <- des_i$nC
+  table_3$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_3$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table 3 single-stage design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(92, 51, 34, 65, 41, 78, 49, 88, 52, 94, 59, 100, 60,
+                           106, 61, 107, 61, 107, 61, 106, 60, 100, 59, 94, 52,
+                           88, 49, 78, 41, 65, 34, 51, 92)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.15,
+                                   beta    = 0.15,
+                                   type    = "fisher",
+                                   delta   = table_3$px[i] - table_3$py[i],
+                                   Pi0     = table_3$py[i],
+                                   Pi1     = table_3$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1e-6, 0, 0, 0, 1),
+                                   nCmax   = nCmax[i])
+  table_3$`Minimax design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_3$`Minimax design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_3$`Minimax design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_3$`Minimax design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 3 minimax design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(94, 52, 34, 68, 42, 82, 51, 93, 56, 102, 62, 107, 65,
+                           114, 65, 115, 66, 115, 65, 114, 65, 107, 62, 102, 56,
+                           93, 52, 84, 43, 69, 35, 53, 98)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.15,
+                                   beta    = 0.15,
+                                   delta   = table_3$px[i] - table_3$py[i],
+                                   Pi0     = table_3$py[i],
+                                   Pi1     = table_3$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1, 0, 0, 0, 0),
+                                   nCmax   = nCmax[i])
+  table_3$`Optimal design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_3$`Optimal design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_3$`Optimal design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_3$`Optimal design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 3 optimal design ", i, " completed..")
+}
+# Table 4
+table_4           <-
+  cbind(p0p1, p0p1[, 2]*(1 - p0p1[, 1])/(p0p1[, 1]*(1 - p0p1[, 2])),
+        matrix(0, nrow(p0p1), 11))
+colnames(table_4) <- c("p0", "p1", "theta", "Single-stage design: n",
+                       "Single-stage design: alpha",
+                       "Single-stage design: 1-beta",
+                       "Minimax design: (n,n1)", "Minimax design: alpha",
+                       "Minimax design: 1-beta", "Minimax design: EN",
+                       "Optimal design: (n,n1)", "Optimal design: alpha",
+                       "Optimal design: 1-beta", "Optimal design: EN")
+table_4           <- tibble::as_tibble(table_4)
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_one_stage(alpha = 0.2,
+                                   beta  = 0.2,
+                                   type  = "fisher",
+                                   delta = table_4$px[i] - table_4$py[i],
+                                   Pi0   = table_4$py[i],
+                                   Pi1   = table_4$py[i],
+                                   nCmax = 100L)
+  table_4$`Single-stage design: n`[i]      <- des_i$nC
+  table_4$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_4$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table 4 single-stage design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(65, 38, 25, 47, 30, 54, 34, 62, 39, 67, 40, 68, 41,
+                           69, 42, 70, 42, 70, 42, 69, 41, 68, 41, 67, 39, 62,
+                           34, 54, 30, 47, 25, 38, 65)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.2,
+                                   beta    = 0.2,
+                                   type    = "fisher",
+                                   delta   = table_4$px[i] - table_4$py[i],
+                                   Pi0     = table_4$py[i],
+                                   Pi1     = table_4$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1e-6, 0, 0, 0, 1),
+                                   nCmax   = nCmax[i])
+  table_4$`Minimax design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_4$`Minimax design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_4$`Minimax design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_4$`Minimax design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 4 minimax design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(68, 38, 25, 47, 31, 60, 35, 65, 40, 73, 45, 75, 45,
+                           76, 46, 77, 45, 77, 46, 76, 45, 77, 45, 73, 40, 65,
+                           36, 60, 33, 48, 26, 40, 70)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.2,
+                                   beta    = 0.2,
+                                   delta   = table_4$px[i] - table_4$py[i],
+                                   Pi0     = table_4$py[i],
+                                   Pi1     = table_4$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1, 0, 0, 0, 0),
+                                   nCmax   = nCmax[i])
+  table_4$`Optimal design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_4$`Optimal design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_4$`Optimal design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_4$`Optimal design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 4 optimal design ", i, " completed..")
+}
+# Table 5
+table_5           <-
+  cbind(p0p1, p0p1[, 2]*(1 - p0p1[, 1])/(p0p1[, 1]*(1 - p0p1[, 2])),
+        matrix(0, nrow(p0p1), 11))
+colnames(table_5) <- c("p0", "p1", "theta", "Single-stage design: n",
+                       "Single-stage design: alpha",
+                       "Single-stage design: 1-beta",
+                       "Minimax design: (n,n1)", "Minimax design: alpha",
+                       "Minimax design: 1-beta", "Minimax design: EN",
+                       "Optimal design: (n,n1)", "Optimal design: alpha",
+                       "Optimal design: 1-beta", "Optimal design: EN")
+table_5           <- tibble::as_tibble(table_5)
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_one_stage(alpha = 0.2,
+                                   beta  = 0.15,
+                                   type  = "fisher",
+                                   delta = table_5$px[i] - table_4$py[i],
+                                   Pi0   = table_5$py[i],
+                                   Pi1   = table_5$py[i],
+                                   nCmax = 100L)
+  table_5$`Single-stage design: n`[i]      <- des_i$nC
+  table_5$`Single-stage design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_5$`Single-stage design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  message("..Table 5 single-stage design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(78, 44, 30, 56, 35, 65, 42, 74, 45, 78, 46, 87, 50,
+                           89, 53, 89, 53, 89, 53, 89, 50, 87, 46, 78, 45, 74,
+                           42, 65, 35, 56, 30, 44, 78)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.2,
+                                   beta    = 0.15,
+                                   type    = "fisher",
+                                   delta   = table_5$px[i] - table_4$py[i],
+                                   Pi0     = table_5$py[i],
+                                   Pi1     = table_5$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1e-6, 0, 0, 0, 1),
+                                   nCmax   = nCmax[i])
+  table_5$`Minimax design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_5$`Minimax design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_5$`Minimax design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_5$`Minimax design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 5 minimax design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(81, 44, 30, 59, 37, 69, 43, 80, 48, 84, 50, 92, 52,
+                           93, 55, 96, 57, 96, 55, 92, 52, 92, 50, 85, 48, 82,
+                           44, 69, 37, 59, 31, 46, 83)))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha   = 0.2,
+                                   beta    = 0.15,
+                                   delta   = table_5$px[i] - table_4$py[i],
+                                   Pi0     = table_5$py[i],
+                                   Pi1     = table_5$py[i],
+                                   equal   = FALSE,
+                                   w       = c(1, 0, 0, 0, 0),
+                                   nCmax   = nCmax[i])
+  table_5$`Optimal design: (n,n1)`[i] <- paste0("(", sum(des_i$nC), ",",
+                                                des_i$nC[1], ")")
+  table_5$`Optimal design: alpha`[i]  <- des_i$opchar$`P(pi)`[1]
+  table_5$`Optimal design: 1-beta`[i] <- des_i$opchar$`P(pi)`[2]
+  table_5$`Optimal design: EN`[i]     <- des_i$opchar$`ESS(pi)`[1]/2
+  message("..Table 5 optimal design ", i, " completed..")
+}
+```
+
+## 3.3. Litwin *et al* (2017)
+
+Currently, __ph2rand__ identifies designs of the type from Litwin *et al* (2017) in a different way to Litwin *et al* (2017), and therefore results from this article cannot at present by directly reproduced.
+
+## 3.4. Shan *et al* (2013)
+
+Tables 2-3 from Shan *et al* (2013) can be reproduced with
+
+```{r shan, eval = FALSE}
+fact              <- rep(seq(0.1, 0.5, 0.1), each = 4)
+p0p1              <- cbind(fact, fact + rep(c(0.15, 0.15, 0.2, 0.2), 5))
+# Table 2
+table_2           <- cbind(p0p1, matrix(0, nrow(p0p1), 4))
+colnames(table_2) <- c("p0", "p1", "Method", "Total sample size",
+                       "Type I error", "Power")
+table_2           <- tibble::as_tibble(table_2)
+table_2$Method    <- rep(c("barnard", "fisher"), 10)
+nCmax             <-
+  as.integer(ceiling(1.1*c(90, 112, 58, 72, 128, 148, 78, 92, 154, 170, 86, 106,
+                           156, 174, 96, 108, 156, 172, 86, 106)/2))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_one_stage(alpha = 0.15,
+                                   beta  = 0.2,
+                                   type  = table_2$Method[i],
+                                   delta = table_2$p1[i] - table_2$p0[i],
+                                   Pi0   = table_2$p0[i],
+                                   Pi1   = table_2$p0[i],
+                                   nCmax = nCmax[i])
+  table_2$`Total sample size`[i]  <- des_i$nC + des_i$nE
+  table_2$`Type I error`[i]       <- des_i$opchar$`P(pi)`[1]
+  table_2$`Power`[i]              <- des_i$opchar$`P(pi)`[2]
+  message("..Table 2 single-stage design ", i, " completed..")
+}
+# Table 3
+table_3           <- cbind(p0p1, matrix(0, nrow(p0p1), 13))
+colnames(table_3) <- c("p0", "p1", "Method", "Minimax design: n1",
+                       "Minimax design: n2", "Minimax design: N",
+                       "Minimax design: ESS", "Optimal design: n1",
+                       "Optimal design: n2", "Optimal design: N",
+                       "Optimal design: ESS", "Constrained design: n1",
+                       "Constrained design: n2", "Constrained design: N",
+                       "Constrained design: ESS")
+table_3           <- tibble::as_tibble(table_3)
+table_3$Method    <- rep(c("barnard", "fisher"), 10)
+nCmax             <-
+  as.integer(ceiling(1.2*c(72, 112, 42, 72, 94, 148, 60, 92, 112, 170, 72, 98,
+                           120, 174, 76, 108, 122, 172, 76, 98)/2))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha = 0.15,
+                                   beta  = 0.2,
+                                   type  = table_3$Method[i],
+                                   delta = table_3$p1[i] - table_3$p0[i],
+                                   Pi0   = table_3$p0[i],
+                                   Pi1   = table_3$p0[i],
+                                   equal = FALSE,
+                                   w     = c(1e-6, 0, 0, 0, 1),
+                                   nCmax = nCmax[i], summary = TRUE)
+  table_3$`Minimax design: n1`[i]  <- des_i$nC[1]
+  table_3$`Minimax design: n2`[i]  <- des_i$nC[2]
+  table_3$`Minimax design: N`[i]   <- sum(des_i$nC) + sum(des_i$nE)
+  table_3$`Minimax design: ESS`[i] <- des_i$opchar$`ESS(pi)`[1]
+  message("..Table 3 minimax design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(118, 116, 108, 74, 132, 158, 94, 98, 140, 190, 140,
+                           104, 140, 188, 132, 112, 140, 190, 140, 104)/2))
+for (i in 1:nrow(p0p1)) {
+  des_i           <- des_two_stage(alpha = 0.15,
+                                   beta  = 0.2,
+                                   type  = table_3$Method[i],
+                                   delta = table_3$p1[i] - table_3$p0[i],
+                                   Pi0   = table_3$p0[i],
+                                   Pi1   = table_3$p0[i],
+                                   equal = FALSE,
+                                   w     = c(1, 0, 0, 0, 0),
+                                   nCmax = nCmax[i])
+  table_3$`Optimal design: n1`[i]  <- des_i$nC1
+  table_3$`Optimal design: n2`[i]  <- des_i$nC2
+  table_3$`Optimal design: N`[i]   <-
+    des_i$nC1 + des_i$nC2 + des_i$nE1 + des_i$nE2
+  table_3$`Optimal design: ESS`[i] <- des_i$opchar$`ESS(pi)`[1]
+  message("..Table 3 optimal design ", i, " completed..")
+}
+nCmax             <-
+  as.integer(ceiling(1.1*c(84, 52, 126, 72, 140, 80, 140, 82, 140, 78)/2))
+for (i in seq(1, nrow(p0p1), 2)) {
+  des_i           <- des_two_stage(alpha = 0.15,
+                                   beta  = 0.2,
+                                   type  = table_3$Method[i],
+                                   delta = table_3$p1[i] - table_3$p0[i],
+                                   Pi0   = table_3$p0[i],
+                                   Pi1   = table_3$p0[i],
+                                   equal = FALSE,
+                                   w     = c(1, 0, 0, 0, 0),
+                                   nCmax = nCmax[i])
+  n1_ge_n2_i                           <- dplyr::filter(des_i$feasible,
+                                                        n1C >= n2C)
+  table_3$`Constrained design: n1`[i]  <- n1_gs_n2_i$n1C[1]
+  table_3$`Constrained design: n2`[i]  <- n1_gs_n2_i$n2C[1]
+  table_3$`Constrained design: N`[i]   <- n1_gs_n2_i$`max N`
+  table_3$`Constrained design: ESS`[i] <- n1_gs_n2_i$`ESS(piO,piO)`[1]
+  message("..Table 3 constrained design ", i, " completed..")
+}
+```
+
+Note that Shan *et al* (2013) does not make it clear how optimised two-stage designs are identified (i.e., what restrictions are placed on the search space).
+It appears almost no restrictions were placed (see the minimax designs, which often have a single patient in stage 2).
+__ph2rand__ enforces restrictions that the optimal two-stage design must be a true two-stage design (i.e., the result at the end of stage 2 cannot be certain having continued to stage 2).
+Consequently, this leads to several differences when attempting to reproduce Table 3.
+Furthermore, the 'Sequential' design of Table 3 is not currently supported by __ph2rand__, so these rows are omitted.
+
+# 4. References
+
+Jung SH (2008) Randomized phase II trials with a prospective control.
+*Stat Med* 27(4):568--83.
+DOI: [10.1002/sim.2961](https://doi.org/10.1002/sim.2961).
+PMID: [17573688](https://www.ncbi.nlm.nih.gov/pubmed/17573688).
+
+Jung SH, Sargent DJ (2014) Randomized phase II clinical trials.
+*J Biopharm Stat* 24(4):802--16.
+DOI: [10.1080/10543406.2014.901343](https://doi.org/10.1080/10543406.2014.901343).
+PMID: [24697589](https://www.ncbi.nlm.nih.gov/pubmed/24697589).
+
+Litwin S, Basickes S, Ross EA (2017) Two-sample binary phase 2 trials with low type I error and low sample size.
+*Stat Med* 36(9):1383--94.
+DOI: [10.1002/sim.7226](http://doi.org/10.1002/sim.7226).
+PMID: [28118686](https://www.ncbi.nlm.nih.gov/pubmed/28118686).
+
+Shan G, Ma C, Hutson AD, Wilding GE (2013) Randomized two-stage phase II clinical trial designs based on Barnard's exact test.
+*J Biopharm Stat* 23(5):1081--90.
+DOI: [10.1080/10543406.2013.813525](https://doi.org/10.1080/10543406.2013.813525).
+PMID: [23957517](https://www.ncbi.nlm.nih.gov/pubmed/23957517).
