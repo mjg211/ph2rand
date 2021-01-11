@@ -66,7 +66,7 @@
 #' des       <- des_one_stage()
 #' # Controlling the type-I/II error-rates over a range of possible response
 #' # rates
-#' des_range <-  des_one_stage(Pi0 = c(0, 1),
+#' des_range <- des_one_stage(Pi0 = c(0, 1),
 #'                            Pi1 = c(0, 0.8))
 #' @seealso \code{\link{des_two_stage}}, \code{\link{opchar}},
 #' \code{\link{pmf}}, \code{\link{sim}}, \code{\link{terminal}},

@@ -124,7 +124,6 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
     }
   }
   if (!output) {
-    print(class(plots))
     if (is.list(plots)) {
       print(plots$stage_1)
     } else {
