@@ -483,7 +483,7 @@ double sat_des_ess_two_stage(NumericVector pi, NumericVector nC,
   double        S1      = 0;
   NumericMatrix dbinom1 = dbinom_one_stage(pi, nC[0], nE[0]);
   for (int o1 = 0; o1 <= (nC[0] + 1)*(nE[0] + 1) - 1; o1++) {
-    if (((poss_y1[o1] >= eT1) & (poss_x1(o1, 1) >= eS1)) ||
+    if (((poss_y1[o1] >= eT1) && (poss_x1(o1, 1) >= eS1)) ||
           (poss_x1(o1, 1) <= fS1) || (poss_y1[o1] <= fT1)) {
       S1               += dbinom1(0, poss_x1(o1, 0))*dbinom1(1, poss_x1(o1, 1));
     }
