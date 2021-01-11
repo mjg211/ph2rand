@@ -60,30 +60,30 @@
 #' @section References:
 #' Jung SH (2008) Randomized phase II trials with a prospective control.
 #' \emph{Stat Med} \strong{27}(4)\strong{:}568--83.
-#' DOI: \href{https://doi.org/10.1002/sim.2961}{10.1002/sim.2961}.
+#' DOI: \doi{10.1002/sim.2961}.
 #' PMID: \href{https://www.ncbi.nlm.nih.gov/pubmed/17573688}{17573688}.
 #' 
 #' Jung SH, Sargent DJ (2014) Randomized phase II clinical trials.
 #' \emph{J Biopharm Stat} \strong{24}(4)\strong{:}802--16.
-#' DOI: \href{https://doi.org/10.1080/10543406.2014.901343}{10.1080/10543406.2014.901343}.
+#' DOI: \doi{10.1080/10543406.2014.901343}.
 #' PMID: \href{https://www.ncbi.nlm.nih.gov/pubmed/24697589}{24697589}.
 #' 
 #' Kepner JL (2010) On group sequential designs comparing two binomial
 #' proportions.
 #' \emph{J Biopharm Stat} \strong{20}(1)\strong{:}145--59.
-#' DOI: \href{https://doi.org/10.1080/10543400903280621}{10.1080/10543400903280621}.
+#' DOI: \doi{10.1080/10543400903280621}.
 #' PMID: \href{https://www.ncbi.nlm.nih.gov/pubmed/20077254}{20077254}.
 #' 
 #' Litwin S, Basickes S, Ross EA (2017) Two-sample binary phase 2 trials with
 #' low type I error and low sample size.
 #' \emph{Stat Med} \strong{36}(9)\strong{:}1383--94.
-#' DOI: \href{http://doi.org/10.1002/sim.7226}{10.1002/sim.7226}.
+#' DOI: \doi{10.1002/sim.7226}.
 #' PMID: \href{https://www.ncbi.nlm.nih.gov/pubmed/28118686}{28118686}.
 #' 
 #' Shan G, Ma C, Hutson AD, Wilding GE (2013) Randomized two-stage phase II
 #' clinical trial designs based on Barnard's exact test.
 #' \emph{J Biopharm Stat} \strong{23}(5)\strong{:}1081--90.
-#' DOI: \href{https://doi.org/10.1080/10543406.2013.813525}{10.1080/10543406.2013.813525}.
+#' DOI: \doi{10.1080/10543406.2013.813525}.
 #' PMID: \href{https://www.ncbi.nlm.nih.gov/pubmed/23957517}{23957517}.
 #' 
 #' @docType package
