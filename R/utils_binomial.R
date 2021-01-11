@@ -296,6 +296,99 @@ binomial_pmf_two_stage        <- function(pi, nC, nE, e1, f1, e2, k) {
   dplyr::arrange(pmf, .data$piC, .data$piE, .data$k, .data$xC, .data$xE)
 }
 
+binomial_est                  <- function(nC, nE, e1, f1, e2, k, method) {
+  terminal <- binomial_terminal_two_stage(nC, nE, e1, f1, e2, k)
+  terminal <- dplyr::filter(terminal, .data$decision != "Continue to stage 2")
+  est      <- tibble::tibble(xC = rep(terminal$xC, length(method)),
+                             xE = rep(terminal$xE, length(method)),
+                             mC = rep(terminal$mC, length(method)),
+                             mE = rep(terminal$mE, length(method)),
+                             decision = rep(terminal$decision, length(method)),
+                             k = factor(rep(terminal$k, length(method)), k),
+                             method = factor(rep(method, each = nrow(terminal)),
+                                             method),
+                             `hat(piC)(x,m)` = NA,
+                             `hat(piE)(x,m)` = NA,
+                             `hat(piD)(x,m)` = NA)
+  for (i in 1:length(method)) {
+    range                          <- which(est$method == method[i])
+    if (method[i] == "naive") {
+      est$`hat(piC)(x,m)`[range]   <- terminal$xC/terminal$mC
+      est$`hat(piE)(x,m)`[range]   <- terminal$xE/terminal$mE
+      est$`hat(piD)(x,m)`[range]   <-
+        est$`hat(piE)(x,m)`[range] - est$`hat(piC)(x,m)`[range]
+    } else if (method[i] == "bias_sub") {
+      for (j in 1:length(range)) {
+        est_j                      <- c(terminal$xC[j]/terminal$mC[j],
+                                        terminal$xE[j]/terminal$mE[j])
+        bias_j                     <-
+          binomial_est_niave_bias(matrix(est_j, 1), nC, nE, e1, f1, e2, k)
+        est$`hat(piC)(x,m)`[range[j]] <- est_j[1] - bias_j[1]
+        est$`hat(piE)(x,m)`[range[j]] <- est_j[2] - bias_j[2]
+        est$`hat(piD)(x,m)`[range[j]] <- (est_j[2] - est_j[1]) - bias_j[3]
+      }
+    }
+  }
+  est
+}
+
+binomial_est_niave_bias       <- function(pi, nC, nE, e1, f1, e2, k, est) {
+  pmf <- binomial_pmf_two_stage(pi, nC, nE, e1, f1, e2, k)
+  c(sum(pmf$`f(x,m|pi)`*pmf$xC/pmf$mC),
+    sum(pmf$`f(x,m|pi)`*pmf$xE/pmf$mE),
+    sum(pmf$`f(x,m|pi)`*(pmf$xE/pmf$mE - pmf$xC/pmf$mC))) - c(pi, pi[2] - pi[1])
+}
+
+binomial_est_perf             <- function(pi, nC, nE, e1, f1, e2, k, method) {
+  pmf    <- binomial_pmf_two_stage(pi, nC, nE, e1, f1, e2, k)
+  est    <- binomial_est(nC, nE, e1, f1, e2, k, method)
+  perf   <- tibble::tibble(piC                 = rep(pi[, 1], length(method)),
+                           piE                 = rep(pi[, 2], length(method)),
+                           method              =
+                             factor(rep(method, each = nrow(pi)),
+                                    levels = method),
+                           `E(hat(piC)|pi)`    = NA,
+                           `Var(hat(piC)|pi)`  = NA,
+                           `Bias(hat(piC)|pi)` = NA,
+                           `RMSE(hat(piC)|pi)` = NA,
+                           `E(hat(piE)|pi)`    = NA,
+                           `Var(hat(piE)|pi)`  = NA,
+                           `Bias(hat(piE)|pi)` = NA,
+                           `RMSE(hat(piE)|pi)` = NA,
+                           `E(hat(piD)|pi)`    = NA,
+                           `Var(hat(piD)|pi)`  = NA,
+                           `Bias(hat(piD)|pi)` = NA,
+                           `RMSE(hat(piD)|pi)` = NA)
+  for (i in 1:nrow(perf)) {
+    pmf_i                       <-
+      dplyr::filter(pmf, .data$piC == perf$piC[i] & .data$piE == perf$piE[i])
+    est_i                       <- dplyr::filter(est, method == perf$method[i])
+    perf$`E(hat(piC)|pi)`[i]    <- sum(pmf_i$`f(x,m|pi)`*est_i$`hat(piC)(x,m)`)
+    perf$`Var(hat(piC)|pi)`[i]  <-
+      sum(pmf_i$`f(x,m|pi)`*(est_i$`hat(piC)(x,m)`^2)) -
+      perf$`E(hat(piC)|pi)`[i]^2
+    perf$`Bias(hat(piC)|pi)`[i] <- perf$`E(hat(piC)|pi)`[i] - perf$piC[i]
+    perf$`RMSE(hat(piC)|pi)`[i] <- sqrt(perf$`Var(hat(piC)|pi)`[i] +
+                                         perf$`Bias(hat(piC)|pi)`[i]^2)
+    perf$`E(hat(piE)|pi)`[i]    <- sum(pmf_i$`f(x,m|pi)`*est_i$`hat(piE)(x,m)`)
+    perf$`Var(hat(piE)|pi)`[i]  <-
+      sum(pmf_i$`f(x,m|pi)`*(est_i$`hat(piE)(x,m)`^2)) -
+      perf$`E(hat(piE)|pi)`[i]^2
+    perf$`Bias(hat(piE)|pi)`[i] <- perf$`E(hat(piE)|pi)`[i] - perf$piE[i]
+    perf$`RMSE(hat(piE)|pi)`[i] <- sqrt(perf$`Var(hat(piE)|pi)`[i] +
+                                          perf$`Bias(hat(piE)|pi)`[i]^2)
+    perf$`E(hat(piD)|pi)`[i]    <- sum(pmf_i$`f(x,m|pi)`*est_i$`hat(piD)(x,m)`)
+    perf$`Var(hat(piD)|pi)`[i]  <-
+      sum(pmf_i$`f(x,m|pi)`*(est_i$`hat(piD)(x,m)`^2)) -
+      perf$`E(hat(piD)|pi)`[i]^2
+    perf$`Bias(hat(piD)|pi)`[i] <-
+      perf$`E(hat(piD)|pi)`[i] - (perf$piE[i] - perf$piC[i])
+    perf$`RMSE(hat(piD)|pi)`[i] <- sqrt(perf$`Var(hat(piD)|pi)`[i] +
+                                          perf$`Bias(hat(piD)|pi)`[i]^2)
+  }
+  perf
+}
+
 binomial_terminal_one_stage   <- function(nC, nE, e1) {
   x        <- expand.grid(0:nC, 0:nE)
   nrow_pmf <- (nC + 1)*(nE + 1)

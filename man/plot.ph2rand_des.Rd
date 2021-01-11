@@ -35,12 +35,14 @@ a range of key response rate scenarios. For convenience, it also calls
 design.
 }
 \examples{
+\dontrun{
 # The default two-stage design
 des   <- des_two_stage()
 # Print several key plots
 plot(des)
 # Determine and store all available plots
 plots <- plot(des, output = TRUE)
+}
 }
 \seealso{
 \code{\link{des_one_stage}}, \code{\link{des_two_stage}},

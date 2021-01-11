@@ -27,6 +27,7 @@
 #' plot(pmf)
 #' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
 #' \code{\link{pmf}}, \code{\link{plot.ph2rand_des}}.
+#' @method plot ph2rand_pmf
 #' @export
 plot.ph2rand_pmf <- function(x, output = F, ...) {
   

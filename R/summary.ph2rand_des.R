@@ -14,6 +14,7 @@
 #' summary(des)
 #' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
 #' \code{\link{plot.ph2rand_des}}.
+#' @method summary ph2rand_des
 #' @export
 summary.ph2rand_des <- function(object, ...) {
 

@@ -21,6 +21,7 @@ Imports:
     ggplot2,
     Rcpp,
     scales,
+    stats,
     tibble,
     tidyr
 LinkingTo: Rcpp

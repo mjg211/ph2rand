@@ -18,8 +18,8 @@ should be returned by the function.}
 }
 \value{
 If \code{output = T}, a \code{\link{list}} containing each of the
-input parameters along with a plot in the slot \code{$plot}, which gives the
-produced plot of the terminal points.
+input parameters along with plot(s) in the slot \code{$plots}, which gives
+the produced plot(s) of the terminal points.
 }
 \description{
 \code{plot.ph2rand_terminal} plots the terminal points of a design returned

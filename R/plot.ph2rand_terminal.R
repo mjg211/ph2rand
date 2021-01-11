@@ -10,8 +10,8 @@
 #' should be returned by the function.
 #' @param ... Not currently used.
 #' @return If \code{output = T}, a \code{\link{list}} containing each of the
-#' input parameters along with a plot in the slot \code{$plot}, which gives the
-#' produced plot of the terminal points.
+#' input parameters along with plot(s) in the slot \code{$plots}, which gives
+#' the produced plot(s) of the terminal points.
 #' @examples
 #' # The default two-stage design
 #' des  <- des_two_stage()
@@ -25,6 +25,7 @@
 #' plot(term)
 #' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
 #' \code{\link{terminal}}, \code{\link{plot.ph2rand_des}}.
+#' @method plot ph2rand_terminal
 #' @export
 plot.ph2rand_terminal <- function(x, output = F, ...) {
 
@@ -48,7 +49,7 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
       x_internal$terminal$xC           <- x_internal$terminal$xC1
       x_internal$terminal$xE           <- x_internal$terminal$xE1
     }
-    plot                               <-
+    plots                              <-
       ggplot2::ggplot(x_internal$terminal,
                       ggplot2::aes(x      = .data$xC,
                                    y      = .data$xE,
@@ -83,8 +84,8 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
     }
     x_internal$terminal$state          <- factor(x_internal$terminal$state,
                                                  levels = levels_state)
-    plot                               <- list()
-    plot$stage_1                       <-
+    plots                              <- list()
+    plots$stage_1                      <-
       ggplot2::ggplot(dplyr::filter(x_internal$terminal,
                                     .data$state == "k = 1"),
                       ggplot2::aes(x      = .data$xC,
@@ -100,9 +101,9 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
       ggplot2::coord_fixed(ratio = 1) +
       theme_ph2rand() +
       ggplot2::labs(title = "k = 1")
-    plot$stage_2                       <- list()
+    plots$stage_2                      <- list()
     for (z1 in sort(unique(x_internal$terminal$z1[which_2]))) {
-      plot$stage_2[[z1 + 1]]           <-
+      plots$stage_2[[z1 + 1]]          <-
         ggplot2::ggplot(dplyr::filter(x_internal$terminal,
                                       .data$state == paste0("k = 2: z1 = ",
                                                             z1)),
@@ -123,10 +124,11 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
     }
   }
   if (!output) {
-    if (is.list(plot)) {
-      print(plot$stage_1)
+    print(class(plots))
+    if (is.list(plots)) {
+      print(plots$stage_1)
     } else {
-      print(plot)
+      print(plots)
     }
   }
 
@@ -134,7 +136,7 @@ plot.ph2rand_terminal <- function(x, output = F, ...) {
 
   if (output) {
     return(list(output = output,
-                plot   = plot,
+                plots  = plots,
                 x      = x))
   }
 

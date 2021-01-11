@@ -242,8 +242,8 @@ sim_internal               <- function(pi, completed_replicates, des, k,
     }
     n        <- c(rep(nC[1] + nE[1], replicates*S[1]),
                   rep(cum_nC[2] + cum_nE[2], replicates*S[2]))
-    c(pi, sum(E), sum(n)/replicates, sd(n), quantile(n, 0.5), E, Fu, S,
-      cum_nC[2] + cum_nE[2])
+    c(pi, sum(E), sum(n)/replicates, stats::sd(n), stats::quantile(n, 0.5), E,
+      Fu, S, cum_nC[2] + cum_nE[2])
   }
 }
 
