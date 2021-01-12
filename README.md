@@ -179,8 +179,8 @@ sim_jung$sim
 #> # A tibble: 2 x 13
 #>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
 #>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0718      47.0       16.5        34        0   0.0718    0.618
-#> 2   0.1   0.3  0.804       64.6       10.2        68        0   0.804     0.101
+#> 1   0.1   0.1  0.0704      47.3       16.6        34        0   0.0704    0.609
+#> 2   0.1   0.3  0.805       64.6       10.2        68        0   0.805     0.099
 #> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
 #> #   N` <int>
 ```
@@ -219,7 +219,7 @@ PMID: [20077254](https://www.ncbi.nlm.nih.gov/pubmed/20077254).
 
 Litwin S, Basickes S, Ross EA (2017) Two-sample binary phase 2 trials
 with low type I error and low sample size. *Stat Med* 36(9):1383–94.
-DOI: [10.1002/sim.7226](http://doi.org/10.1002/sim.7226). PMID:
+DOI: [10.1002/sim.7226](https://doi.org/10.1002/sim.7226). PMID:
 [28118686](https://www.ncbi.nlm.nih.gov/pubmed/28118686).
 
 Shan G, Ma C, Hutson AD, Wilding GE (2013) Randomized two-stage phase II
