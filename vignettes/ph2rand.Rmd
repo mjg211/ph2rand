@@ -1,7 +1,7 @@
 ---
 title: "ph2rand: Design of randomized comparative phase II oncology trials with a Bernoulli distributed primary outcome"
 author: "Michael J Grayling (michael.grayling@newcastle.ac.uk)"
-date: "`r Sys.Date()`"
+date: "$`r Sys.Date()`$"
 output: pdf_document
 header-includes:
   - \usepackage{mathrsfs}
