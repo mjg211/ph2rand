@@ -2,7 +2,7 @@
 title: "ph2rand: Validation"
 author: "Michael J Grayling (michael.grayling@newcastle.ac.uk)"
 date: "$`r Sys.Date()`$"
-output: pdf_document
+output: html_document
 header-includes:
   - \usepackage{mathrsfs}
 vignette: >

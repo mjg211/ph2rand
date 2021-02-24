@@ -45,50 +45,6 @@ barnard_des_two_stage_cpp <- function(alpha, beta, delta, poss_nC, poss_nE, poss
     .Call('_ph2rand_barnard_des_two_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_nC, poss_nE, poss_x, poss_B, unique_B, point_null, Pi0, point_alt, Pi1, equal, efficacy, futility, pi_ess, summary)
 }
 
-bernard_pmf_two_stage_cpp <- function(pi, n0, n1, e1, f1, e2, k) {
-    .Call('_ph2rand_bernard_pmf_two_stage_cpp', PACKAGE = 'ph2rand', pi, n0, n1, e1, f1, e2, k)
-}
-
-bernard_power_one_stage <- function(pi, n0, n1, e, poss_x, poss_B) {
-    .Call('_ph2rand_bernard_power_one_stage', PACKAGE = 'ph2rand', pi, n0, n1, e, poss_x, poss_B)
-}
-
-bernard_power_two_stage <- function(pi, n0, n1, e, f, poss_x, poss_B) {
-    .Call('_ph2rand_bernard_power_two_stage', PACKAGE = 'ph2rand', pi, n0, n1, e, f, poss_x, poss_B)
-}
-
-bernard_terminal_two_stage_cpp <- function(n0, n1, e1, f1, e2, k) {
-    .Call('_ph2rand_bernard_terminal_two_stage_cpp', PACKAGE = 'ph2rand', n0, n1, e1, f1, e2, k)
-}
-
-bernard_max_typeI <- function(J, alpha, n0, n1, e, f, poss_x, poss_B, pi_null, check) {
-    .Call('_ph2rand_bernard_max_typeI', PACKAGE = 'ph2rand', J, alpha, n0, n1, e, f, poss_x, poss_B, pi_null, check)
-}
-
-bernard_min_power <- function(J, beta, delta, n0, n1, e, f, poss_x, poss_B, pi_alt, check) {
-    .Call('_ph2rand_bernard_min_power', PACKAGE = 'ph2rand', J, beta, delta, n0, n1, e, f, poss_x, poss_B, pi_alt, check)
-}
-
-bernard_ess_two_stage <- function(pi, n0, n1, e1, f1) {
-    .Call('_ph2rand_bernard_ess_two_stage', PACKAGE = 'ph2rand', pi, n0, n1, e1, f1)
-}
-
-bernard_des_ess_two_stage <- function(pi, n0, n1, e1, f1, poss_x, poss_B) {
-    .Call('_ph2rand_bernard_des_ess_two_stage', PACKAGE = 'ph2rand', pi, n0, n1, e1, f1, poss_x, poss_B)
-}
-
-bernard_max_ess_1d_two_stage <- function(n0, n1, e1, f1, poss_x1, poss_B1) {
-    .Call('_ph2rand_bernard_max_ess_1d_two_stage', PACKAGE = 'ph2rand', n0, n1, e1, f1, poss_x1, poss_B1)
-}
-
-bernard_des_one_stage_cpp <- function(alpha, beta, delta, poss_n0, poss_n1, poss_x, poss_B, unique_B, point_null, pi_null, point_alt, pi_alt, summary) {
-    .Call('_ph2rand_bernard_des_one_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_n0, poss_n1, poss_x, poss_B, unique_B, point_null, pi_null, point_alt, pi_alt, summary)
-}
-
-bernard_des_two_stage_cpp <- function(alpha, beta, delta, poss_n0, poss_n1, poss_x, poss_B, unique_B, point_null, pi_null, point_alt, pi_alt, equal, efficacy, futility, pi_ess, summary) {
-    .Call('_ph2rand_bernard_des_two_stage_cpp', PACKAGE = 'ph2rand', alpha, beta, delta, poss_n0, poss_n1, poss_x, poss_B, unique_B, point_null, pi_null, point_alt, pi_alt, equal, efficacy, futility, pi_ess, summary)
-}
-
 binomial_pmf_two_stage_cpp <- function(pi, nC, nE, e1, f1, e2, k) {
     .Call('_ph2rand_binomial_pmf_two_stage_cpp', PACKAGE = 'ph2rand', pi, nC, nE, e1, f1, e2, k)
 }
@@ -239,10 +195,6 @@ dbinom_one_stage <- function(pi, nC, nE) {
 
 dbinom_two_stage <- function(pi, nC, nE) {
     .Call('_ph2rand_dbinom_two_stage', PACKAGE = 'ph2rand', pi, nC, nE)
-}
-
-message_cpp <- function(text_1, text_2) {
-    invisible(.Call('_ph2rand_message_cpp', PACKAGE = 'ph2rand', text_1, text_2))
 }
 
 pi_power_finder <- function(point_alt, Pi1, delta) {

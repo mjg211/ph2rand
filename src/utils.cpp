@@ -4,7 +4,6 @@
 #include "dbinom_des_two_stage.h"
 #include "dbinom_one_stage.h"
 #include "dbinom_two_stage.h"
-#include "message_cpp.h"
 #include "pi_power_finder.h"
 #include "pi_typeI_finder.h"
 using namespace Rcpp;
@@ -246,13 +245,6 @@ NumericMatrix dbinom_two_stage(NumericVector pi, NumericVector nC,
     }
   }
   return dbinom;
-}
-
-// [[Rcpp::export]]
-void message_cpp(std::string text_1, std::string text_2) {
-  Rcpp::Function msg("message");
-  msg(std::string("  [from Rcpp: ") + std::string(text_1) +
-    std::string(text_2) + std::string("]"));
 }
 
 // [[Rcpp::export]]

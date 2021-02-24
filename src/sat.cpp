@@ -4,7 +4,6 @@
 #include "dbinom_des_two_stage.h"
 #include "dbinom_one_stage.h"
 #include "dbinom_two_stage.h"
-#include "message_cpp.h"
 #include "pi_power_finder.h"
 #include "pi_typeI_finder.h"
 using namespace Rcpp;
@@ -628,8 +627,7 @@ NumericMatrix sat_des_one_stage_cpp(double alpha, double beta, double delta,
     nC                     = poss_nC[n];
     nE                     = poss_nE[n];
     if ((summary == 1) && (nC%10 == 0)) {
-      string str = std::to_string(nC);
-      message_cpp("currently analysing designs with nC = ", str);
+      Rprintf("currently analysing designs with nC = %i \n", nC);
     }
     NumericVector poss_y_n = poss_y[nC + nCmax*(nE - 1) - 1];
     NumericMatrix prob_x_power(nC + 1, nE + 1),
@@ -777,8 +775,7 @@ NumericMatrix sat_des_two_stage_cpp(double alpha, double beta, double delta,
     n1E                                   = poss_nE[nE];
     if (((equal != 1) && (n1C < nCmax)) || ((equal == 1) && (n1C <= 0.5*nCmax))) {
       if ((summary == 1) && (n1C%10 == 0)) {
-        string str = std::to_string(n1C);
-        message_cpp("currently analysing designs with n1C = ", str);
+        Rprintf("currently analysing designs with n1C = %i \n", n1C);
       }
       NumericVector poss_y1               = poss_y[n1C + nCmax*(n1E - 1) - 1];
       NumericMatrix prob_x1_ess0(n1C + 1, n1E + 1),
