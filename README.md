@@ -179,8 +179,8 @@ sim_jung$sim
 #> # A tibble: 2 x 13
 #>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
 #>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0704      47.3       16.6        34        0   0.0704    0.609
-#> 2   0.1   0.3  0.805       64.6       10.2        68        0   0.805     0.099
+#> 1   0.1   0.1  0.0717      47.1       16.6        34        0   0.0717    0.614
+#> 2   0.1   0.3  0.807       64.5       10.3        68        0   0.807     0.102
 #> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
 #> #   N` <int>
 ```
