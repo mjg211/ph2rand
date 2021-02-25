@@ -179,8 +179,8 @@ sim_jung$sim
 #> # A tibble: 2 x 13
 #>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
 #>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0717      47.1       16.6        34        0   0.0717    0.614
-#> 2   0.1   0.3  0.807       64.5       10.3        68        0   0.807     0.102
+#> 1   0.1   0.1  0.0699      46.9       16.5        34        0   0.0699    0.620
+#> 2   0.1   0.3  0.804       64.6       10.3        68        0   0.804     0.101
 #> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
 #> #   N` <int>
 ```
@@ -205,25 +205,25 @@ See the package vignettes for further details.
 Jung SH (2008) Randomized phase II trials with a prospective control.
 *Stat Med* 27(4):568–83. DOI:
 [10.1002/sim.2961](https://doi.org/10.1002/sim.2961). PMID:
-[17573688](https://www.ncbi.nlm.nih.gov/pubmed/17573688).
+[17573688](https://pubmed.ncbi.nlm.nih.gov/17573688).
 
 Jung SH, Sargent DJ (2014) Randomized phase II clinical trials. *J
 Biopharm Stat* 24(4):802–16. DOI:
 [10.1080/10543406.2014.901343](https://doi.org/10.1080/10543406.2014.901343).
-PMID: [24697589](https://www.ncbi.nlm.nih.gov/pubmed/24697589).
+PMID: [24697589](https://pubmed.ncbi.nlm.nih.gov/24697589).
 
 Kepner JL (2010) On group sequential designs comparing two binomial
 proportions. *J Biopharm Stat* 20(1):145–59. DOI:
 [10.1080/10543400903280621](https://doi.org/10.1080/10543400903280621).
-PMID: [20077254](https://www.ncbi.nlm.nih.gov/pubmed/20077254).
+PMID: [20077254](https://pubmed.ncbi.nlm.nih.gov/20077254).
 
 Litwin S, Basickes S, Ross EA (2017) Two-sample binary phase 2 trials
 with low type I error and low sample size. *Stat Med* 36(9):1383–94.
 DOI: [10.1002/sim.7226](https://doi.org/10.1002/sim.7226). PMID:
-[28118686](https://www.ncbi.nlm.nih.gov/pubmed/28118686).
+[28118686](https://pubmed.ncbi.nlm.nih.gov/28118686).
 
 Shan G, Ma C, Hutson AD, Wilding GE (2013) Randomized two-stage phase II
 clinical trial designs based on Barnard’s exact test. *J Biopharm Stat*
 23(5):1081–90. DOI:
 [10.1080/10543406.2013.813525](https://doi.org/10.1080/10543406.2013.813525).
-PMID: [23957517](https://www.ncbi.nlm.nih.gov/pubmed/23957517).
+PMID: [23957517](https://pubmed.ncbi.nlm.nih.gov/23957517).
