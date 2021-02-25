@@ -1,3 +1,8 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+* Fixed incorrect URL links to PubMed
+
 ## Test environments
 * local Windows 10 install, R 4.0.4
 * local OS X install, R 4.0.3
@@ -7,7 +12,7 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was no NOTEs on win-builder.
+There were no NOTEs on win-builder.
 
 There was 1 NOTE on local OS X and Windows Server 2008 R2 SP1:
 

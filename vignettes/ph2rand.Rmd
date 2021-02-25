@@ -829,7 +829,7 @@ DOI: [10.1080/10543406.2018.1428615](https://doi.org/10.1080/10543406.2018.14286
 Grayling MJ, Dimairo M, Mander AP, Jaki TF (2019) A review of perspectives on the use of randomization in phase II oncology trials.
 *JNCI: J Natl Cancer I* 111(12):1255--62.
 DOI: [10.1093/jnci/djz126](https://doi.org/10.1093/jnci/djz126).
-PMID: [31218346](https://www.ncbi.nlm.nih.gov/pubmed/31218346).
+PMID: [31218346](https://pubmed.ncbi.nlm.nih.gov/31218346).
 
 Grayling MJ, Wason JMS (2020) A web application for the design of multi-arm clinical trials.
 *BMC Cancer* 20:80.
@@ -841,7 +841,7 @@ Chapman & Hall/CRC: Boca Raton, FL.
 Jung SH (2008) Randomized phase II trials with a prospective control.
 *Stat Med* 27(4):568--83.
 DOI: [10.1002/sim.2961](https://doi.org/10.1002/sim.2961).
-PMID: [17573688](https://www.ncbi.nlm.nih.gov/pubmed/17573688).
+PMID: [17573688](https://pubmed.ncbi.nlm.nih.gov/17573688).
 
 Jung SH (2013) *Randomized phase II cancer clinical trials*.
 Chapman & Hall/CRC: Boca Raton, FL.
@@ -849,17 +849,17 @@ Chapman & Hall/CRC: Boca Raton, FL.
 Jung SH, Lee T, Kim K, George SL (2004) Admissible two-stage designs for phase II cancer clinical trials.
 *Stat Med* 23(4):561--9.
 DOI: [10.1002/sim.1600](https://doi.org/10.1002/sim.1600).
-PMID: [14755389](https://www.ncbi.nlm.nih.gov/pubmed/14755389).
+PMID: [14755389](https://pubmed.ncbi.nlm.nih.gov/14755389).
 
 Jung SH, Sargent DJ (2014) Randomized phase II clinical trials.
 *J Biopharm Stat* 24(4):802--16.
 DOI: [10.1080/10543406.2014.901343](https://doi.org/10.1080/10543406.2014.901343).
-PMID: [24697589](https://www.ncbi.nlm.nih.gov/pubmed/24697589).
+PMID: [24697589](https://pubmed.ncbi.nlm.nih.gov/24697589).
 
 Kepner JL (2010) On group sequential designs comparing two binomial proportions.
 *J Biopharm Stat* 20(1):145--59.
 DOI: [10.1080/10543400903280621](https://doi.org/10.1080/10543400903280621). 
-PMID: [20077254](https://www.ncbi.nlm.nih.gov/pubmed/20077254).
+PMID: [20077254](https://pubmed.ncbi.nlm.nih.gov/20077254).
 
 Law M, Grayling MJ, Mander AP (2020) A stochastically curtailed two-arm randomised phase II trial design for binary outcomes.
 *Pharm Stat*
@@ -868,12 +868,12 @@ DOI: [10.1002/pst.2067](https://doi.org/10.1002/pst.2067).
 Litwin S, Basickes S, Ross EA (2017) Two-sample binary phase 2 trials with low type I error and low sample size.
 *Stat Med* 36(9):1383--94.
 DOI: [10.1002/sim.7226](https://doi.org/10.1002/sim.7226).
-PMID: [28118686](https://www.ncbi.nlm.nih.gov/pubmed/28118686).
+PMID: [28118686](https://pubmed.ncbi.nlm.nih.gov/28118686).
 
 Mander AP, Wason JM, Sweeting MJ, Thompson SG (2012) Admissible two-stage designs for phase II cancer clinical trials that incorporate the expected sample size under the alternative hypothesis.
 *Pharm Stat* 11(2):91--6.
 DOI: [10.1002/pst.501](https://doi.org/10.1002/pst.501).
-PMID: [22232071](https://www.ncbi.nlm.nih.gov/pubmed/22232071).
+PMID: [22232071](https://pubmed.ncbi.nlm.nih.gov/22232071).
 
 Roychoudhury S, Scheuer N, Neuenschwander B (2018) Beyond p-values: A phase II dual-criterion design with statistical significance and clinical relevance.
 *Clin Trials* 15(5):452–-61.
@@ -882,7 +882,7 @@ DOI: [10.1177/1740774518770661](https://doi.org/10.1177/1740774518770661).
 Shan G, Ma C, Hutson AD, Wilding GE (2013) Randomized two-stage phase II clinical trial designs based on Barnard's exact test.
 *J Biopharm Stat* 23(5):1081--90.
 DOI: [10.1080/10543406.2013.813525](https://doi.org/10.1080/10543406.2013.813525).
-PMID: [23957517](https://www.ncbi.nlm.nih.gov/pubmed/23957517).
+PMID: [23957517](https://pubmed.ncbi.nlm.nih.gov/23957517).
 
 Wason J (2015) OptGS: An R package for finding near-optimal group-sequential designs.
 *J Stat Soft* 66(2):1--13.
@@ -891,4 +891,4 @@ DOI: [10.18637/jss.v066.i02](https://doi.org/10.18637/jss.v066.i02).
 Wason JM, Mander AP, Thompson SG (2012) Optimal multistage designs for randomised clinical trials with continuous outcomes.
 *Stat Med* 31(4):301--12.
 DOI: [10.1002/sim.4421](https://doi.org/10.1002/sim.4421).
-PMID: [22139822](https://www.ncbi.nlm.nih.gov/pubmed/22139822).
+PMID: [22139822](https://pubmed.ncbi.nlm.nih.gov/22139822).
