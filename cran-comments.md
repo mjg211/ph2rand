@@ -2,9 +2,12 @@
 * local Windows 10 install, R 4.0.4
 * local OS X install, R 4.0.3
 * R-hub Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+* win-builder, R-devel
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
+
+There was no NOTEs on win-builder.
 
 There was 1 NOTE on local OS X and Windows Server 2008 R2 SP1:
 
@@ -38,8 +41,8 @@ There was 1 NOTE on local Windows 10:
 
   See 'Writing portable packages' in the 'Writing R Extensions' manual.
 
-Appears to be a local install issue as it does not occur on Windows server and
-none of the detected symbols are actually called.
+Appears to be a local install issue as it does not occur via R-hub or win
+builder tests and none of the detected symbols are actually called.
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package.
