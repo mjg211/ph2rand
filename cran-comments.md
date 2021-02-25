@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Fixed incorrect URL links to PubMed
+* Fixed additional incorrect URL links to PubMed by updating .md files
 
 ## Test environments
 * local Windows 10 install, R 4.0.4
