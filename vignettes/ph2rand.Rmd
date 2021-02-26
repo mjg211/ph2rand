@@ -562,14 +562,14 @@ summary(des)
 ```
 We can plot the terminal points of this design with
 
-```{r eg41_3, cache = TRUE, dpi = 150, fig.retina = 4, fig.height = 5, fig.width = 7}
+```{r eg41_3, cache = TRUE, dpi = 100, fig.retina = 4, fig.height = 5, fig.width = 7}
 term_des <- terminal(des)
 plot(term_des)
 ```
 
 We can also find and plot the probability mass function for $\boldsymbol{\pi}=(0.1,0.1)^\top$ and $\boldsymbol{\pi}=(0.1,0.5)^\top$ via
 
-```{r eg41_4, cache = TRUE, dpi = 150, fig.retina = 4}
+```{r eg41_4, cache = TRUE, dpi = 100, fig.retina = 4}
 pmf_des <- pmf(des, pi = rbind(c(0.1, 0.1),
                                c(0.1, 0.5)))
 plot(pmf_des)
@@ -585,7 +585,7 @@ opchar_des$opchar
 
 Finally, we can plot the power for a wider range of scenarios with
 
-```{r eg41_6, cache = TRUE, dpi = 150, fig.retina = 4}
+```{r eg41_6, cache = TRUE, dpi = 100, fig.retina = 4}
 plot(des)
 ```
 
@@ -642,7 +642,7 @@ Thus, the approach described in Shan *et al* (2013) is the most efficient in thi
 Next, we will consider how the choice of $\Pi_0$ and $\Pi_1$ effects the optimal design.
 As an illustrative example, consider a one-stage design for $\delta=0.4$, $\alpha=0.05$, $\beta=0.1$, and $r=1$, using the binomial approach.
 First, let's find the design for $\Pi_0=\Pi_1=0.1$, inspect its required sample size in the control arm, and plot its operating characteristics
-```{r eg43_1, cache = TRUE, dpi = 150, fig.retina = 4}
+```{r eg43_1, cache = TRUE, dpi = 100, fig.retina = 4}
 binomial_1 <- des_one_stage(type  = "binomial",
                             alpha = 0.05,
                             beta  = 0.1,
@@ -657,7 +657,7 @@ plot(binomial_1)
 Thus, $17$ patients are required in the control arm.
 Notice that there are many scenarios when the type-I error-rate is larger than $0.05$, and where the power is below $0.9$.
 To ensure the maximal type-I error-rate is below $0.05$, and the maximal type-II error-rate is below $0.1$, we can re-run the above modifying the values of $\Pi_0$ and $\Pi_1$
-```{r eg43_2, cache = TRUE, dpi = 150, fig.retina = 4}
+```{r eg43_2, cache = TRUE, dpi = 100, fig.retina = 4}
 binomial_2 <- des_one_stage(type  = "binomial",
                             alpha = 0.05,
                             beta  = 0.1,
@@ -727,12 +727,12 @@ fisher$opchar
 sat$opchar
 ```
 It is also important to evaluate the operating characteristics in more scenarios as, e.g., the type-I error-rate may be large in situations not allowed for in the design
-```{r eg44_4, cache = TRUE, dpi = 150, fig.retina = 4, eval = FALSE}
+```{r eg44_4, cache = TRUE, dpi = 100, fig.retina = 4, eval = FALSE}
 plots <- plot(sat, output = TRUE)
 plots$plots
 ```
 
-```{r eg44_5, cache = TRUE, dpi = 150, fig.retina = 4, eval = TRUE, echo = FALSE}
+```{r eg44_5, cache = TRUE, dpi = 100, fig.retina = 4, eval = TRUE, echo = FALSE}
 plots <- suppressWarnings(plot(sat, output = TRUE))
 plots$plots
 ```
