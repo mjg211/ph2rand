@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Fixed additional incorrect URL links to PubMed by updating .md files
+* Changed to toy examples in vignettes to shorten R CMD check run time
 
 ## Test environments
 * local Windows 10 install, R 4.0.4

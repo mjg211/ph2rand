@@ -32,19 +32,19 @@ In addition, we also provide code that seeks to reproduce results from previous 
 
 As explained in `vignette("ph2rand")`, the default two-stage design can be found with
 
-```{r default}
+```{r default, cache = TRUE}
 des_jung <- des_two_stage()
 ```
 
 The operating characteristics under the null and alternative are then available with
 
-```{r opchar}
+```{r opchar, cache = TRUE}
 des_jung$opchar
 ```
 
 These can be re-evaluated using simulation by calling `sim()` as follows
 
-```{r sim}
+```{r sim, cache = TRUE}
 sim_jung <- sim(des_jung, replicates = 1e5)
 sim_jung$sim
 ```
@@ -58,7 +58,7 @@ As can be seen, the estimated operating characteristics are almost identical all
 We begin by providing code to reproduce results Jung (2008).
 First, we can reproduce Table I with
 
-```{r table_I, eval = FALSE}
+```{r table_I, eval = FALSE, cache = TRUE}
 fact              <- rep(seq(0.1, 0.75, 0.05), each = 2)
 p0p1              <- rbind(c(0.05, 0.15),
                            c(0.05, 0.20),
@@ -138,7 +138,7 @@ This approach will be taken where relevant throughout this vignette.
 
 To reproduce Tables II-IV, we can use
 
-```{r other_tables, eval = FALSE}
+```{r other_tables, eval = FALSE, cache = TRUE}
 table_II            <- cbind(p0p1, matrix(0, nrow(p0p1), 11))
 colnames(table_II)  <- c("p0", "p1", "Single-stage design: (n,a)",
                         "Single-stage design: alpha",
@@ -342,7 +342,7 @@ Therefore, some differences may appear between identified minimax designs.
 
 Finally, the designs of Examples 1-2 and from Section 3.2 can be reproduced with
 
-```{r examples, eval = FALSE}
+```{r examples, eval = FALSE, cache = TRUE}
 # Example 1
 single_stage <- des_one_stage(alpha = 0.15,
                               beta  = 0.2,
@@ -408,7 +408,7 @@ optimal      <- des_two_stage(alpha = 0.15,
 
 Tables 2-5 from Jung and Sargent (2014) can be reproduced with
 
-```{r jung_sargent, eval = FALSE}
+```{r jung_sargent, eval = FALSE, cache = TRUE}
 # Table 2
 table_2           <-
   cbind(p0p1, p0p1[, 2]*(1 - p0p1[, 1])/(p0p1[, 1]*(1 - p0p1[, 2])),
@@ -683,7 +683,7 @@ Currently, __ph2rand__ identifies designs of the type from Litwin *et al* (2017)
 
 Tables 2-3 from Shan *et al* (2013) can be reproduced with
 
-```{r shan, eval = FALSE}
+```{r shan, eval = FALSE, cache = TRUE}
 fact              <- rep(seq(0.1, 0.5, 0.1), each = 4)
 p0p1              <- cbind(fact, fact + rep(c(0.15, 0.15, 0.2, 0.2), 5))
 # Table 2
