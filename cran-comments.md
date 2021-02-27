@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Changed to toy examples in vignettes to shorten R CMD check run time
+* Got the tarball down below 5 Mb; now 3.6 Mb on local build
 
 ## Test environments
 * local Windows 10 install, R 4.0.4
@@ -17,9 +17,9 @@ There were no NOTEs on win-builder.
 There was 1 NOTE on local OS X and Windows Server 2008 R2 SP1:
 
 * checking installed package size ...
-     installed size is 12.8Mb
+     installed size is  8.4Mb
      sub-directories of 1Mb or more:
-       doc   10.8Mb
+       doc    6.3Mb
        help   1.2Mb
 
 Large size is due to vignettes - DPI of all images has already been lowered to
