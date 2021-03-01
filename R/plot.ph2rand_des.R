@@ -21,12 +21,14 @@
 #' input parameters along with a \code{\link{list}} in the slot \code{$plots},
 #' which gives all of the available produced plots.
 #' @examples
+#' \donttest{
 #' # The default two-stage design
 #' des   <- des_two_stage()
 #' # Print several key plots
 #' plot(des)
 #' # Determine and store all available plots
 #' plots <- plot(des, output = TRUE)
+#' }
 #' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
 #' \code{\link{plot.ph2rand_terminal}}.
 #' @method plot ph2rand_des
