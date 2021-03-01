@@ -17,23 +17,21 @@
 #' @param output A \code{\link{logical}} variable indicating whether available
 #' outputs should be returned by the function.
 #' @param ... Not currently used.
-#' @return If \code{output = T}, a \code{\link{list}} containing each of the
+#' @return If \code{output = TRUE}, a \code{\link{list}} containing each of the
 #' input parameters along with a \code{\link{list}} in the slot \code{$plots},
 #' which gives all of the available produced plots.
 #' @examples
-#' \dontrun{
 #' # The default two-stage design
 #' des   <- des_two_stage()
 #' # Print several key plots
 #' plot(des)
 #' # Determine and store all available plots
 #' plots <- plot(des, output = TRUE)
-#' }
 #' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
 #' \code{\link{plot.ph2rand_terminal}}.
 #' @method plot ph2rand_des
 #' @export
-plot.ph2rand_des <- function(x, k = 1:x$J, output = F, ...) {
+plot.ph2rand_des <- function(x, k = 1:x$J, output = FALSE, ...) {
 
   ##### Check inputs ###########################################################
 
@@ -45,7 +43,7 @@ plot.ph2rand_des <- function(x, k = 1:x$J, output = F, ...) {
 
   plots                  <- list()
   terminal               <- terminal(x, k)
-  plots$terminal         <- plot.ph2rand_terminal(terminal, output = T)$plot
+  plots$terminal         <- plot.ph2rand_terminal(terminal, output = TRUE)$plot
   seq_grid               <- seq(0, 1, 0.05)
   opchar_grid            <- opchar(x, as.matrix(expand.grid(seq_grid,
                                                             seq_grid)),
@@ -129,8 +127,8 @@ plot.ph2rand_des <- function(x, k = 1:x$J, output = F, ...) {
     opchar_grid_rej$key  <-
       factor(opchar_grid_rej$key,
              labels = paste0(rep(c(paste0(expression(italic(E)), "["),
-                                   paste0(expression(italic(F)), "[")), each = 2),
-                             rep(1:2, 2), "]"))
+                                   paste0(expression(italic(F)), "[")),
+                                 each = 2), rep(1:2, 2), "]"))
     plots$grid$rejection <-
       ggplot2::ggplot(opchar_grid_rej,
                       ggplot2::aes(x    = .data$piC,

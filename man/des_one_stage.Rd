@@ -14,7 +14,7 @@ des_one_stage(
   Pi0 = 0.1,
   Pi1 = Pi0[1],
   nCmax = 50L,
-  summary = F
+  summary = FALSE
 )
 }
 \arguments{
@@ -60,7 +60,7 @@ to \code{50L}.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"ph2rand_des"},

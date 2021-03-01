@@ -5,7 +5,7 @@
 \title{Plot the operating characteristics of a randomised clinical trial design that
 assumes a Bernoulli distributed primary outcome variable}
 \usage{
-\method{plot}{ph2rand_des}(x, k = 1:x$J, output = F, ...)
+\method{plot}{ph2rand_des}(x, k = 1:x$J, output = FALSE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{ph2rand_des}, as returned by
@@ -23,7 +23,7 @@ outputs should be returned by the function.}
 \item{...}{Not currently used.}
 }
 \value{
-If \code{output = T}, a \code{\link{list}} containing each of the
+If \code{output = TRUE}, a \code{\link{list}} containing each of the
 input parameters along with a \code{\link{list}} in the slot \code{$plots},
 which gives all of the available produced plots.
 }
@@ -35,14 +35,12 @@ a range of key response rate scenarios. For convenience, it also calls
 design.
 }
 \examples{
-\dontrun{
 # The default two-stage design
 des   <- des_two_stage()
 # Print several key plots
 plot(des)
 # Determine and store all available plots
 plots <- plot(des, output = TRUE)
-}
 }
 \seealso{
 \code{\link{des_one_stage}}, \code{\link{des_two_stage}},

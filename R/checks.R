@@ -33,11 +33,11 @@ check_integer_pair_range     <- function(value1, value2, name1, name2, range) {
 }
 
 check_integer_range          <- function(value, name, range, len) {
-  check         <- F
+  check         <- FALSE
   if (is.finite(len)) {
     if (any(length(value) != len, !is.numeric(value), value%%1 != 0,
             value <= range[1], value >= range[2])) {
-      check     <- T
+      check     <- TRUE
       if (len == 1) {
         segment <- " a single integer that belongs to {"
       } else {
@@ -47,7 +47,7 @@ check_integer_range          <- function(value, name, range, len) {
     }
   } else if (any(value%%1 != 0, !is.numeric(value), value <= range[1],
                  value >= range[2])) {
-    check       <- T  
+    check       <- TRUE  
     segment     <- " an integer vector whose elements all belong to {"
   }
   if (check) {
@@ -101,10 +101,10 @@ check_fisher_params          <- function(efficacy_type, efficacy_param,
            "(0, 1)")
     }
   }
-  check              <- F
+  check              <- FALSE
   if (is.null(efficacy_param)) {
     efficacy_param   <- -0.5
-    check            <- T
+    check            <- TRUE
   }
   if (efficacy_type == 0) {
     if (!check) {

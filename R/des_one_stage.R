@@ -44,7 +44,7 @@
 #' to \code{50L}.
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"ph2rand_des"},
 #' containing each of the input parameters along with several additional
 #' variables, including
@@ -74,7 +74,7 @@
 #' @export
 des_one_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
                           delta = 0.2, ratio = 1, Pi0 = 0.1, Pi1 = Pi0[1],
-                          nCmax = 50L, summary = F) {
+                          nCmax = 50L, summary = FALSE) {
 
   ##### Check inputs ###########################################################
 

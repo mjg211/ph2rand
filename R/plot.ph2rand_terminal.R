@@ -9,7 +9,7 @@
 #' @param output A \code{\link{logical}} variable indicating whether outputs
 #' should be returned by the function.
 #' @param ... Not currently used.
-#' @return If \code{output = T}, a \code{\link{list}} containing each of the
+#' @return If \code{output = TRUE}, a \code{\link{list}} containing each of the
 #' input parameters along with plot(s) in the slot \code{$plots}, which gives
 #' the produced plot(s) of the terminal points.
 #' @examples
@@ -27,7 +27,7 @@
 #' \code{\link{terminal}}, \code{\link{plot.ph2rand_des}}.
 #' @method plot ph2rand_terminal
 #' @export
-plot.ph2rand_terminal <- function(x, output = F, ...) {
+plot.ph2rand_terminal <- function(x, output = FALSE, ...) {
 
   ##### Check inputs ###########################################################
 

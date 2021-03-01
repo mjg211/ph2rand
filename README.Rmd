@@ -19,7 +19,7 @@ suppressPackageStartupMessages(library(ph2rand))
 
 # ph2rand <img src='man/figures/ph2rand.png' align="right" height="139" />
 
-*Design of randomized comparative phase II oncology trials with a Bernoulli distributed primary outcome*
+*Randomized Phase II Oncology Trials with Bernoulli Outcomes*
 
 ## Description
 

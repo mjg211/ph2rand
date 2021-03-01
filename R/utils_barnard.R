@@ -113,7 +113,7 @@ barnard_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
       feasible$`argmax_piE ESS(piC,piE)`[i] <- max_ESS_2d[2]
       feasible$`max ESS(piC,piE)`[i]        <- max_ESS_2d[3]
     }
-    feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, T)*
+    feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, TRUE)*
                                     feasible[, c(13:14, 16, 19:20)])
     feasible           <- dplyr::arrange(feasible, .data$o,
                                          dplyr::desc(.data$`min power`))

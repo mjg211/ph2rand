@@ -78,7 +78,7 @@ design." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ph2rand</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -86,7 +86,7 @@ design." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -115,7 +115,7 @@ design." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/mjg211/ph2rand/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -147,7 +147,7 @@ design.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for ph2rand_des</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='kw'>x</span>, k = <span class='fl'>1</span><span class='op'>:</span><span class='kw'>x</span><span class='op'>$</span><span class='kw'>J</span>, output = <span class='kw'>F</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>x</span>, k <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='va'>x</span><span class='op'>$</span><span class='va'>J</span>, output <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,7 +178,7 @@ outputs should be returned by the function.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>If <code>output = T</code>, a <code><a href='https://rdrr.io/r/base/list.html'>list</a></code> containing each of the
+    <p>If <code>output = TRUE</code>, a <code><a href='https://rdrr.io/r/base/list.html'>list</a></code> containing each of the
 input parameters along with a <code><a href='https://rdrr.io/r/base/list.html'>list</a></code> in the slot <code>$plots</code>,
 which gives all of the available produced plots.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -188,11 +188,11 @@ which gives all of the available produced plots.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># The default two-stage design</span>
-<span class='kw'>des</span>   <span class='op'>&lt;-</span> <span class='fu'><a href='des_two_stage.html'>des_two_stage</a></span>()
+<span class='va'>des</span>   <span class='op'>&lt;-</span> <span class='fu'><a href='des_two_stage.html'>des_two_stage</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='co'># Print several key plots</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='kw'>des</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>des</span><span class='op'>)</span>
 </div><div class='img'><img src='plot.ph2rand_des-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='plot.ph2rand_des-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># Determine and store all available plots</span>
-<span class='kw'>plots</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='kw'>des</span>, output = <span class='fl'>TRUE</span>)
+<span class='va'>plots</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>des</span>, output <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -75,7 +75,7 @@ des_one_stage or des_two_stage." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ph2rand</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@ des_one_stage or des_two_stage." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -112,7 +112,7 @@ des_one_stage or des_two_stage." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/mjg211/ph2rand/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -141,7 +141,7 @@ distributed primary outcome variable</h1>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for ph2rand_des</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>object</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,6 +157,9 @@ distributed primary outcome variable</h1>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Currently not used.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='des_one_stage.html'>des_one_stage</a></code>, <code><a href='des_two_stage.html'>des_two_stage</a></code>,
@@ -164,9 +167,9 @@ distributed primary outcome variable</h1>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># The default two-stage design</span>
-<span class='kw'>des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='des_two_stage.html'>des_two_stage</a></span>()
+<span class='va'>des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='des_two_stage.html'>des_two_stage</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='co'># Print a summary</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>des</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>des</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>  -------------------------------------------------</span></div><div class='output co'>#&gt; <span class='message'>  A two-stage trial based on an exact binomial test</span></div><div class='output co'>#&gt; <span class='message'>  -------------------------------------------------</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>  ---------------</span></div><div class='output co'>#&gt; <span class='message'>  Hypothesis test</span></div><div class='output co'>#&gt; <span class='message'>  ---------------</span></div><div class='output co'>#&gt; <span class='message'>  You have chosen to test the following hypothesis</span></div><div class='output co'>#&gt; <span class='message'>    H0 : piE &lt;= piC</span></div><div class='output co'>#&gt; <span class='message'>  with the following type-I error constraint</span></div><div class='output co'>#&gt; <span class='message'>    P(0.1,0.1) &lt;= alpha = 0.1</span></div><div class='output co'>#&gt; <span class='message'>  and the following type-II error constraint</span></div><div class='output co'>#&gt; <span class='message'>    P(0.1,0.3) &gt;= 1 - beta = 0.8</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>  -----------------</span></div><div class='output co'>#&gt; <span class='message'>  Design parameters</span></div><div class='output co'>#&gt; <span class='message'>  -----------------</span></div><div class='output co'>#&gt; <span class='message'>  The design has:</span></div><div class='output co'>#&gt; <span class='message'>    - n1C = 17</span></div><div class='output co'>#&gt; <span class='message'>    - n2C = 17</span></div><div class='output co'>#&gt; <span class='message'>    - n1E = 17</span></div><div class='output co'>#&gt; <span class='message'>    - n2E = 17</span></div><div class='output co'>#&gt; <span class='message'>    - e1 = Inf</span></div><div class='output co'>#&gt; <span class='message'>    - f1 = 0</span></div><div class='output co'>#&gt; <span class='message'>    - e2 = 4</span></div><div class='output co'>#&gt; <span class='message'></span>

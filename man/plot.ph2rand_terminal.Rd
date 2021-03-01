@@ -5,7 +5,7 @@
 \title{Plot the terminal points of a randomised clinical trial design that assumes a
 Bernoulli distributed primary outcome variable}
 \usage{
-\method{plot}{ph2rand_terminal}(x, output = F, ...)
+\method{plot}{ph2rand_terminal}(x, output = FALSE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{ph2rand_terminal}, as returned by
@@ -17,7 +17,7 @@ should be returned by the function.}
 \item{...}{Not currently used.}
 }
 \value{
-If \code{output = T}, a \code{\link{list}} containing each of the
+If \code{output = TRUE}, a \code{\link{list}} containing each of the
 input parameters along with plot(s) in the slot \code{$plots}, which gives
 the produced plot(s) of the terminal points.
 }

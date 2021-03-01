@@ -108,7 +108,7 @@ search_parameters          <- function(J, type, nCmax, ratio) {
         !logical(len_unique_B_index)
       for (i in 2:len_unique_B_index) {
         if (unique_B[[index]][i] - unique_B[[index]][i - 1] <= 1e-15) {
-          keep[i]                                  <- F
+          keep[i]                                  <- FALSE
         }
       }
       unique_B[[index]]                            <- unique_B[[index]][keep]
@@ -252,7 +252,7 @@ theme_ph2rand              <- function(base_size = 11, base_family = "") {
                       base_size   = base_size) +
     ggplot2::theme(axis.ticks       = ggplot2::element_line(colour = "grey70",
                                                             size   = 0.25),
-                   complete         = T,
+                   complete         = TRUE,
                    legend.key       = ggplot2::element_rect(fill   = "white",
                                                             colour = NA),
                    legend.position  = "bottom",

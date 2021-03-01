@@ -1,12 +1,12 @@
 ---
-title: "ph2rand: Design of randomized comparative phase II oncology trials with a Bernoulli distributed primary outcome"
+title: "ph2rand: Randomized Phase II Oncology Trials with Bernoulli Outcomes"
 author: "Michael J Grayling (michael.grayling@newcastle.ac.uk)"
 date: "$`r Sys.Date()`$"
 output: html_document
 header-includes:
   - \usepackage{mathrsfs}
 vignette: >
-  %\VignetteIndexEntry{ph2rand: Design of randomized comparative phase II oncology trials with a Bernoulli distributed primary outcome}
+  %\VignetteIndexEntry{ph2rand: Randomized Phase II Oncology Trials with Bernoulli Outcomes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,7 +15,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-```{r ph2rand, echo = F, cache = TRUE}
+```{r ph2rand, echo = FALSE, cache = TRUE}
 suppressPackageStartupMessages(library(ph2rand))
 ```
 
@@ -310,7 +310,7 @@ Defaults to `Pi0[1]`.
 - `nCmax`: A `numeric` indicating the maximum value of the sample size in the control arm, $\tilde{n}_{JC}$, to consider in the search procedure.
 Defaults to `50L`.
 - `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console.
-Defaults to `F`.
+Defaults to `FALSE`.
 
 It returns a `list` with additional class `"ph2rand_des"`, containing each of the input parameters along with several additional variables, including
 
@@ -351,7 +351,7 @@ Defaults to `Pi0[1]`.
 - `nCmax`: A `numeric` indicating the maximum value of the sample size in the control arm (across both stage), $\tilde{n}_{JC}$, to consider in the search procedure.
 Defaults to `50L`.
 - `equal`: A `logical` variable indicating whether the sample size of the two stages should be equal (i.e., whether we should enforce $n_{1C}=n_{2C}$ and $n_{1E}=n_{2E}$).
-Defaults to `T`.
+Defaults to `TRUE`.
 - `w`: A `numeric` `vector` indicating the weights to use in the optimality criteria.
 Must be of `length` five, with all elements greater than or equal to zero, and at least one of the first four elements strictly positive.
 Defaults to `c(1, 0, 0, 0, 0)`.
@@ -359,10 +359,10 @@ Defaults to `c(1, 0, 0, 0, 0)`.
 Defaults to `Pi0[1]`.
 - `efficacy`: Only used if `type` is one of `"barnard"`, `"binomial"`, or `"sat"`.
 Then, it is a `logical` variable indicating whether to include early stopping for efficacy in the design.
-Defaults to `F`.
+Defaults to `FALSE`.
 - `futility`: Only used if `type` is one of `"barnard"`, `"binomial"`, or `"sat"`.
 Then, it is a `logical` variable indicating whether to include early stopping for futility in the design.
-Defaults to `T`.
+Defaults to `TRUE`.
 - `efficacy_type`: Only used if `type` is `"fisher"`.
 Then, it is a `numeric` indicating whether, and which type of, early stopping for efficacy to include in the design.
 See below for details.
@@ -380,7 +380,7 @@ Then, it is a `numeric` that influences the precise way in which a futility boun
 See below for details.
 Defaults to `1L`.
 - `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console.
-Defaults to `F`.
+Defaults to `FALSE`.
 
 It returns a `list` with additional class `"ph2rand_des"`, containing each of the input parameters along with several additional variables, including
 
@@ -427,7 +427,7 @@ Defaults to `ph2rand::des_one_stage()`.
 - `k`: A `numeric` `vector` indicating which stages to consider when determining the terminal points.
 Defaults to `1:des$J` (i.e., to all stages of the given design).
 - `summary` A `logical` variable indicating whether a summary of the function's progress should be printed to the console.
-Defaults to `F`.
+Defaults to `FALSE`.
 
 It returns a `list` with additional class `"ph2rand_terminal"`, containing each of the input parameters along with a tibble in the slot `$terminal`, which gives the determined terminal points.
 
@@ -446,7 +446,7 @@ Defaults to `des$opchar[, 1:2]`.
 That is, it will condition the calculations on the trial ending in the stages given in `k`.
 Defaults to `1:des$J` (i.e., to all stages of the given design).
 - `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console.
-Defaults to `F`.
+Defaults to `FALSE`.
 
 It returns a `list` with additional class `"ph2rand_pmf"`, containing each of the input parameters along with a tibble in the slot `$pmf`, which gives the determined probability mass functions.
 
@@ -465,7 +465,7 @@ Defaults to `des$opchar[, 1:2]`.
 That is, it will condition the calculations on the trial ending in the stages given in `k`.
 Defaults to `1:des$J` (i.e., to all stages of the given design).
 - `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console.
-Defaults to `F`.
+Defaults to `FALSE`.
 
 It returns a `list` with additional class `"ph2rand_opchar"`, containing each of the input parameters along with a tibble in the slot `$opchar`, which gives the determined operating characteristics.
 
@@ -486,7 +486,7 @@ Defaults to `1:des$J` (i.e., to all stages of the given design).
 - `replicates`: A `numeric` indicating the number of replicate simulations to use in estimating the operating characteristics.
 Defaults to `1e4`.
 - `summary`: A `logical` variable indicating whether a summary of the function's progress should be printed to the console.
-Defaults to `F`.
+Defaults to `FALSE`.
 
 It returns a `list` with additional class `"ph2rand_sim"`, containing each of the input parameters along with a tibble in the slot `$sim`, which gives the estimated operating characteristics.
 
@@ -505,7 +505,7 @@ That is, it will condition the calculations on the trial ending in the stages gi
 Defaults to `1:des$J` (i.e., to all stages of the given design).
 - `output`: A `logical` variable indicating whether available outputs should be returned by the function.
 
-If `output = T`, a `list` containing each of the input parameters along with a `list` in the slot `$plots`, which gives all of the available produced plots.
+If `output = TRUE`, a `list` containing each of the input parameters along with a `list` in the slot `$plots`, which gives all of the available produced plots.
 
 ## 3.8. `summary.ph2rand_des()`
 
@@ -523,9 +523,9 @@ It allows each of the following options to be specified
 
 - `x`: An object of class `"ph2rand_terminal"`, as returned by `terminal()`.
 - `output`: A `logical` variable indicating whether outputs should be returned by the function.
-Defaults to `F`.
+Defaults to `FALSE`.
 
-If `output = T`, it will return a `list` containing each of the input parameters along with a plot in the slot `$plot`, giving the produced plot of the terminal points.
+If `output = TRUE`, it will return a `list` containing each of the input parameters along with a plot in the slot `$plot`, giving the produced plot of the terminal points.
 
 ## 3.10. `plot.ph2rand_pmf()`
 
@@ -535,9 +535,9 @@ It allows the following inputs to be specified
 
 - `x`: An object of class `"ph2rand_pmf"`, as returned by `pmf()`.
 - `output`: A `logical` variable indicating whether outputs should be returned by the function.
-Defaults to `F`.
+Defaults to `FALSE`.
 
-If `output = T`, it will return a `list` containing each of the input parameters along with a `list` in the slot `$plots`, giving the produced plots of the probability mass functions.
+If `output = TRUE`, it will return a `list` containing each of the input parameters along with a `list` in the slot `$plots`, giving the produced plots of the probability mass functions.
 
 # 4. Examples
 
@@ -749,7 +749,7 @@ binomial_1 <- des_two_stage(type     = "binomial",
                             ratio    = 2,
                             Pi0      = 0.2,
                             Pi1      = 0.2,
-                            efficacy = T,
+                            efficacy = TRUE,
                             w        = c(1, 0, 0, 0, 0),
                             nCmax    = 10L)
 binomial_2 <- des_two_stage(type     = "binomial",
@@ -759,7 +759,7 @@ binomial_2 <- des_two_stage(type     = "binomial",
                             ratio    = 2,
                             Pi0      = 0.2,
                             Pi1      = 0.2,
-                            efficacy = T,
+                            efficacy = TRUE,
                             w        = c(0, 1, 0, 0, 0),
                             nCmax    = 10L)
 binomial_3 <- des_two_stage(type     = "binomial",
@@ -769,7 +769,7 @@ binomial_3 <- des_two_stage(type     = "binomial",
                             ratio    = 2,
                             Pi0      = 0.2,
                             Pi1      = 0.2,
-                            efficacy = T,
+                            efficacy = TRUE,
                             w        = c(1, 1, 0, 0, 1)/3,
                             nCmax    = 10L)
 ```

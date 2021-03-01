@@ -10,7 +10,7 @@ sim(
   pi = des$opchar[, 1:2],
   k = 1:des$J,
   replicates = 10000,
-  summary = F
+  summary = FALSE
 )
 }
 \arguments{
@@ -37,7 +37,7 @@ simulations to use for each value of
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"ph2rand_sim"},

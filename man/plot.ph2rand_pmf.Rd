@@ -5,7 +5,7 @@
 \title{Plot probability mass functions of a randomised clinical trial design that
 assumes a Bernoulli distributed primary outcome variable}
 \usage{
-\method{plot}{ph2rand_pmf}(x, output = F, ...)
+\method{plot}{ph2rand_pmf}(x, output = FALSE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{ph2rand_pmf}, as returned by
@@ -17,7 +17,7 @@ should be returned by the function.}
 \item{...}{Not currently used.}
 }
 \value{
-If \code{output = T}, a \code{\link{list}} containing each of the
+If \code{output = TRUE}, a \code{\link{list}} containing each of the
 input parameters along with a plot in the slot \code{$plot}, which gives the
 produced plot of the terminal points.
 }

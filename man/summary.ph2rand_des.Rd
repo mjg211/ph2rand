@@ -13,6 +13,9 @@ distributed primary outcome variable}
 
 \item{...}{Not currently used.}
 }
+\value{
+Currently not used.
+}
 \description{
 \code{summary.ph2rand_des} prints a summary of a design returned by
 \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.

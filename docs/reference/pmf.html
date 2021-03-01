@@ -76,7 +76,7 @@ response rate scenarios (see pi)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ph2rand</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -84,7 +84,7 @@ response rate scenarios (see pi)." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -113,7 +113,7 @@ response rate scenarios (see pi)." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/mjg211/ph2rand/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -142,12 +142,12 @@ a Bernoulli distributed primary outcome variable</h1>
 response rate scenarios (see <code>pi</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pmf</span>(
-  des = <span class='kw'>ph2rand</span>::<span class='fu'><a href='des_one_stage.html'>des_one_stage</a></span>(),
-  pi = <span class='kw'>des</span><span class='op'>$</span><span class='kw'>opchar</span>[, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>],
-  k = <span class='fl'>1</span><span class='op'>:</span><span class='kw'>des</span><span class='op'>$</span><span class='kw'>J</span>,
-  summary = <span class='kw'>F</span>
-)</pre>
+    <pre class="usage"><span class='fu'>pmf</span><span class='op'>(</span>
+  des <span class='op'>=</span> <span class='fu'>ph2rand</span><span class='fu'>::</span><span class='fu'><a href='des_one_stage.html'>des_one_stage</a></span><span class='op'>(</span><span class='op'>)</span>,
+  pi <span class='op'>=</span> <span class='va'>des</span><span class='op'>$</span><span class='va'>opchar</span><span class='op'>[</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>]</span>,
+  k <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='va'>des</span><span class='op'>$</span><span class='va'>J</span>,
+  summary <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,7 +178,7 @@ design).</p></td>
       <th>summary</th>
       <td><p>A <code><a href='https://rdrr.io/r/base/logical.html'>logical</a></code> variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-<code>F</code>.</p></td>
+<code>FALSE</code>.</p></td>
     </tr>
     </table>
 
@@ -194,13 +194,13 @@ containing each of the input parameters along with a tibble in the slot
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># The default two-stage design</span>
-<span class='kw'>des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='des_two_stage.html'>des_two_stage</a></span>()
+<span class='va'>des</span> <span class='op'>&lt;-</span> <span class='fu'><a href='des_two_stage.html'>des_two_stage</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='co'># Its probability mass function under the uninteresting and interesting</span>
 <span class='co'># scenarios</span>
-<span class='kw'>pmf</span> <span class='op'>&lt;-</span> <span class='fu'>pmf</span>(<span class='kw'>des</span>)
+<span class='va'>pmf</span> <span class='op'>&lt;-</span> <span class='fu'>pmf</span><span class='op'>(</span><span class='va'>des</span><span class='op'>)</span>
 <span class='co'># The same probability mass functions, conditioning on the trial ending in</span>
 <span class='co'># stage 2</span>
-<span class='kw'>pmf</span> <span class='op'>&lt;-</span> <span class='fu'>pmf</span>(<span class='kw'>des</span>, k = <span class='fl'>2</span>)
+<span class='va'>pmf</span> <span class='op'>&lt;-</span> <span class='fu'>pmf</span><span class='op'>(</span><span class='va'>des</span>, k <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

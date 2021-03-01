@@ -122,7 +122,7 @@ sat_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1, nCmax,
       feasible$`argmax_piE ESS(piC,piE)`[i] <- max_ESS_2d[2]
       feasible$`max ESS(piC,piE)`[i]        <- max_ESS_2d[3]
     }
-    feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, T)*
+    feasible$o         <- rowSums(matrix(w, nrow_feasible, 5, TRUE)*
                                     feasible[, c(16:17, 19, 22:23)])
     feasible           <- dplyr::arrange(feasible, .data$o,
                                          dplyr::desc(.data$`min power`))

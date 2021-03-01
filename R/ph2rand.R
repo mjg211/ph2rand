@@ -1,5 +1,4 @@
-#' ph2rand: Design of randomized comparative phase II oncology trials with a
-#' Bernoulli distributed primary outcome
+#' ph2rand: Randomized Phase II Oncology Trials with Bernoulli Outcomes
 #'
 #' \strong{ph2rand} provides functions to assist with the design of randomized
 #' comparative phase II oncology trials that assume their primary outcome

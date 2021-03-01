@@ -15,7 +15,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-```{r ph2rand, echo = F, cache = TRUE}
+```{r ph2rand, echo = FALSE, cache = TRUE}
 suppressPackageStartupMessages(library(ph2rand))
 ```
 

@@ -9,7 +9,7 @@ pmf(
   des = ph2rand::des_one_stage(),
   pi = des$opchar[, 1:2],
   k = 1:des$J,
-  summary = F
+  summary = FALSE
 )
 }
 \arguments{
@@ -31,7 +31,7 @@ design).}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"ph2rand_pmf"},

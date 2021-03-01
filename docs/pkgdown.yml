@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   ph2rand: ph2rand.html
   validation: validation.html
-last_built: 2020-09-24T14:19Z
+last_built: 2021-03-01T10:34Z
 urls:
   reference: https://mjg211.github.io/ph2rand/reference
   article: https://mjg211.github.io/ph2rand/articles

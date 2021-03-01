@@ -5,7 +5,7 @@
 \title{Terminal points of a randomised clinical trial design that assumes a
 Bernoulli distributed primary outcome variable}
 \usage{
-terminal(des = ph2rand::des_one_stage(), k = 1:des$J, summary = F)
+terminal(des = ph2rand::des_one_stage(), k = 1:des$J, summary = FALSE)
 }
 \arguments{
 \item{des}{An object of class \code{ph2rand_des}, as returned by
@@ -18,7 +18,7 @@ to consider when determining the terminal points. Defaults to \code{1:des$J}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"ph2rand_terminal"},

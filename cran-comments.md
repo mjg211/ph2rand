@@ -1,7 +1,10 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Got the tarball down below 5 Mb; now 3.6 Mb on local build
+* Reduced the length of the title to less than 65 characters
+* Wrote TRUE and FALSE instead of T and F
+* Added \value to summary.ph2rand_des.Rd
+* Replaced \dontrun{} with \donttest{}
 
 ## Test environments
 * local Windows 10 install, R 4.0.4

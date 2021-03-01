@@ -12,7 +12,7 @@
 #' (i.e., to all stages of the given design).
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"ph2rand_terminal"},
 #' containing each of the input parameters along with a tibble in the slot
 #' \code{$terminal}, which gives the determined terminal points.
@@ -28,7 +28,8 @@
 #' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}},
 #' \code{\link{plot.ph2rand_terminal}}.
 #' @export
-terminal <- function(des = ph2rand::des_one_stage(), k = 1:des$J, summary = F) {
+terminal <- function(des = ph2rand::des_one_stage(), k = 1:des$J,
+                     summary = FALSE) {
 
   ##### Check inputs ###########################################################
 

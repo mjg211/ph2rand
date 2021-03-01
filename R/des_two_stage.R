@@ -42,7 +42,7 @@
 #' sample size in the control arm (across both stages) to consider in the search
 #' procedure. Defaults to \code{50L}.
 #' @param equal A \code{\link{logical}} variable indicating whether the sample
-#' size of the two stages should be equal. Defaults to \code{T}.
+#' size of the two stages should be equal. Defaults to \code{TRUE}.
 #' @param w A \code{\link{numeric}} \code{\link{vector}} indicating the weights
 #' to use in the optimality criteria. Must be of \code{\link{length}} five, with
 #' all elements greater than or equal to zero, and at least one of the first
@@ -53,11 +53,11 @@
 #' @param efficacy Only used if \code{type} is one of \code{"barnard"},
 #' \code{"binomial"}, or \code{"sat"}. Then, it is a
 #' \code{\link{logical}} variable indicating whether to include early stopping
-#' for efficacy in the design. Defaults to \code{F}.
+#' for efficacy in the design. Defaults to \code{FALSE}.
 #' @param futility Only used if \code{type} is one of \code{"barnard"},
 #' \code{"binomial"}, or \code{"sat"}. Then, it is a
 #' \code{\link{logical}} variable indicating whether to include early stopping
-#' for futility in the design. Defaults to \code{T}.
+#' for futility in the design. Defaults to \code{TRUE}.
 #' @param efficacy_type Only used if \code{type} is \code{"fisher"}. Then, it is
 #' a \code{\link{numeric}} indicating whether, and which type of, early stopping
 #' for efficacy to include in the design. See the vignette for details. Defaults
@@ -76,7 +76,7 @@
 #' boundary is specified. See the vignette for details. Defaults to \code{1L}.
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"ph2rand_des"},
 #' containing each of the input parameters along with several additional
 #' variables, including
@@ -109,10 +109,10 @@
 des_two_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
                           delta = 0.2, ratio = 1, Pi0 = 0.1, Pi1 = Pi0[1],
                           nCmax = 50L, equal = T, w = c(1, 0, 0, 0, 0),
-                          piO = Pi0[1], efficacy = F, futility = T,
+                          piO = Pi0[1], efficacy = FALSE, futility = TRUE,
                           efficacy_type = 0L, efficacy_param = NULL,
                           futility_type = 1L, futility_param = 0L,
-                          summary = F) {
+                          summary = FALSE) {
 
   ##### Check inputs ###########################################################
 
@@ -128,8 +128,8 @@ des_two_stage <- function(type = "binomial", alpha = 0.1, beta = 0.2,
   check_w(w)
   check_real_range(piO, "piO", c(0, 1 - delta), 1)
   if (type == "fisher") {
-    check_default(efficacy, "efficacy", F)
-    check_default(futility, "futility", T)
+    check_default(efficacy, "efficacy", FALSE)
+    check_default(futility, "futility", TRUE)
     check_integer_range(efficacy_type, "efficacy_type", c(-1, 3), 1)
     check_integer_range(futility_type, "futility_type", c(-1, 3), 1)
     efficacy_param <- check_fisher_params(efficacy_type, efficacy_param,

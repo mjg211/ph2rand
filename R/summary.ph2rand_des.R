@@ -7,6 +7,7 @@
 #' @param object An object of class \code{ph2rand_des}, as returned by
 #' \code{\link{des_one_stage}} or \code{\link{des_two_stage}}.
 #' @param ... Not currently used.
+#' @return Currently not used.
 #' @examples
 #' # The default two-stage design
 #' des <- des_two_stage()

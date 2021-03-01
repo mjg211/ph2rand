@@ -172,7 +172,7 @@ fisher_des_two_stage        <- function(alpha, beta, delta, ratio, Pi0, Pi1,
       feasible$`max ESS(piC,piE)`[i]        <- max_ESS_2d[3]
     }
     feasible$o                   <-
-      rowSums(matrix(w, nrow_feasible, 5, T)*feasible[, c(10:11, 13, 16:17)])
+      rowSums(matrix(w, nrow_feasible, 5, TRUE)*feasible[, c(10:11, 13, 16:17)])
     feasible                     <-
       dplyr::arrange(feasible, .data$o, dplyr::desc(.data$`min power`))
     feasible_e1                  <- feasible_e1[as.matrix(feasible[, 1]), ]
@@ -272,8 +272,8 @@ fisher_opchar_two_stage     <- function(pi, nC, nE, e1, f1, e2, k, pmf_pi) {
   E                <- Fu <- numeric(2)
   if (missing(pmf_pi)) {
     for (i in 1:nrow_pi) {
-      pmf_pi         <- fisher_pmf_two_stage(pi[i, , drop = F], nC, nE, e1, f1,
-                                             e2, k)
+      pmf_pi         <- fisher_pmf_two_stage(pi[i, , drop = FALSE], nC, nE, e1,
+                                             f1, e2, k)
       for (j in k) {
         E[j]         <- sum(dplyr::filter(pmf_pi, .data$decision == "Reject" &
                                             .data$k == j)$`f(x,m|pi)`)

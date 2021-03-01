@@ -20,7 +20,7 @@
 #' design).
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"ph2rand_pmf"},
 #' containing each of the input parameters along with a tibble in the slot
 #' \code{$pmf}, which gives the determined probability mass functions.
@@ -37,7 +37,7 @@
 #' \code{\link{plot.ph2rand_terminal}}.
 #' @export
 pmf <- function(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
-                k = 1:des$J, summary = F) {
+                k = 1:des$J, summary = FALSE) {
 
   ##### Check inputs ###########################################################
 

@@ -25,7 +25,7 @@
 #' \code{1e4}.
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"ph2rand_sim"},
 #' containing each of the input parameters along with a tibble in the slot
 #' \code{$sim}, which gives the estimated operating characteristics.
@@ -41,7 +41,7 @@
 #' @seealso \code{\link{des_one_stage}}, \code{\link{des_two_stage}}.
 #' @export
 sim <- function(des = ph2rand::des_one_stage(), pi = des$opchar[, 1:2],
-                k = 1:des$J, replicates = 1e4, summary = F) {
+                k = 1:des$J, replicates = 1e4, summary = FALSE) {
   
   ##### Check inputs ###########################################################
   

@@ -3,8 +3,7 @@
 
 # ph2rand <img src='man/figures/ph2rand.png' align="right" height="139" />
 
-*Design of randomized comparative phase II oncology trials with a
-Bernoulli distributed primary outcome*
+*Randomized Phase II Oncology Trials with Bernoulli Outcomes*
 
 ## Description
 
@@ -179,8 +178,8 @@ sim_jung$sim
 #> # A tibble: 2 x 13
 #>     piC   piE `P(pi)` `ESS(pi)` `SDSS(pi)` `MSS(pi)` `E1(pi)` `E2(pi)` `F1(pi)`
 #>   <dbl> <dbl>   <dbl>     <dbl>      <dbl>     <dbl>    <dbl>    <dbl>    <dbl>
-#> 1   0.1   0.1  0.0699      46.9       16.5        34        0   0.0699    0.620
-#> 2   0.1   0.3  0.804       64.6       10.3        68        0   0.804     0.101
+#> 1   0.1   0.1  0.0727      47.0       16.5        34        0   0.0727   0.617 
+#> 2   0.1   0.3  0.815       64.7       10.0        68        0   0.815    0.0961
 #> # … with 4 more variables: `F2(pi)` <dbl>, `S1(pi)` <dbl>, `S2(pi)` <dbl>, `max
 #> #   N` <int>
 ```

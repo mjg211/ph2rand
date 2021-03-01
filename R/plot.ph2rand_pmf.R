@@ -9,7 +9,7 @@
 #' @param output A \code{\link{logical}} variable indicating whether outputs
 #' should be returned by the function.
 #' @param ... Not currently used.
-#' @return If \code{output = T}, a \code{\link{list}} containing each of the
+#' @return If \code{output = TRUE}, a \code{\link{list}} containing each of the
 #' input parameters along with a plot in the slot \code{$plot}, which gives the
 #' produced plot of the terminal points.
 #' @examples
@@ -29,7 +29,7 @@
 #' \code{\link{pmf}}, \code{\link{plot.ph2rand_des}}.
 #' @method plot ph2rand_pmf
 #' @export
-plot.ph2rand_pmf <- function(x, output = F, ...) {
+plot.ph2rand_pmf <- function(x, output = FALSE, ...) {
   
   ##### Check inputs ###########################################################
   
